@@ -2092,6 +2092,241 @@ function calculateStats() {
         console.log('🔗 Pronto per Integrazione SharePoint + Teams + Outlook');
         console.log('✨ Funzionalità Avanzate: Modifica, Eliminazione, Progress Tracking, Filtri');
         console.log('🎯 Sistema Pronto per Deploy Azure Static Web Apps');
-    </script>
+      </script>
+    <script>
+// 🚨 FIX URGENTE PERSISTENZA DATI - IMPLEMENTAZIONE IMMEDIATA
+// Codice da aggiungere SUBITO al sistema per risolvere la perdita dati
+
+// ========== PATCH IMMEDIATO - SOSTITUISCI getStatoComune() ==========
+function getStatoComune(adempimentoId, comune) {
+    const storageKey = `stato_${adempimentoId}_${comune}`;
+    const stato = localStorage.getItem(storageKey);
+    
+    // Se non trova lo stato, salva "In Corso" come default
+    if (!stato) {
+        localStorage.setItem(storageKey, 'In Corso');
+        console.log(`💾 Stato inizializzato per ${comune}: In Corso`);
+        return 'In Corso';
+    }
+    
+    return stato;
+}
+
+// ========== PATCH IMMEDIATO - SOSTITUISCI updateStatoComune() ==========
+function updateStatoComune(adempimentoId, comune, nuovoStato) {
+    const storageKey = `stato_${adempimentoId}_${comune}`;
+    
+    try {
+        // Salvataggio principale
+        localStorage.setItem(storageKey, nuovoStato);
+        
+        // 🆕 BACKUP IMMEDIATO in sessionStorage
+        sessionStorage.setItem(storageKey, nuovoStato);
+        
+        // 🆕 LOG dettagliato per debugging
+        console.log(`💾 Stato aggiornato - Adempimento: ${adempimentoId}, Comune: ${comune}, Nuovo Stato: ${nuovoStato}`);
+        console.log(`💾 Chiave storage: ${storageKey}`);
+        console.log(`💾 Verifica salvato localStorage:`, localStorage.getItem(storageKey));
+        console.log(`💾 Verifica salvato sessionStorage:`, sessionStorage.getItem(storageKey));
+        
+        // Aggiorna immediatamente la UI
+        if (typeof updateDashboard === 'function') {
+            updateDashboard();
+        }
+        if (typeof updateProgressIndicators === 'function') {
+            updateProgressIndicators();
+        }
+        
+    } catch (error) {
+        console.error('❌ ERRORE nel salvataggio stato:', error);
+        alert('Errore nel salvataggio. I dati potrebbero non essere stati salvati correttamente.');
+    }
+}
+
+// ========== FIX CRITICO - BACKUP AUTOMATICO DATI ==========
+function backupDatiCompleto() {
+    console.log('💾 Eseguendo backup completo dei dati...');
+    
+    try {
+        // 1. Backup adempimenti
+        if (window.adempimentiData && window.adempimentiData.length > 0) {
+            localStorage.setItem('BACKUP_adempimenti', JSON.stringify(window.adempimentiData));
+            sessionStorage.setItem('BACKUP_adempimenti', JSON.stringify(window.adempimentiData));
+            console.log(`✅ Backup ${window.adempimentiData.length} adempimenti`);
+        }
+        
+        // 2. Backup enti
+        if (window.entiData && window.entiData.length > 0) {
+            localStorage.setItem('BACKUP_enti', JSON.stringify(window.entiData));
+            sessionStorage.setItem('BACKUP_enti', JSON.stringify(window.entiData));
+            console.log(`✅ Backup ${window.entiData.length} enti`);
+        }
+        
+        // 3. Backup tutti gli stati
+        const tuttiStati = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('stato_')) {
+                tuttiStati[key] = localStorage.getItem(key);
+            }
+        }
+        
+        if (Object.keys(tuttiStati).length > 0) {
+            localStorage.setItem('BACKUP_stati', JSON.stringify(tuttiStati));
+            sessionStorage.setItem('BACKUP_stati', JSON.stringify(tuttiStati));
+            console.log(`✅ Backup ${Object.keys(tuttiStati).length} stati comuni`);
+        }
+        
+        // 4. Salva timestamp ultimo backup
+        const timestamp = new Date().toISOString();
+        localStorage.setItem('ULTIMO_BACKUP', timestamp);
+        sessionStorage.setItem('ULTIMO_BACKUP', timestamp);
+        
+        console.log('✅ Backup completo terminato alle:', timestamp);
+        
+    } catch (error) {
+        console.error('❌ ERRORE nel backup:', error);
+    }
+}
+
+// ========== FIX CRITICO - RIPRISTINO DATI ==========
+function ripristinaDatiBackup() {
+    console.log('🔄 Tentativo ripristino dati da backup...');
+    
+    try {
+        let datiRipristinati = false;
+        
+        // 1. Ripristina adempimenti
+        let backupAdempimenti = localStorage.getItem('BACKUP_adempimenti') || sessionStorage.getItem('BACKUP_adempimenti');
+        if (backupAdempimenti) {
+            window.adempimentiData = JSON.parse(backupAdempimenti);
+            console.log(`🔄 Ripristinati ${window.adempimentiData.length} adempimenti da backup`);
+            datiRipristinati = true;
+        }
+        
+        // 2. Ripristina enti
+        let backupEnti = localStorage.getItem('BACKUP_enti') || sessionStorage.getItem('BACKUP_enti');
+        if (backupEnti) {
+            window.entiData = JSON.parse(backupEnti);
+            console.log(`🔄 Ripristinati ${window.entiData.length} enti da backup`);
+            datiRipristinati = true;
+        }
+        
+        // 3. Ripristina stati
+        let backupStati = localStorage.getItem('BACKUP_stati') || sessionStorage.getItem('BACKUP_stati');
+        if (backupStati) {
+            const stati = JSON.parse(backupStati);
+            Object.keys(stati).forEach(key => {
+                localStorage.setItem(key, stati[key]);
+            });
+            console.log(`🔄 Ripristinati ${Object.keys(stati).length} stati da backup`);
+            datiRipristinati = true;
+        }
+        
+        if (datiRipristinati) {
+            console.log('✅ RIPRISTINO COMPLETATO - Aggiornando UI...');
+            
+            // Aggiorna UI
+            setTimeout(() => {
+                if (typeof renderAdempimenti === 'function') {
+                    renderAdempimenti();
+                }
+                if (typeof updateDashboard === 'function') {
+                    updateDashboard();
+                }
+                if (typeof updateProgressIndicators === 'function') {
+                    updateProgressIndicators();
+                }
+            }, 500);
+            
+            return true;
+        } else {
+            console.warn('⚠️ Nessun backup trovato per il ripristino');
+            return false;
+        }
+        
+    } catch (error) {
+        console.error('❌ ERRORE nel ripristino:', error);
+        return false;
+    }
+}
+
+// ========== MONITORAGGIO CONTINUO ==========
+function monitoraPersistenza() {
+    // Backup automatico ogni 2 minuti
+    setInterval(() => {
+        backupDatiCompleto();
+    }, 120000);
+    
+    // Verifica integrità ogni minuto
+    setInterval(() => {
+        const adempimentiCount = window.adempimentiData?.length || 0;
+        const entiCount = window.entiData?.length || 0;
+        
+        if (adempimentiCount === 0 && entiCount === 0) {
+            console.warn('⚠️ ALERT: Nessun dato in memoria, tentando ripristino...');
+            ripristinaDatiBackup();
+        }
+    }, 60000);
+    
+    console.log('👀 Monitoraggio persistenza attivato');
+}
+
+// ========== INIZIALIZZAZIONE IMMEDIATA ==========
+function inizializzaFixUrgente() {
+    console.log('🚨 INIZIALIZZANDO FIX URGENTE PERSISTENZA...');
+    
+    // 1. Controlla se ci sono dati in memoria
+    const datiPresenti = (window.adempimentiData && window.adempimentiData.length > 0) ||
+                        (window.entiData && window.entiData.length > 0);
+    
+    if (datiPresenti) {
+        console.log('✅ Dati presenti in memoria, eseguendo backup...');
+        backupDatiCompleto();
+    } else {
+        console.log('⚠️ Nessun dato in memoria, tentando ripristino...');
+        ripristinaDatiBackup();
+    }
+    
+    // 2. Avvia monitoraggio
+    monitoraPersistenza();
+    
+    // 3. Esporta funzioni globalmente
+    window.backupDatiCompleto = backupDatiCompleto;
+    window.ripristinaDatiBackup = ripristinaDatiBackup;
+    window.getStatoComune = getStatoComune;
+    window.updateStatoComune = updateStatoComune;
+    
+    console.log('🚀 FIX URGENTE ATTIVATO - Sistema protetto da perdita dati!');
+}
+
+// ========== AVVIO AUTOMATICO ==========
+// Esegui immediatamente
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inizializzaFixUrgente);
+} else {
+    inizializzaFixUrgente();
+}
+
+// Backup anche prima di chiudere la pagina
+window.addEventListener('beforeunload', () => {
+    console.log('💾 Backup finale prima della chiusura...');
+    backupDatiCompleto();
+});
+
+// Ripristino quando la pagina torna in focus
+window.addEventListener('focus', () => {
+    setTimeout(() => {
+        if (!window.adempimentiData || window.adempimentiData.length === 0) {
+            console.log('🔄 Pagina tornata in focus, verificando dati...');
+            ripristinaDatiBackup();
+        }
+    }, 1000);
+});
+
+</script>
+
 </body>
 </html>
+
+
