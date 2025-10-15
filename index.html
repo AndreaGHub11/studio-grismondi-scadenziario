@@ -1340,116 +1340,167 @@ document.addEventListener('DOMContentLoaded', function() {
             }, stepTime);
         }
 
-        function calculateStats() {
-            const now = new Date();
-            let stats = { total: 0, pending: 0, completed: 0, overdue: 0 };
+function calculateStats() {
+    const now = new Date();
+    let stats = { total: 0, pending: 0, completed: 0, overdue: 0 };
 
-            adempimenti.forEach(adempimento => {
-                const scadenza = new Date(adempimento.dataScadenza);
-                Object.keys(adempimento.comuni).forEach(comune => {
-                    const comuneData = adempimento.comuni[comune];
-                    stats.total++;
-                    
-                    switch(comuneData.stato) {
-                        case 'Completato':
-                            stats.completed++;
-                            break;
-                        case 'In Corso':
-                        case 'Non Iniziato':
-                            if (scadenza < now) {
-                                stats.overdue++;
-                            } else {
-                                stats.pending++;
-                            }
-                            break;
-                        case 'In Ritardo':
-                            stats.overdue++;
-                            break;
+    adempimenti.forEach(adempimento => {
+        const scadenza = new Date(adempimento.dataScadenza);
+        Object.keys(adempimento.comuni).forEach(comune => {
+            const comuneData = adempimento.comuni[comune];
+            stats.total++;
+            
+            switch(comuneData.stato) {
+                case 'Completato':
+                    stats.completed++;
+                    break;
+                case 'In Corso':
+                    if (scadenza < now && comuneData.progress < 100) {
+                        stats.overdue++;
+                    } else {
+                        stats.pending++;
                     }
-                });
-            });
-
-            return stats;
-        }
-
-        function renderAdempimenti() {
-            const container = document.getElementById('adempimentiContainer');
-            const filteredAdempimenti = getFilteredAdempimenti();
-            
-            if (filteredAdempimenti.length === 0) {
-                container.innerHTML = '';
-                document.getElementById('emptyState').classList.remove('hidden');
-                return;
+                    break;
+                case 'Non Iniziato':
+                    if (scadenza < now) {
+                        stats.overdue++;
+                    } else {
+                        stats.pending++;
+                    }
+                    break;
+                case 'In Ritardo':
+                    stats.overdue++;
+                    break;
             }
+        });
+    });
 
-            document.getElementById('emptyState').classList.add('hidden');
-            
-            container.innerHTML = filteredAdempimenti.map(adempimento => `
-                <div class="adempimento-item" data-id="${adempimento.id}">
-                    <div class="adempimento-header">
-                        <div class="adempimento-title">
-                            <h4>${adempimento.titolo}</h4>
-                            <div class="adempimento-meta">
-                                <span>📅 Scadenza: ${formatDate(adempimento.dataScadenza)}</span>
-                                <span>👤 Responsabile: ${adempimento.responsabile}</span>
-                                <span>📂 ${adempimento.categoria}</span>
-                                <span>🏛️ ${Object.keys(adempimento.comuni).length} comuni</span>
-                            </div>
+    return stats;
+}
+
+        function calculateAdempimentoProgress(adempimento) {
+    const comuniTotali = Object.keys(adempimento.comuni).length;
+    const comuniCompletati = Object.values(adempimento.comuni).filter(c => c.stato === 'Completato').length;
+    const comuniInCorso = Object.values(adempimento.comuni).filter(c => c.stato === 'In Corso').length;
+    const comuniInRitardo = Object.values(adempimento.comuni).filter(c => c.stato === 'In Ritardo').length;
+    const comuniNonIniziati = Object.values(adempimento.comuni).filter(c => c.stato === 'Non Iniziato').length;
+    
+    return {
+        totali: comuniTotali,
+        completati: comuniCompletati,
+        inCorso: comuniInCorso,
+        inRitardo: comuniInRitardo,
+        nonIniziati: comuniNonIniziati,
+        percentualeCompletamento: comuniTotali > 0 ? Math.round((comuniCompletati / comuniTotali) * 100) : 0
+    };
+}
+
+      
+       function renderAdempimenti() {
+    const container = document.getElementById('adempimentiContainer');
+    const filteredAdempimenti = getFilteredAdempimenti();
+    
+    if (filteredAdempimenti.length === 0) {
+        container.innerHTML = '';
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+    }
+
+    document.getElementById('emptyState').classList.add('hidden');
+    
+    container.innerHTML = filteredAdempimenti.map(adempimento => {
+        const progress = calculateAdempimentoProgress(adempimento);
+        
+        return `
+            <div class="adempimento-item" data-id="${adempimento.id}">
+                <div class="adempimento-header">
+                    <div class="adempimento-title">
+                        <h4>${adempimento.titolo}</h4>
+                        <div class="adempimento-meta">
+                            <span>📅 Scadenza: ${formatDate(adempimento.dataScadenza)}</span>
+                            <span>👤 Responsabile: ${adempimento.responsabile}</span>
+                            <span>📂 ${adempimento.categoria}</span>
+                            <span>🏛️ ${progress.totali} comuni</span>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
-                            <div>
-                                <span class="priority ${adempimento.priorita.toLowerCase()}">${adempimento.priorita}</span>
-                                <span class="status ${adempimento.statoGlobale.toLowerCase().replace(' ', '-')}">${adempimento.statoGlobale}</span>
+                        
+                        <!-- NUOVO INDICATORE PROGRESS -->
+                        <div class="adempimento-progress-summary" style="margin-top: 10px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                            <div class="progress-indicator" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-weight: bold; font-size: 16px; color: #2c3e50;">
+                                    📊 Avanzamento: ${progress.completati}/${progress.totali} 
+                                    <span style="color: #27ae60;">(${progress.percentualeCompletamento}%)</span>
+                                </span>
                             </div>
-                            <div class="adempimento-actions">
-                                ${getCurrentUser().ruolo === 'admin' ? `
-                                <button class="btn btn-warning btn-small" onclick="editAdempimento(${adempimento.id})">
-                                    ✏️ Modifica
-                                </button>
-                                <button class="btn btn-danger btn-small" onclick="deleteAdempimento(${adempimento.id})">
-                                    🗑️ Elimina
-                                </button>
-                                ` : ''}
+                            
+                            <div class="progress-breakdown" style="display: flex; gap: 10px; font-size: 12px;">
+                                ${progress.completati > 0 ? `<span style="background: #e8f5e8; color: #27ae60; padding: 2px 8px; border-radius: 12px;">✅ ${progress.completati} Completati</span>` : ''}
+                                ${progress.inCorso > 0 ? `<span style="background: #fff3e0; color: #f39c12; padding: 2px 8px; border-radius: 12px;">🔄 ${progress.inCorso} In Corso</span>` : ''}
+                                ${progress.inRitardo > 0 ? `<span style="background: #fee; color: #e74c3c; padding: 2px 8px; border-radius: 12px;">⚠️ ${progress.inRitardo} In Ritardo</span>` : ''}
+                                ${progress.nonIniziati > 0 ? `<span style="background: #f8f9fa; color: #6c757d; padding: 2px 8px; border-radius: 12px;">⏸️ ${progress.nonIniziati} Non Iniziati</span>` : ''}
+                            </div>
+                            
+                            <!-- BARRA PROGRESS VISUALE -->
+                            <div class="visual-progress-bar" style="flex: 1; min-width: 200px; height: 8px; background: #ecf0f1; border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; background: linear-gradient(90deg, #27ae60 0%, #27ae60 ${progress.percentualeCompletamento}%, #ecf0f1 ${progress.percentualeCompletamento}%, #ecf0f1 100%); transition: all 0.3s ease;"></div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="adempimento-content">
-                        <div class="adempimento-description">
-                            <strong>Descrizione:</strong> ${adempimento.descrizione}
+                    <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+                        <div>
+                            <span class="priority ${adempimento.priorita.toLowerCase()}">${adempimento.priorita}</span>
+                            <span class="status ${adempimento.statoGlobale.toLowerCase().replace(' ', '-')}">${adempimento.statoGlobale}</span>
                         </div>
-                        
-                        <div class="comuni-toggle" onclick="toggleComuniView(${adempimento.id})">
-                            <span class="toggle-icon" id="toggleIcon-${adempimento.id}">▶</span>
-                            <span>Visualizza dettagli comuni (${Object.keys(adempimento.comuni).length})</span>
-                        </div>
-                        
-                        <div class="comuni-grid" id="comuniGrid-${adempimento.id}">
-                            ${Object.keys(adempimento.comuni).map(comune => {
-                                const comuneData = adempimento.comuni[comune];
-                                return `
-                                    <div class="comune-card ${comuneData.stato.toLowerCase().replace(' ', '-')}" 
-                                         onclick="openProgressModal(${adempimento.id}, '${comune}')">
-                                        <h5>🏛️ ${comune}</h5>
-                                        <div class="comune-progress">
-                                            <div class="comune-progress-bar">
-                                                <div class="comune-progress-fill" 
-                                                     style="width: ${comuneData.progress}%; background: ${getProgressColor(comuneData.stato)}"></div>
-                                            </div>
-                                            <span style="font-size: 12px; font-weight: bold;">${comuneData.progress}%</span>
-                                        </div>
-                                        <div class="comune-status ${comuneData.stato.toLowerCase().replace(' ', '-')}">
-                                            ${comuneData.stato}
-                                        </div>
-                                        ${comuneData.note ? `<div class="comune-note">"${comuneData.note}"</div>` : ''}
-                                    </div>
-                                `;
-                            }).join('')}
+                        <div class="adempimento-actions">
+                            ${getCurrentUser().ruolo === 'admin' ? `
+                            <button class="btn btn-warning btn-small" onclick="editAdempimento(${adempimento.id})">
+                                ✏️ Modifica
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteAdempimento(${adempimento.id})">
+                                🗑️ Elimina
+                            </button>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
-            `).join('');
-        }
+                
+                <div class="adempimento-content">
+                    <div class="adempimento-description">
+                        <strong>Descrizione:</strong> ${adempimento.descrizione}
+                    </div>
+                    
+                    <div class="comuni-toggle" onclick="toggleComuniView(${adempimento.id})">
+                        <span class="toggle-icon" id="toggleIcon-${adempimento.id}">▶</span>
+                        <span>Visualizza dettagli comuni (${progress.totali}) - Completati: ${progress.completati} | In Corso: ${progress.inCorso} | In Ritardo: ${progress.inRitardo}</span>
+                    </div>
+                    
+                    <div class="comuni-grid" id="comuniGrid-${adempimento.id}">
+                        ${Object.keys(adempimento.comuni).map(comune => {
+                            const comuneData = adempimento.comuni[comune];
+                            return `
+                                <div class="comune-card ${comuneData.stato.toLowerCase().replace(' ', '-')}" 
+                                     onclick="openProgressModal(${adempimento.id}, '${comune}')">
+                                    <h5>🏛️ ${comune}</h5>
+                                    <div class="comune-progress">
+                                        <div class="comune-progress-bar">
+                                            <div class="comune-progress-fill" 
+                                                 style="width: ${comuneData.progress}%; background: ${getProgressColor(comuneData.stato)}"></div>
+                                        </div>
+                                        <span style="font-size: 12px; font-weight: bold;">${comuneData.progress}%</span>
+                                    </div>
+                                    <div class="comune-status ${comuneData.stato.toLowerCase().replace(' ', '-')}">
+                                        ${comuneData.stato}
+                                    </div>
+                                    ${comuneData.note ? `<div class="comune-note">"${comuneData.note}"</div>` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 
         function toggleComuniView(adempimentoId) {
             const grid = document.getElementById(`comuniGrid-${adempimentoId}`);
