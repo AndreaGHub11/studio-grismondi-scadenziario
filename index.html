@@ -2297,32 +2297,401 @@ function inizializzaFixUrgente() {
     window.getStatoComune = getStatoComune;
     window.updateStatoComune = updateStatoComune;
     
-    console.log('🚀 FIX URGENTE ATTIVATO - Sistema protetto da perdita dati!');
+  <script>
+// 🚀 FIX DEFINITIVO COMPLETO - RISOLVE TUTTO
+// Sostituisce completamente il fix di persistenza precedente
+
+// ========== FUNZIONE RENDERING CORRETTA ==========
+function renderAdempimenti() {
+    const container = document.getElementById('adempimentiContainer');
+    if (!container || !window.adempimentiData || window.adempimentiData.length === 0) {
+        if (container) {
+            container.innerHTML = '<div class="alert alert-warning">📭 Nessun adempimento da visualizzare</div>';
+        }
+        return;
+    }
+    
+    let html = '<div class="row">';
+    
+    window.adempimentiData.forEach(adempimento => {
+        const comuni = adempimento.Comuni ? adempimento.Comuni.split(';').filter(c => c.trim()) : [];
+        let completati = 0;
+        
+        // Conta comuni completati
+        comuni.forEach(comune => {
+            const stato = getStatoComune(adempimento.ID, comune.trim());
+            if (stato === 'Completato') completati++;
+        });
+        
+        const percentuale = comuni.length > 0 ? Math.round((completati / comuni.length) * 100) : 0;
+        const badgeColor = adempimento.Priorita === 'Alta' ? 'danger' : adempimento.Priorita === 'Media' ? 'warning' : 'success';
+        
+        html += `
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">${adempimento.Titolo}</h5>
+                        <span class="badge badge-${badgeColor}">${adempimento.Priorita || 'Media'}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">${adempimento.Descrizione || 'Nessuna descrizione'}</p>
+                        <p><strong>📅 Scadenza:</strong> ${adempimento.Scadenza || 'Non specificata'}</p>
+                        <p><strong>📊 Progresso:</strong> ${completati}/${comuni.length} comuni (${percentuale}%)</p>
+                        
+                        <div class="progress mb-3" style="height: 10px;">
+                            <div class="progress-bar ${percentuale === 100 ? 'bg-success' : percentuale > 50 ? 'bg-warning' : 'bg-danger'}" 
+                                 style="width: ${percentuale}%">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-primary btn-sm" 
+                                    onclick="apriProgressModal(${adempimento.ID}, '${adempimento.Titolo}', '${adempimento.Comuni}')">
+                                🏛️ Gestisci Comuni
+                            </button>
+                            <small class="text-muted align-self-center">${comuni.length} comuni</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    console.log(`✅ Renderizzati ${window.adempimentiData.length} adempimenti`);
+}
+
+// ========== FUNZIONE CARICAMENTO DATI ==========
+function loadAdempimentiData() {
+    console.log('🔄 Caricamento dati adempimenti...');
+    
+    // Prima prova a recuperare dai backup
+    let datiRecuperati = false;
+    
+    // 1. Prova localStorage backup
+    const backupAdempimenti = localStorage.getItem('BACKUP_adempimenti');
+    if (backupAdempimenti) {
+        try {
+            window.adempimentiData = JSON.parse(backupAdempimenti);
+            console.log(`✅ Recuperati ${window.adempimentiData.length} adempimenti da backup localStorage`);
+            datiRecuperati = true;
+        } catch (e) {
+            console.error('❌ Errore parsing backup localStorage:', e);
+        }
+    }
+    
+    // 2. Se non trova backup, crea dati demo (in attesa SharePoint)
+    if (!datiRecuperati) {
+        console.log('📊 Creando dati demo per testing...');
+        window.adempimentiData = [
+            {
+                ID: 1,
+                Titolo: "Bilancio di Previsione 2024",
+                Descrizione: "Approvazione e invio bilancio di previsione annuale",
+                Scadenza: "2024-12-31",
+                Comuni: "Rogno;Ubiale Clanezzo;Bergamo;Lovere",
+                Priorita: "Alta",
+                CreatedBy: "Sistema"
+            },
+            {
+                ID: 2,
+                Titolo: "Dichiarazione Rifiuti TARI",
+                Descrizione: "Presentazione dichiarazione annuale TARI per i comuni",
+                Scadenza: "2024-11-30",
+                Comuni: "Milano;Roma;Torino;Brescia;Cremona",
+                Priorita: "Media",
+                CreatedBy: "Sistema"
+            },
+            {
+                ID: 3,
+                Titolo: "Rendiconto della Gestione",
+                Descrizione: "Rendiconto finanziario annuale per tutti gli enti",
+                Scadenza: "2025-01-15",
+                Comuni: "Rogno;Bergamo;Lovere",
+                Priorita: "Alta",
+                CreatedBy: "Sistema"
+            }
+        ];
+        
+        console.log(`✅ Creati ${window.adempimentiData.length} adempimenti demo`);
+    }
+    
+    // 3. Salva backup immediato
+    backupDatiCompleto();
+    
+    // 4. Renderizza
+    setTimeout(() => {
+        renderAdempimenti();
+        updateDashboard();
+    }, 100);
+}
+
+// ========== FUNZIONE DASHBOARD CORRETTA ==========
+function updateDashboard() {
+    if (!window.adempimentiData) return;
+    
+    const totalCount = document.getElementById('totalCount');
+    const totalProgress = document.getElementById('totalProgress');
+    const completedCount = document.getElementById('completedCount');
+    const pendingCount = document.getElementById('pendingCount');
+    
+    const total = window.adempimentiData.length;
+    let completati = 0;
+    let totalComuni = 0;
+    let comuniCompletati = 0;
+    
+    window.adempimentiData.forEach(adempimento => {
+        const comuni = adempimento.Comuni ? adempimento.Comuni.split(';').filter(c => c.trim()) : [];
+        totalComuni += comuni.length;
+        
+        let adempimentoCompletato = true;
+        comuni.forEach(comune => {
+            const stato = getStatoComune(adempimento.ID, comune.trim());
+            if (stato === 'Completato') {
+                comuniCompletati++;
+            } else {
+                adempimentoCompletato = false;
+            }
+        });
+        
+        if (adempimentoCompletato && comuni.length > 0) {
+            completati++;
+        }
+    });
+    
+    const percentualeAdempimenti = total > 0 ? Math.round((completati / total) * 100) : 0;
+    const percentualeComuni = totalComuni > 0 ? Math.round((comuniCompletati / totalComuni) * 100) : 0;
+    
+    // Aggiorna elementi dashboard
+    if (totalCount) totalCount.textContent = total;
+    if (totalProgress) totalProgress.textContent = `${percentualeAdempimenti}%`;
+    if (completedCount) completedCount.textContent = completati;
+    if (pendingCount) pendingCount.textContent = total - completati;
+    
+    // Aggiorna progress bar se esiste
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        if (bar.closest('#totalProgress')) {
+            bar.style.width = `${percentualeAdempimenti}%`;
+        }
+    });
+    
+    console.log(`📊 Dashboard aggiornata: ${completati}/${total} adempimenti (${percentualeAdempimenti}%)`);
+}
+
+// ========== FUNZIONE MODAL PROGRESS ==========
+function apriProgressModal(adempimentoId, titoloAdempimento, comuni) {
+    console.log(`🔧 Apertura modal per adempimento ${adempimentoId}`);
+    
+    // Trova gli elementi del modal (potrebbero avere nomi diversi)
+    let modal = document.getElementById('progressModal');
+    if (!modal) {
+        // Crea modal temporaneo se non esiste
+        modal = document.createElement('div');
+        modal.className = 'modal fade show';
+        modal.style.display = 'block';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        modal.innerHTML = `
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">🏛️ ${titoloAdempimento}</h5>
+                        <button type="button" class="close" onclick="this.closest('.modal').remove()">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modalComuni"></div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    const modalBody = modal.querySelector('#modalComuni') || modal.querySelector('.modal-body');
+    if (!modalBody) return;
+    
+    const comuniArray = comuni.split(';').filter(c => c.trim() !== '');
+    let html = '<div class="list-group">';
+    
+    comuniArray.forEach(comune => {
+        const comuneTrim = comune.trim();
+        const statoAttuale = getStatoComune(adempimentoId, comuneTrim);
+        const badgeClass = statoAttuale === 'Completato' ? 'success' : 'warning';
+        
+        html += `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>🏛️ ${comuneTrim}</strong>
+                    <span class="badge badge-${badgeClass} ml-2">${statoAttuale}</span>
+                </div>
+                <div>
+                    <select class="form-control form-control-sm" 
+                            onchange="updateStatoComune(${adempimentoId}, '${comuneTrim}', this.value)"
+                            style="width: 130px;">
+                        <option value="In Corso" ${statoAttuale === 'In Corso' ? 'selected' : ''}>In Corso</option>
+                        <option value="Completato" ${statoAttuale === 'Completato' ? 'selected' : ''}>✅ Completato</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    modalBody.innerHTML = html;
+}
+
+// ========== FUNZIONI STATO COMUNI (CORRETTE) ==========
+function getStatoComune(adempimentoId, comune) {
+    const storageKey = `stato_${adempimentoId}_${comune}`;
+    const stato = localStorage.getItem(storageKey);
+    return stato || 'In Corso';
+}
+
+function updateStatoComune(adempimentoId, comune, nuovoStato) {
+    const storageKey = `stato_${adempimentoId}_${comune}`;
+    
+    try {
+        localStorage.setItem(storageKey, nuovoStato);
+        sessionStorage.setItem(storageKey, nuovoStato);
+        
+        console.log(`💾 Stato aggiornato: ${comune} → ${nuovoStato}`);
+        
+        // Aggiorna UI immediatamente
+        setTimeout(() => {
+            renderAdempimenti();
+            updateDashboard();
+            backupDatiCompleto();
+        }, 100);
+        
+    } catch (error) {
+        console.error('❌ Errore aggiornamento stato:', error);
+        alert('Errore nel salvataggio. Riprova.');
+    }
+}
+
+// ========== BACKUP E RIPRISTINO (CORRETTI) ==========
+function backupDatiCompleto() {
+    try {
+        if (window.adempimentiData && window.adempimentiData.length > 0) {
+            localStorage.setItem('BACKUP_adempimenti', JSON.stringify(window.adempimentiData));
+            sessionStorage.setItem('BACKUP_adempimenti', JSON.stringify(window.adempimentiData));
+        }
+        
+        const tuttiStati = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('stato_')) {
+                tuttiStati[key] = localStorage.getItem(key);
+            }
+        }
+        
+        if (Object.keys(tuttiStati).length > 0) {
+            localStorage.setItem('BACKUP_stati', JSON.stringify(tuttiStati));
+            sessionStorage.setItem('BACKUP_stati', JSON.stringify(tuttiStati));
+        }
+        
+        localStorage.setItem('ULTIMO_BACKUP', Date.now().toString());
+        
+    } catch (error) {
+        console.error('❌ Errore backup:', error);
+    }
+}
+
+function ripristinaDatiBackup() {
+    try {
+        let ripristinato = false;
+        
+        // Ripristina adempimenti
+        const backupAdempimenti = localStorage.getItem('BACKUP_adempimenti') || 
+                                  sessionStorage.getItem('BACKUP_adempimenti');
+        if (backupAdempimenti) {
+            window.adempimentiData = JSON.parse(backupAdempimenti);
+            console.log(`🔄 Ripristinati ${window.adempimentiData.length} adempimenti`);
+            ripristinato = true;
+        }
+        
+        // Ripristina stati
+        const backupStati = localStorage.getItem('BACKUP_stati') || 
+                           sessionStorage.getItem('BACKUP_stati');
+        if (backupStati) {
+            const stati = JSON.parse(backupStati);
+            Object.keys(stati).forEach(key => {
+                localStorage.setItem(key, stati[key]);
+            });
+            console.log(`🔄 Ripristinati ${Object.keys(stati).length} stati`);
+            ripristinato = true;
+        }
+        
+        if (ripristinato) {
+            setTimeout(() => {
+                renderAdempimenti();
+                updateDashboard();
+            }, 500);
+        }
+        
+        return ripristinato;
+    } catch (error) {
+        console.error('❌ Errore ripristino:', error);
+        return false;
+    }
+}
+
+// ========== INIZIALIZZAZIONE COMPLETA ==========
+function inizializzaSistemaCompleto() {
+    console.log('🚀 INIZIALIZZAZIONE SISTEMA COMPLETO...');
+    
+    // 1. Controlla se ci sono dati
+    const datiEsistenti = window.adempimentiData && window.adempimentiData.length > 0;
+    
+    if (!datiEsistenti) {
+        console.log('📊 Nessun dato in memoria, caricando...');
+        const ripristinato = ripristinaDatiBackup();
+        
+        if (!ripristinato) {
+            console.log('📋 Nessun backup, caricando dati freschi...');
+            loadAdempimentiData();
+        }
+    } else {
+        console.log('✅ Dati già presenti, renderizzando...');
+        renderAdempimenti();
+        updateDashboard();
+    }
+    
+    // 2. Auto-backup ogni 2 minuti
+    setInterval(backupDatiCompleto, 120000);
+    
+    // 3. Monitoraggio
+    setInterval(() => {
+        if (!window.adempimentiData || window.adempimentiData.length === 0) {
+            console.log('⚠️ Dati spariti, tentando ripristino...');
+            loadAdempimentiData();
+        }
+    }, 30000);
+    
+    // 4. Backup prima della chiusura
+    window.addEventListener('beforeunload', backupDatiCompleto);
+    
+    // 5. Esporta funzioni globalmente
+    window.renderAdempimenti = renderAdempimenti;
+    window.loadAdempimentiData = loadAdempimentiData;
+    window.updateDashboard = updateDashboard;
+    window.getStatoComune = getStatoComune;
+    window.updateStatoComune = updateStatoComune;
+    window.apriProgressModal = apriProgressModal;
+    window.backupDatiCompleto = backupDatiCompleto;
+    window.ripristinaDatiBackup = ripristinaDatiBackup;
+    
+    console.log('✅ SISTEMA COMPLETO INIZIALIZZATO!');
 }
 
 // ========== AVVIO AUTOMATICO ==========
-// Esegui immediatamente
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inizializzaFixUrgente);
+    document.addEventListener('DOMContentLoaded', inizializzaSistemaCompleto);
 } else {
-    inizializzaFixUrgente();
+    inizializzaSistemaCompleto();
 }
-
-// Backup anche prima di chiudere la pagina
-window.addEventListener('beforeunload', () => {
-    console.log('💾 Backup finale prima della chiusura...');
-    backupDatiCompleto();
-});
-
-// Ripristino quando la pagina torna in focus
-window.addEventListener('focus', () => {
-    setTimeout(() => {
-        if (!window.adempimentiData || window.adempimentiData.length === 0) {
-            console.log('🔄 Pagina tornata in focus, verificando dati...');
-            ripristinaDatiBackup();
-        }
-    }, 1000);
-});
 
 </script>
 
