@@ -906,28 +906,29 @@
             </div>
             
             <form id="adempimentoForm">
-                <input type="hidden" id="editingAdempimentoId">
+<form id="adempimentoForm">
+                <input type="hidden" id="editingAdempimentoId" name="adempimentoId">
                 
                 <div class="form-group">
                     <label for="titoloAdempimento">Titolo Adempimento *</label>
-                    <input type="text" id="titoloAdempimento" required 
+                    <input type="text" id="titoloAdempimento" name="titolo" required 
                            placeholder="es. Dichiarazione TARI 2024">
                 </div>
                 
                 <div class="form-group">
                     <label for="descrizioneAdempimento">Descrizione</label>
-                    <textarea id="descrizioneAdempimento" 
+                    <textarea id="descrizioneAdempimento" name="descrizione"
                               placeholder="Descrizione dettagliata dell'adempimento..."></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label for="dataScadenza">Data Scadenza *</label>
-                    <input type="date" id="dataScadenza" required>
+                    <input type="date" id="dataScadenza" name="dataScadenza" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="prioritaAdempimento">Priorità</label>
-                    <select id="prioritaAdempimento">
+                    <select id="prioritaAdempimento" name="priorita">
                         <option value="Bassa">Bassa</option>
                         <option value="Media" selected>Media</option>
                         <option value="Alta">Alta</option>
@@ -936,7 +937,7 @@
                 
                 <div class="form-group">
                     <label for="categoriaAdempimento">Categoria</label>
-                    <select id="categoriaAdempimento">
+                    <select id="categoriaAdempimento" name="ente">
                         <option value="Tributario">Tributario</option>
                         <option value="Contabilità">Contabilità</option>
                         <option value="Personale">Personale</option>
@@ -946,7 +947,7 @@
                 
                 <div class="form-group">
                     <label for="responsabileAdempimento">Responsabile</label>
-                    <select id="responsabileAdempimento">
+                    <select id="responsabileAdempimento" name="permesso">
                         <option value="Andrea Grismondi">Andrea Grismondi</option>
                         <option value="Roberta">Roberta</option>
                         <option value="Nicoletta">Nicoletta</option>
@@ -972,27 +973,31 @@
                     </div>
                     
                     <div id="entiGridForm" class="enti-grid-form hidden">
-                        <label><input type="checkbox" value="Bossico"> Bossico</label>
-                        <label><input type="checkbox" value="Carobbio degli Angeli"> Carobbio degli Angeli</label>
-                        <label><input type="checkbox" value="Castro"> Castro</label>
-                        <label><input type="checkbox" value="Cavernago"> Cavernago</label>
-                        <label><input type="checkbox" value="Cenate Sotto"> Cenate Sotto</label>
-                        <label><input type="checkbox" value="Colere"> Colere</label>
-                        <label><input type="checkbox" value="Filago"> Filago</label>
-                        <label><input type="checkbox" value="Foppolo"> Foppolo</label>
-                        <label><input type="checkbox" value="Onore"> Onore</label>
-                        <label><input type="checkbox" value="Osio Sopra"> Osio Sopra</label>
-                        <label><input type="checkbox" value="Osio Sotto"> Osio Sotto</label>
-                        <label><input type="checkbox" value="Parzanica"> Parzanica</label>
-                        <label><input type="checkbox" value="Ponte San Pietro"> Ponte San Pietro</label>
-                        <label><input type="checkbox" value="Rogno"> Rogno</label>
-                        <label><input type="checkbox" value="Selvino"> Selvino</label>
-                        <label><input type="checkbox" value="Solto Collina"> Solto Collina</label>
-                        <label><input type="checkbox" value="Telgate"> Telgate</label>
-                        <label><input type="checkbox" value="Ubiale Clanezzo"> Ubiale Clanezzo</label>
-                        <label><input type="checkbox" value="Zanica"> Zanica</label>
+                        <label><input type="checkbox" name="comuni" value="Bossico"> Bossico</label>
+                        <label><input type="checkbox" name="comuni" value="Carobbio degli Angeli"> Carobbio degli Angeli</label>
+                        <label><input type="checkbox" name="comuni" value="Castro"> Castro</label>
+                        <label><input type="checkbox" name="comuni" value="Cavernago"> Cavernago</label>
+                        <label><input type="checkbox" name="comuni" value="Cenate Sotto"> Cenate Sotto</label>
+                        <label><input type="checkbox" name="comuni" value="Colere"> Colere</label>
+                        <label><input type="checkbox" name="comuni" value="Filago"> Filago</label>
+                        <label><input type="checkbox" name="comuni" value="Foppolo"> Foppolo</label>
+                        <label><input type="checkbox" name="comuni" value="Onore"> Onore</label>
+                        <label><input type="checkbox" name="comuni" value="Osio Sopra"> Osio Sopra</label>
+                        <label><input type="checkbox" name="comuni" value="Osio Sotto"> Osio Sotto</label>
+                        <label><input type="checkbox" name="comuni" value="Parzanica"> Parzanica</label>
+                        <label><input type="checkbox" name="comuni" value="Ponte San Pietro"> Ponte San Pietro</label>
+                        <label><input type="checkbox" name="comuni" value="Rogno"> Rogno</label>
+                        <label><input type="checkbox" name="comuni" value="Selvino"> Selvino</label>
+                        <label><input type="checkbox" name="comuni" value="Solto Collina"> Solto Collina</label>
+                        <label><input type="checkbox" name="comuni" value="Telgate"> Telgate</label>
+                        <label><input type="checkbox" name="comuni" value="Ubiale Clanezzo"> Ubiale Clanezzo</label>
+                        <label><input type="checkbox" name="comuni" value="Zanica"> Zanica</label>
                     </div>
                 </div>
+
+                <!-- Campi nascosti necessari -->
+                <input type="hidden" name="stato" value="Da Fare">
+                <input type="hidden" name="note" value="">
                 
                 <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end;">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">
@@ -1003,6 +1008,7 @@
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 
