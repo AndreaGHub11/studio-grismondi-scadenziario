@@ -1382,6 +1382,54 @@ function initializeComuniManagement() {
     event.target.reset();
 }
 
+        // Funzione per modificare adempimento
+function editAdempimento(id) {
+    const user = getCurrentUser();
+    if (user.ruolo !== 'admin') {
+        alert('❌ Solo gli amministratori possono modificare gli adempimenti');
+        return;
+    }
+    
+    const adempimento = window.adempimentiData.find(a => a.ID == id);
+    if (!adempimento) {
+        alert('❌ Adempimento non trovato');
+        return;
+    }
+    
+    // Popola il form con i dati esistenti
+    document.getElementById('editingAdempimentoId').value = adempimento.ID;
+    document.getElementById('titoloAdempimento').value = adempimento.Titolo;
+    document.getElementById('descrizioneAdempimento').value = adempimento.Descrizione || '';
+    document.getElementById('dataScadenza').value = adempimento.Scadenza;
+    document.getElementById('prioritaAdempimento').value = adempimento.Priorita;
+    
+    // Apri modal
+    openCreateModal();
+}
+
+// Funzione per eliminare adempimento
+function deleteAdempimento(id) {
+    const user = getCurrentUser();
+    if (user.ruolo !== 'admin') {
+        alert('❌ Solo gli amministratori possono eliminare gli adempimenti');
+        return;
+    }
+    
+    const adempimento = window.adempimentiData.find(a => a.ID == id);
+    if (!adempimento) {
+        alert('❌ Adempimento non trovato');
+        return;
+    }
+    
+    if (confirm(`⚠️ Sei sicuro di voler eliminare "${adempimento.Titolo}"?\n\nQuesta azione non può essere annullata.`)) {
+        window.adempimentiData = window.adempimentiData.filter(a => a.ID != id);
+        localStorage.setItem('scadenziari_adempimenti', JSON.stringify(window.adempimentiData));
+        renderAdempimenti();
+        updateDashboard();
+        alert(`✅ Adempimento "${adempimento.Titolo}" eliminato con successo`);
+    }
+}
+
        
         function setupEventListeners() {
             // Filtri
@@ -2196,6 +2244,10 @@ function calculateStats() {
         console.log('🔗 Pronto per Integrazione SharePoint + Teams + Outlook');
         console.log('✨ Funzionalità Avanzate: Modifica, Eliminazione, Progress Tracking, Filtri');
         console.log('🎯 Sistema Pronto per Deploy Azure Static Web Apps');
+    // Esporta funzioni globalmente
+window.editAdempimento = editAdempimento;
+window.deleteAdempimento = deleteAdempimento;
+
       </script>
     <script>
 // 🚨 FIX URGENTE PERSISTENZA DATI - IMPLEMENTAZIONE IMMEDIATA
