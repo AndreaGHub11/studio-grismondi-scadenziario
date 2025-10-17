@@ -1353,9 +1353,12 @@ function initializeComuniManagement() {
         // Altrimenti usa solo quelli selezionati
         comuniSelezionati = Array.from(document.querySelectorAll('input[name="comuni"]:checked')).map(cb => cb.value);
     }
+       // Controlla se è modifica o creazione
+    const editingId = document.getElementById('editingAdempimentoId').value;
+    const isEditing = editingId && editingId !== '';
     
     const adempimento = {
-        ID: Date.now(),
+        ID: isEditing ? parseInt(editingId) : Date.now(),
         Titolo: formData.get('titolo'),
         Descrizione: formData.get('descrizione') || 'Nessuna descrizione',
         Scadenza: formData.get('dataScadenza'),
@@ -1364,12 +1367,26 @@ function initializeComuniManagement() {
     };
     
     if (!window.adempimentiData) window.adempimentiData = [];
-    window.adempimentiData.push(adempimento);
+    
+    if (isEditing) {
+        // Modifica esistente - sostituisci
+        const index = window.adempimentiData.findIndex(a => a.ID == editingId);
+        if (index !== -1) {
+            window.adempimentiData[index] = adempimento;
+            console.log('✏️ Adempimento modificato:', adempimento.Titolo);
+        }
+    } else {
+        // Nuovo adempimento - aggiungi
+        window.adempimentiData.push(adempimento);
+        console.log('➕ Nuovo adempimento creato:', adempimento.Titolo);
+    }
+    
     localStorage.setItem('scadenziari_adempimenti', JSON.stringify(window.adempimentiData));
     
     if (typeof renderAdempimenti === 'function') renderAdempimenti();
     if (typeof updateDashboard === 'function') updateDashboard();
     if (typeof backupDatiCompleto === 'function') backupDatiCompleto();
+
     
         // Chiudi modal
     const modal = document.getElementById('adempimentoModal');
