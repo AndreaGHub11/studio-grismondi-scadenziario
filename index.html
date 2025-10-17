@@ -730,6 +730,27 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Fix visualizzazione adempimenti */
+.card {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+    padding: 15px !important;
+    margin-bottom: 15px !important;
+    font-size: 14px !important;
+}
+
+.card * {
+    color: black !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.card h5, .card-title {
+    color: black !important;
+    font-weight: bold !important;
+}
+
     </style>
 </head>
 <body>
@@ -1256,6 +1277,61 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification('✅ Connesso a SharePoint Studio Grismondi! Sistema pronto per dati reali.');
     }, 1000);
 }
+// Funzioni per interfaccia utente
+function refreshData() {
+    if (typeof renderAdempimenti === 'function') {
+        renderAdempimenti();
+    }
+    if (typeof updateDashboard === 'function') {
+        updateDashboard();
+    }
+    console.log('✅ Dati aggiornati');
+}
+
+function openCreateModal() {
+    console.log('📝 Aprendo modal...');
+    document.getElementById('adempimentoForm').reset();
+    
+    const modal = document.getElementById('adempimentoModal');
+    modal.style.display = 'block';
+    modal.classList.add('show');
+    document.body.classList.add('modal-open');
+    
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop fade show';
+    backdrop.onclick = () => {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        backdrop.remove();
+    };
+    document.body.appendChild(backdrop);
+}
+
+function initializeComuniManagement() {
+    const allButtons = document.querySelectorAll('button, a, div');
+    const gestioneButtons = Array.from(allButtons).filter(btn => 
+        btn.textContent && btn.textContent.includes('Gestisci Comuni')
+    );
+    
+    gestioneButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const card = btn.closest('.card');
+            if (card) {
+                const titleElement = card.querySelector('h5, .card-title');
+                const title = titleElement ? titleElement.textContent : 'Sconosciuto';
+                
+                const adempimento = window.adempimentiData.find(a => a.Titolo === title);
+                if (adempimento) {
+                    const comuniArray = adempimento.Comuni ? adempimento.Comuni.split(';') : [];
+                    alert(`🏛️ Comuni per "${adempimento.Titolo}":\n\n${comuniArray.join('\n')}\n\n📊 Totale: ${comuniArray.length} comuni`);
+                }
+            }
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+}
 
         function setupEventListeners() {
             // Filtri
@@ -1279,6 +1355,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     statusSelect.value = "In Corso";
                 }
             });
+                        // Inizializza gestione comuni dopo rendering
+            setTimeout(() => {
+                initializeComuniManagement();
+            }, 1000);
+
         }
 
         function updateUserInterface() {
@@ -1704,23 +1785,17 @@ function calculateStats() {
     if (typeof updateDashboard === 'function') updateDashboard();
     if (typeof backupDatiCompleto === 'function') backupDatiCompleto();
     
-    // Chiudi modal
-    try {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('adempimentoModal'));
-        if (modal) modal.hide();
-    } catch (e) {
-        // Fallback se bootstrap non disponibile
-        const modalEl = document.getElementById('adempimentoModal');
-        if (modalEl) {
-            modalEl.style.display = 'none';
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) backdrop.remove();
-        }
-    }
+        // Chiudi modal
+    const modal = document.getElementById('adempimentoModal');
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) backdrop.remove();
     
     event.target.reset();
 }
+
 
 
     try {
