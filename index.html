@@ -1289,7 +1289,13 @@ function refreshData() {
 
 function openCreateModal() {
     console.log('📝 Aprendo modal...');
-    document.getElementById('adempimentoForm').reset();
+    
+    // NON resettare il form se stiamo modificando
+    const editingId = document.getElementById('editingAdempimentoId').value;
+    if (!editingId || editingId === '') {
+        // Solo se è nuovo adempimento, resetta il form
+        document.getElementById('adempimentoForm').reset();
+    }
     
     const modal = document.getElementById('adempimentoModal');
     modal.style.display = 'block';
@@ -1868,56 +1874,7 @@ function calculateStats() {
 
  
 
-    try {
-        // Inizializza window.adempimentiData se non esiste
-        if (!window.adempimentiData) {
-            window.adempimentiData = [];
-        }
-
-        // Verifica se è modifica o creazione
-        const existingIndex = window.adempimentiData.findIndex(a => a.id === adempimento.id);
-        
-        if (existingIndex !== -1) {
-            // Modifica esistente
-            window.adempimentiData[existingIndex] = adempimento;
-            console.log('Adempimento modificato:', adempimento);
-        } else {
-            // Nuovo adempimento
-            window.adempimentiData.push(adempimento);
-            console.log('Nuovo adempimento creato:', adempimento);
-        }
-
-        // Salva in localStorage per persistenza
-        localStorage.setItem('scadenziari_adempimenti', JSON.stringify(window.adempimentiData));
-        
-        // Aggiorna l'interfaccia
-        if (typeof renderAdempimenti === 'function') {
-            renderAdempimenti();
-        }
-        if (typeof updateDashboard === 'function') {
-            updateDashboard();
-        }
-        if (typeof backupDatiCompleto === 'function') {
-            backupDatiCompleto();
-        }
-
-        // Chiudi il modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('adempimentoModal'));
-        if (modal) {
-            modal.hide();
-        }
-
-        // Reset del form
-        event.target.reset();
-        
-        // Messaggio di successo
-        showNotification('Adempimento salvato con successo!', 'success');
-        
-    } catch (error) {
-        console.error('Errore nel salvataggio:', error);
-        showNotification('Errore nel salvataggio dell\'adempimento', 'error');
-    }
-}
+    
 
                 // Gestione modal progress comuni
         function openProgressModal(adempimentoId, comune) {
