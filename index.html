@@ -2681,38 +2681,6 @@ function apriProgressModal(adempimentoId, titoloAdempimento, comuni) {
 }
 
     
-    const modalBody = modal.querySelector('#modalComuni') || modal.querySelector('.modal-body');
-    if (!modalBody) return;
-    
-    const comuniArray = comuni.split(';').filter(c => c.trim() !== '');
-    let html = '<div class="list-group">';
-    
-    comuniArray.forEach(comune => {
-        const comuneTrim = comune.trim();
-        const statoAttuale = getStatoComune(adempimentoId, comuneTrim);
-        const badgeClass = statoAttuale === 'Completato' ? 'success' : 'warning';
-        
-        html += `
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>🏛️ ${comuneTrim}</strong>
-                    <span class="badge badge-${badgeClass} ml-2">${statoAttuale}</span>
-                </div>
-                <div>
-                    <select class="form-control form-control-sm" 
-                            onchange="updateStatoComune(${adempimentoId}, '${comuneTrim}', this.value)"
-                            style="width: 130px;">
-                        <option value="In Corso" ${statoAttuale === 'In Corso' ? 'selected' : ''}>In Corso</option>
-                        <option value="Completato" ${statoAttuale === 'Completato' ? 'selected' : ''}>✅ Completato</option>
-                    </select>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div>';
-    modalBody.innerHTML = html;
-}
 
 // ========== FUNZIONI STATO COMUNI (CORRETTE) ==========
 function getStatoComune(adempimentoId, comune) {
