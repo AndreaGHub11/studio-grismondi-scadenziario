@@ -1399,7 +1399,7 @@ function initializeComuniManagement() {
     event.target.reset();
 }
 
-        // Funzione per modificare adempimento
+      // Funzione per modificare adempimento
 function editAdempimento(id) {
     const user = getCurrentUser();
     if (user.ruolo !== 'admin') {
@@ -1413,12 +1413,16 @@ function editAdempimento(id) {
         return;
     }
     
+    console.log('✏️ Modificando adempimento ID:', id, adempimento);
+    
     // Popola il form con i dati esistenti
     document.getElementById('editingAdempimentoId').value = adempimento.ID;
     document.getElementById('titoloAdempimento').value = adempimento.Titolo;
     document.getElementById('descrizioneAdempimento').value = adempimento.Descrizione || '';
     document.getElementById('dataScadenza').value = adempimento.Scadenza;
     document.getElementById('prioritaAdempimento').value = adempimento.Priorita;
+    
+    console.log('✏️ Campo editingAdempimentoId impostato a:', document.getElementById('editingAdempimentoId').value);
     
     // Apri modal
     openCreateModal();
@@ -1443,6 +1447,7 @@ function deleteAdempimento(id) {
         localStorage.setItem('scadenziari_adempimenti', JSON.stringify(window.adempimentiData));
         renderAdempimenti();
         updateDashboard();
+        backupDatiCompleto();
         alert(`✅ Adempimento "${adempimento.Titolo}" eliminato con successo`);
     }
 }
