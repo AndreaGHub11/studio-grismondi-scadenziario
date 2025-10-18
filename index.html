@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi - SharePoint</title>
+    <title>Scadenziario Studio Grismondi</title>
     
     <!-- MSAL.js Library per Azure AD Authentication -->
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
@@ -62,7 +62,7 @@
         
         .app-container {
             display: none;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -162,20 +162,6 @@
         .btn:hover {
             background: #5568d3;
             transform: translateY(-1px);
-        }
-        
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-danger {
-            background: #e74c3c;
-        }
-        
-        .btn-danger:hover {
-            background: #c0392b;
         }
         
         .btn-success {
@@ -340,10 +326,6 @@
             font-weight: 700;
         }
         
-        .priority-low {
-            color: #95a5a6;
-        }
-        
         .action-buttons {
             display: flex;
             gap: 5px;
@@ -493,13 +475,9 @@
             </div>
 
             <div class="filter-group">
-                <label>📂 Categoria:</label>
-                <select id="filterCategoria">
+                <label>📂 Tipologia:</label>
+                <select id="filterTipologia">
                     <option value="">Tutte</option>
-                    <option value="Contabilità">Contabilità</option>
-                    <option value="Tributi">Tributi</option>
-                    <option value="Personale">Personale</option>
-                    <option value="Altro">Altro</option>
                 </select>
             </div>
 
@@ -507,9 +485,6 @@
                 <label>⚠️ Stato:</label>
                 <select id="filterStato">
                     <option value="">Tutti</option>
-                    <option value="Non Iniziato">Non Iniziato</option>
-                    <option value="In Corso">In Corso</option>
-                    <option value="Completato">Completato</option>
                 </select>
             </div>
 
@@ -524,10 +499,6 @@
 
             <button class="btn admin-only" id="btnExport">
                 📊 Esporta CSV
-            </button>
-
-            <button class="btn admin-only" id="btnManageEnti">
-                🏛️ Gestisci Enti
             </button>
 
             <button class="btn" id="btnSync">
@@ -564,12 +535,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Categoria *</label>
-                    <select id="formCategoria" required>
-                        <option value="Contabilità">Contabilità</option>
-                        <option value="Tributi">Tributi</option>
-                        <option value="Personale">Personale</option>
-                        <option value="Altro">Altro</option>
+                    <label>Tipologia *</label>
+                    <select id="formTipologia" required>
+                        <option value="">Seleziona...</option>
                     </select>
                 </div>
 
@@ -584,21 +552,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Priorità *</label>
-                    <select id="formPriorita" required>
-                        <option value="Alta">Alta</option>
-                        <option value="Media">Media</option>
-                        <option value="Bassa">Bassa</option>
+                    <label>Stato *</label>
+                    <select id="formStato" required>
+                        <option value="">Seleziona...</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Stato *</label>
-                    <select id="formStato" required>
-                        <option value="Non Iniziato">Non Iniziato</option>
-                        <option value="In Corso">In Corso</option>
-                        <option value="Completato">Completato</option>
-                    </select>
+                    <label>Progress (%)</label>
+                    <input type="number" id="formProgress" min="0" max="100" value="0">
                 </div>
 
                 <div class="form-group">
@@ -611,24 +573,6 @@
                     <button type="button" class="btn" id="btnCloseModal">Annulla</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- Modal Gestione Enti (Admin Only) -->
-    <div id="entiModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🏛️ Gestione Enti</h2>
-            </div>
-            <div id="entiContent">
-                <button class="btn btn-success" id="btnAddEnte" style="margin-bottom: 15px;">
-                    ➕ Nuovo Ente
-                </button>
-                <div id="entiList"></div>
-            </div>
-            <div style="margin-top: 20px;">
-                <button class="btn" id="btnCloseEntiModal">Chiudi</button>
-            </div>
         </div>
     </div>
 
@@ -657,12 +601,18 @@
         // SharePoint Configuration
         const SHAREPOINT_SITE = 'https://studiogrismondi.sharepoint.com/sites/SitodiComunicazione';
         
-        // Liste SharePoint
+        // Liste SharePoint - NOMI CORRETTI
         const LISTS = {
-            ENTI: 'Enti',
-            ADEMPIMENTI: 'Adempimenti',
-            CATEGORIE: 'Categorie',
-            UTENTI: 'Utenti'
+            ENTI: 'Scadenziario_Enti',
+            ADEMPIMENTI: 'Scadenziario_Adempimenti',
+            PERMESSI: 'Scadenziario_Permessi',
+            ARCHIVIO: 'Scadenziario_Archivio'
+        };
+
+        // Utenti autorizzati
+        const AUTHORIZED_USERS = {
+            ADMIN: ['info@studiogrismondisrl.it', 'roberta@studiogrismondisrl.it'],
+            USER: ['miriana@studiogrismondisrl.it', 'nicoletta@studiogrismondisrl.it']
         };
 
         // Stato globale
@@ -671,6 +621,8 @@
         let accessToken = null;
         let allEnti = [];
         let allAdempimenti = [];
+        let tipologieUniche = new Set();
+        let statiUnici = new Set();
 
         // ============================================
         // AUTENTICAZIONE
@@ -678,21 +630,13 @@
         async function login() {
             console.log('🔐 Tentativo di login...');
             try {
-                console.log('📋 Login request:', loginRequest);
-                console.log('⚙️ MSAL Config:', msalConfig);
-                
                 const loginResponse = await msalInstance.loginPopup(loginRequest);
                 console.log('✅ Login response:', loginResponse);
                 
                 currentUser = loginResponse.account;
                 await handleAuthentication();
             } catch (error) {
-                console.error('❌ Login error completo:', error);
-                console.error('Error name:', error.name);
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
-                
-                alert('ERRORE LOGIN: ' + error.message + '\n\nControlla la console (F12) per dettagli');
+                console.error('❌ Login error:', error);
                 showAlert('Errore durante il login: ' + error.message, 'error');
             }
         }
@@ -714,8 +658,20 @@
                 
                 accessToken = tokenResponse.accessToken;
 
-                // Carica ruolo utente
-                await loadUserRole();
+                // Determina ruolo utente
+                const userEmail = currentUser.username.toLowerCase();
+                if (AUTHORIZED_USERS.ADMIN.includes(userEmail)) {
+                    userRole = 'Admin';
+                } else if (AUTHORIZED_USERS.USER.includes(userEmail)) {
+                    userRole = 'User';
+                } else {
+                    showAlert('Utente non autorizzato. Contatta l\'amministratore.', 'error');
+                    await logout();
+                    return;
+                }
+
+                // Registra accesso
+                await logUserAccess(userEmail, userRole);
 
                 // Mostra applicazione
                 document.getElementById('loginContainer').style.display = 'none';
@@ -743,6 +699,26 @@
             location.reload();
         }
 
+        async function logUserAccess(email, role) {
+            try {
+                const now = new Date().toISOString();
+                await callSharePointAPI(
+                    `web/lists/getbytitle('${LISTS.PERMESSI}')/items`,
+                    'POST',
+                    {
+                        __metadata: { type: 'SP.Data.Scadenziario_PermessiListItem' },
+                        Title: currentUser.name || email,
+                        UtenteEmail: email,
+                        Ruolo: role,
+                        StatoAccesso: 'Attivo',
+                        UltimoAccesso: now
+                    }
+                );
+            } catch (error) {
+                console.log('Log access non critico:', error);
+            }
+        }
+
         // ============================================
         // SHAREPOINT API CALLS
         // ============================================
@@ -755,12 +731,23 @@
                 'Content-Type': 'application/json;odata=verbose'
             };
 
+            if (method === 'POST' || method === 'MERGE') {
+                headers['X-RequestDigest'] = await getFormDigest();
+                if (method === 'MERGE') {
+                    headers['X-HTTP-Method'] = 'MERGE';
+                    headers['IF-MATCH'] = '*';
+                }
+            } else if (method === 'DELETE') {
+                headers['X-RequestDigest'] = await getFormDigest();
+                headers['IF-MATCH'] = '*';
+            }
+
             const options = {
-                method,
+                method: method === 'MERGE' ? 'POST' : method,
                 headers
             };
 
-            if (body && method !== 'GET') {
+            if (body && (method === 'POST' || method === 'MERGE')) {
                 options.body = JSON.stringify(body);
             }
 
@@ -774,45 +761,23 @@
                 return { success: true };
             }
 
+            if (response.status === 204) {
+                return { success: true };
+            }
+
             return await response.json();
         }
 
-        async function loadUserRole() {
-            try {
-                // Cerca utente nella lista Utenti SharePoint
-                const userEmail = currentUser.username;
-                const result = await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.UTENTI}')/items?$filter=Email eq '${userEmail}'`
-                );
-
-                if (result.d.results && result.d.results.length > 0) {
-                    userRole = result.d.results[0].Ruolo || 'User';
-                } else {
-                    // Se utente non trovato, crea entry con ruolo User
-                    userRole = 'User';
-                    await addUserToSharePoint(userEmail);
+        async function getFormDigest() {
+            const response = await fetch(`${SHAREPOINT_SITE}/_api/contextinfo`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/json;odata=verbose'
                 }
-            } catch (error) {
-                console.error('Error loading user role:', error);
-                userRole = 'User';
-            }
-        }
-
-        async function addUserToSharePoint(email) {
-            try {
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.UTENTI}')/items`,
-                    'POST',
-                    {
-                        __metadata: { type: 'SP.Data.UtentiListItem' },
-                        Title: currentUser.name || email,
-                        Email: email,
-                        Ruolo: 'User'
-                    }
-                );
-            } catch (error) {
-                console.error('Error adding user:', error);
-            }
+            });
+            const data = await response.json();
+            return data.d.GetContextWebInformation.FormDigestValue;
         }
 
         async function loadAllData() {
@@ -821,18 +786,24 @@
 
                 // Carica Enti
                 const entiResult = await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ENTI}')/items?$select=ID,Title,Provincia,Attivo`
+                    `web/lists/getbytitle('${LISTS.ENTI}')/items?$select=ID,Title,Comune,StatoEnte`
                 );
-                allEnti = entiResult.d.results;
+                allEnti = entiResult.d.results.filter(e => e.StatoEnte !== 'Disattivo');
 
                 // Popola dropdown comuni
-                populateComuneDropdowns();
+                populateComuneDropdown();
 
                 // Carica Adempimenti
                 const adempimentiResult = await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items?$select=ID,Title,EnteId,Categoria,Scadenza,Priorita,Stato,Note`
+                    `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items?$select=ID,Title,Descrizione,Tipologia,DataScadenza,Stato,Progress,Note,AnnoMese`
                 );
                 allAdempimenti = adempimentiResult.d.results;
+
+                // Estrai tipologie e stati unici
+                extractUniqueValues();
+
+                // Popola dropdown filtri
+                populateFilters();
 
                 // Renderizza dati
                 renderComuni();
@@ -840,27 +811,68 @@
 
             } catch (error) {
                 console.error('Error loading data:', error);
-                showAlert('Errore nel caricamento dei dati. Controlla la console.', 'error');
+                showAlert('Errore nel caricamento dei dati: ' + error.message, 'error');
                 showLoading(false);
             }
         }
 
-        // ============================================
-        // RENDERING
-        // ============================================
-        function populateComuneDropdowns() {
-            const entiAttivi = allEnti.filter(e => e.Attivo === true || e.Attivo === 'true');
+        function extractUniqueValues() {
+            tipologieUniche.clear();
+            statiUnici.clear();
+
+            allAdempimenti.forEach(a => {
+                if (a.Tipologia) tipologieUniche.add(a.Tipologia);
+                if (a.Stato) statiUnici.add(a.Stato);
+            });
+        }
+
+        function populateFilters() {
+            // Tipologie
+            const tipologiaFilter = document.getElementById('filterTipologia');
+            const tipologiaForm = document.getElementById('formTipologia');
             
+            tipologiaFilter.innerHTML = '<option value="">Tutte</option>';
+            tipologiaForm.innerHTML = '<option value="">Seleziona...</option>';
+            
+            Array.from(tipologieUniche).sort().forEach(tip => {
+                const opt1 = document.createElement('option');
+                opt1.value = tip;
+                opt1.textContent = tip;
+                tipologiaFilter.appendChild(opt1);
+
+                const opt2 = opt1.cloneNode(true);
+                tipologiaForm.appendChild(opt2);
+            });
+
+            // Stati
+            const statoFilter = document.getElementById('filterStato');
+            const statoForm = document.getElementById('formStato');
+            
+            statoFilter.innerHTML = '<option value="">Tutti</option>';
+            statoForm.innerHTML = '<option value="">Seleziona...</option>';
+            
+            Array.from(statiUnici).sort().forEach(stato => {
+                const opt1 = document.createElement('option');
+                opt1.value = stato;
+                opt1.textContent = stato;
+                statoFilter.appendChild(opt1);
+
+                const opt2 = opt1.cloneNode(true);
+                statoForm.appendChild(opt2);
+            });
+        }
+
+        function populateComuneDropdown() {
             const filterSelect = document.getElementById('filterComune');
             const formSelect = document.getElementById('formComune');
 
             filterSelect.innerHTML = '<option value="">Tutti i comuni</option>';
             formSelect.innerHTML = '<option value="">Seleziona comune...</option>';
 
-            entiAttivi.forEach(ente => {
+            allEnti.forEach(ente => {
                 const option1 = document.createElement('option');
                 option1.value = ente.ID;
-                option1.textContent = `${ente.Title} (${ente.Provincia})`;
+                option1.textContent = ente.Comune || ente.Title;
                 filterSelect.appendChild(option1);
 
                 const option2 = option1.cloneNode(true);
@@ -874,12 +886,12 @@
 
             const filters = {
                 comune: document.getElementById('filterComune').value,
-                categoria: document.getElementById('filterCategoria').value,
+                tipologia: document.getElementById('filterTipologia').value,
                 stato: document.getElementById('filterStato').value,
                 mese: document.getElementById('filterMese').value
             };
 
-            let filteredEnti = allEnti.filter(e => e.Attivo === true || e.Attivo === 'true');
+            let filteredEnti = [...allEnti];
 
             if (filters.comune) {
                 filteredEnti = filteredEnti.filter(e => e.ID == filters.comune);
@@ -898,7 +910,7 @@
                 container.innerHTML = '<div class="alert alert-info">Nessun adempimento trovato con i filtri selezionati.</div>';
             }
 
-            // Aggiungi event listeners per toggle e azioni dopo il rendering
+            // Event listeners per toggle
             document.querySelectorAll('.comune-toggle').forEach(toggle => {
                 toggle.addEventListener('click', function() {
                     const card = this.parentElement;
@@ -910,6 +922,7 @@
                 });
             });
 
+            // Event listeners per azioni
             document.querySelectorAll('.btn-edit-adempimento').forEach(btn => {
                 btn.addEventListener('click', function() {
                     editAdempimento(parseInt(this.dataset.id));
@@ -924,10 +937,17 @@
         }
 
         function getAdempimentiForEnte(enteId, filters) {
-            let adempimenti = allAdempimenti.filter(a => a.EnteId == enteId);
+            // Gli adempimenti hanno Title che contiene il nome comune, non EnteId
+            const ente = allEnti.find(e => e.ID === enteId);
+            if (!ente) return [];
 
-            if (filters.categoria) {
-                adempimenti = adempimenti.filter(a => a.Categoria === filters.categoria);
+            const comuneName = ente.Comune || ente.Title;
+            let adempimenti = allAdempimenti.filter(a => 
+                a.Title && a.Title.includes(comuneName)
+            );
+
+            if (filters.tipologia) {
+                adempimenti = adempimenti.filter(a => a.Tipologia === filters.tipologia);
             }
 
             if (filters.stato) {
@@ -937,10 +957,10 @@
             if (filters.mese) {
                 const [year, month] = filters.mese.split('-');
                 adempimenti = adempimenti.filter(a => {
-                    if (!a.Scadenza) return false;
-                    const scadenzaDate = new Date(a.Scadenza);
-                    return scadenzaDate.getFullYear() == year && 
-                           (scadenzaDate.getMonth() + 1) == month;
+                    if (!a.DataScadenza) return false;
+                    const scadenza = new Date(a.DataScadenza);
+                    return scadenza.getFullYear() == year && 
+                           (scadenza.getMonth() + 1) == month;
                 });
             }
 
@@ -953,19 +973,23 @@
 
             const oggi = new Date();
             const scaduti = adempimenti.filter(a => {
-                const scadenza = new Date(a.Scadenza);
+                if (!a.DataScadenza) return false;
+                const scadenza = new Date(a.DataScadenza);
                 return scadenza < oggi && a.Stato !== 'Completato';
             }).length;
 
             const prossimi = adempimenti.filter(a => {
-                const scadenza = new Date(a.Scadenza);
+                if (!a.DataScadenza) return false;
+                const scadenza = new Date(a.DataScadenza);
                 const diff = (scadenza - oggi) / (1000 * 60 * 60 * 24);
                 return diff >= 0 && diff <= 7 && a.Stato !== 'Completato';
             }).length;
 
+            const comuneName = ente.Comune || ente.Title;
+
             card.innerHTML = `
                 <div class="comune-header comune-toggle">
-                    <div class="comune-name">${ente.Title} (${ente.Provincia})</div>
+                    <div class="comune-name">${comuneName}</div>
                     <div class="comune-stats">
                         <span class="stat-badge">${adempimenti.length} totali</span>
                         ${scaduti > 0 ? `<span class="stat-badge scaduti">${scaduti} scaduti</span>` : ''}
@@ -977,11 +1001,11 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Categoria</th>
+                                <th>Tipologia</th>
                                 <th>Descrizione</th>
                                 <th>Scadenza</th>
-                                <th>Priorità</th>
                                 <th>Stato</th>
+                                <th>Progress</th>
                                 <th>Note</th>
                                 <th>Azioni</th>
                             </tr>
@@ -997,30 +1021,29 @@
         }
 
         function createAdempimentoRow(adempimento) {
-            const scadenza = new Date(adempimento.Scadenza);
+            const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
             const oggi = new Date();
-            const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-            
             let scadenzaClass = '';
-            if (diff < 0 && adempimento.Stato !== 'Completato') {
-                scadenzaClass = 'priority-high';
-            } else if (diff >= 0 && diff <= 7) {
-                scadenzaClass = 'priority-medium';
+            
+            if (scadenza) {
+                const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
+                if (diff < 0 && adempimento.Stato !== 'Completato') {
+                    scadenzaClass = 'priority-high';
+                } else if (diff >= 0 && diff <= 7) {
+                    scadenzaClass = 'priority-medium';
+                }
             }
-
-            const priorityClass = adempimento.Priorita === 'Alta' ? 'priority-high' : 
-                                 adempimento.Priorita === 'Media' ? 'priority-medium' : 'priority-low';
 
             const statoClass = adempimento.Stato === 'Completato' ? 'completato' :
                               adempimento.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
 
             return `
                 <tr>
-                    <td>${adempimento.Categoria}</td>
-                    <td>${adempimento.Title}</td>
-                    <td class="${scadenzaClass}">${formatDate(adempimento.Scadenza)}</td>
-                    <td class="${priorityClass}">${adempimento.Priorita}</td>
-                    <td><span class="status-badge ${statoClass}">${adempimento.Stato}</span></td>
+                    <td>${adempimento.Tipologia || '-'}</td>
+                    <td>${adempimento.Descrizione || adempimento.Title}</td>
+                    <td class="${scadenzaClass}">${scadenza ? formatDate(adempimento.DataScadenza) : '-'}</td>
+                    <td><span class="status-badge ${statoClass}">${adempimento.Stato || 'Non Iniziato'}</span></td>
+                    <td>${adempimento.Progress || 0}%</td>
                     <td>${adempimento.Note || '-'}</td>
                     <td>
                         <div class="action-buttons">
@@ -1048,12 +1071,20 @@
 
             document.getElementById('modalTitle').textContent = 'Modifica Adempimento';
             document.getElementById('editId').value = id;
-            document.getElementById('formComune').value = adempimento.EnteId;
-            document.getElementById('formCategoria').value = adempimento.Categoria;
-            document.getElementById('formDescrizione').value = adempimento.Title;
-            document.getElementById('formScadenza').value = adempimento.Scadenza.split('T')[0];
-            document.getElementById('formPriorita').value = adempimento.Priorita;
-            document.getElementById('formStato').value = adempimento.Stato;
+            
+            // Trova il comune dal Title
+            const comuneMatch = allEnti.find(e => 
+                adempimento.Title && adempimento.Title.includes(e.Comune || e.Title)
+            );
+            if (comuneMatch) {
+                document.getElementById('formComune').value = comuneMatch.ID;
+            }
+            
+            document.getElementById('formTipologia').value = adempimento.Tipologia || '';
+            document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
+            document.getElementById('formScadenza').value = adempimento.DataScadenza ? adempimento.DataScadenza.split('T')[0] : '';
+            document.getElementById('formStato').value = adempimento.Stato || '';
+            document.getElementById('formProgress').value = adempimento.Progress || 0;
             document.getElementById('formNote').value = adempimento.Note || '';
 
             document.getElementById('adempimentoModal').classList.add('open');
@@ -1084,36 +1115,35 @@
             e.preventDefault();
             
             const editId = document.getElementById('editId').value;
+            const comuneId = document.getElementById('formComune').value;
+            const ente = allEnti.find(e => e.ID == comuneId);
+            const comuneName = ente ? (ente.Comune || ente.Title) : '';
+            const descrizione = document.getElementById('formDescrizione').value;
+            
             const data = {
-                __metadata: { type: 'SP.Data.AdempimentiListItem' },
-                Title: document.getElementById('formDescrizione').value,
-                EnteId: parseInt(document.getElementById('formComune').value),
-                Categoria: document.getElementById('formCategoria').value,
-                Scadenza: document.getElementById('formScadenza').value,
-                Priorita: document.getElementById('formPriorita').value,
+                __metadata: { type: 'SP.Data.Scadenziario_AdempimentiListItem' },
+                Title: `${comuneName} - ${descrizione}`,
+                Descrizione: descrizione,
+                Tipologia: document.getElementById('formTipologia').value,
+                DataScadenza: document.getElementById('formScadenza').value,
                 Stato: document.getElementById('formStato').value,
-                Note: document.getElementById('formNote').value
+                Progress: parseInt(document.getElementById('formProgress').value) || 0,
+                Note: document.getElementById('formNote').value,
+                AnnoMese: document.getElementById('formScadenza').value ? 
+                    document.getElementById('formScadenza').value.substring(0, 7) : ''
             };
 
             try {
                 showLoading(true);
 
                 if (editId) {
-                    // Update
                     await callSharePointAPI(
                         `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${editId})`,
-                        'POST',
-                        {
-                            ...data,
-                            __metadata: { 
-                                ...data.__metadata,
-                                type: 'SP.Data.AdempimentiListItem'
-                            }
-                        }
+                        'MERGE',
+                        data
                     );
                     showAlert('Adempimento aggiornato con successo', 'success');
                 } else {
-                    // Create
                     await callSharePointAPI(
                         `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items`,
                         'POST',
@@ -1127,123 +1157,13 @@
 
             } catch (error) {
                 console.error('Error saving:', error);
-                showAlert('Errore durante il salvataggio', 'error');
+                showAlert('Errore durante il salvataggio: ' + error.message, 'error');
                 showLoading(false);
             }
         });
 
         function closeModal() {
             document.getElementById('adempimentoModal').classList.remove('open');
-        }
-
-        // ============================================
-        // GESTIONE ENTI (ADMIN ONLY)
-        // ============================================
-        async function openGestioneEnti() {
-            if (userRole !== 'Admin') {
-                showAlert('Solo gli amministratori possono gestire gli enti', 'error');
-                return;
-            }
-
-            const entiList = document.getElementById('entiList');
-            entiList.innerHTML = `
-                <table style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Nome Comune</th>
-                            <th>Provincia</th>
-                            <th>Stato</th>
-                            <th>Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${allEnti.map(ente => `
-                            <tr>
-                                <td>${ente.Title}</td>
-                                <td>${ente.Provincia}</td>
-                                <td>${ente.Attivo ? '✅ Attivo' : '❌ Disattivo'}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-toggle-ente" data-id="${ente.ID}" data-attivo="${ente.Attivo}">
-                                        ${ente.Attivo ? 'Disattiva' : 'Attiva'}
-                                    </button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-
-            // Aggiungi event listeners per toggle enti
-            document.querySelectorAll('.btn-toggle-ente').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    toggleEnteStatus(parseInt(this.dataset.id));
-                });
-            });
-
-            document.getElementById('entiModal').classList.add('open');
-        }
-
-        async function openAddEnteModal() {
-            const nome = prompt('Nome Comune:');
-            if (!nome) return;
-
-            const provincia = prompt('Sigla Provincia (es. MI, BG, BS):');
-            if (!provincia) return;
-
-            try {
-                showLoading(true);
-
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ENTI}')/items`,
-                    'POST',
-                    {
-                        __metadata: { type: 'SP.Data.EntiListItem' },
-                        Title: nome,
-                        Provincia: provincia.toUpperCase(),
-                        Attivo: true
-                    }
-                );
-
-                showAlert('Ente aggiunto con successo', 'success');
-                await loadAllData();
-                openGestioneEnti();
-
-            } catch (error) {
-                console.error('Error adding ente:', error);
-                showAlert('Errore durante l\'aggiunta dell\'ente', 'error');
-                showLoading(false);
-            }
-        }
-
-        async function toggleEnteStatus(id) {
-            const ente = allEnti.find(e => e.ID === id);
-            if (!ente) return;
-
-            try {
-                showLoading(true);
-
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ENTI}')/items(${id})`,
-                    'POST',
-                    {
-                        __metadata: { type: 'SP.Data.EntiListItem' },
-                        Attivo: !ente.Attivo
-                    }
-                );
-
-                showAlert('Stato ente aggiornato', 'success');
-                await loadAllData();
-                openGestioneEnti();
-
-            } catch (error) {
-                console.error('Error updating ente:', error);
-                showAlert('Errore durante l\'aggiornamento', 'error');
-                showLoading(false);
-            }
-        }
-
-        function closeEntiModal() {
-            document.getElementById('entiModal').classList.remove('open');
         }
 
         // ============================================
@@ -1255,21 +1175,22 @@
                 return;
             }
 
-            const headers = ['Comune', 'Provincia', 'Categoria', 'Descrizione', 'Scadenza', 'Priorità', 'Stato', 'Note'];
+            const headers = ['Comune', 'Tipologia', 'Descrizione', 'Scadenza', 'Stato', 'Progress', 'Note'];
             const rows = [];
 
             allAdempimenti.forEach(adempimento => {
-                const ente = allEnti.find(e => e.ID === adempimento.EnteId);
-                if (!ente) return;
+                const comuneMatch = allEnti.find(e => 
+                    adempimento.Title && adempimento.Title.includes(e.Comune || e.Title)
+                );
+                const comuneName = comuneMatch ? (comuneMatch.Comune || comuneMatch.Title) : '';
 
                 rows.push([
-                    ente.Title,
-                    ente.Provincia,
-                    adempimento.Categoria,
-                    adempimento.Title,
-                    formatDate(adempimento.Scadenza),
-                    adempimento.Priorita,
-                    adempimento.Stato,
+                    comuneName,
+                    adempimento.Tipologia || '',
+                    adempimento.Descrizione || adempimento.Title,
+                    adempimento.DataScadenza ? formatDate(adempimento.DataScadenza) : '',
+                    adempimento.Stato || '',
+                    adempimento.Progress || 0,
                     adempimento.Note || ''
                 ]);
             });
@@ -1282,7 +1203,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `scadenziario_${formatDate(new Date())}.csv`;
+            link.download = `scadenziario_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
 
             showAlert('Export completato con successo', 'success');
@@ -1321,6 +1242,7 @@
         }
 
         function formatDate(dateString) {
+            if (!dateString) return '';
             const date = new Date(dateString);
             return date.toLocaleDateString('it-IT');
         }
@@ -1329,16 +1251,13 @@
         // INITIALIZATION
         // ============================================
         window.addEventListener('load', async () => {
-            console.log('🚀 Applicazione caricata');
-            console.log('📦 MSAL Instance:', msalInstance);
-            console.log('🔑 MSAL Config:', msalConfig);
+            console.log('🚀 Applicazione caricata - Studio Grismondi');
             
             try {
                 await msalInstance.initialize();
                 console.log('✅ MSAL inizializzato');
                 
                 const accounts = msalInstance.getAllAccounts();
-                console.log('👥 Account trovati:', accounts.length);
                 
                 if (accounts.length > 0) {
                     console.log('🔄 Account esistente, auto-login...');
@@ -1347,36 +1266,26 @@
                     console.log('📝 Nessun account, mostra schermata login');
                 }
             } catch (error) {
-                console.error('❌ Errore inizializzazione MSAL:', error);
+                console.error('❌ Errore inizializzazione:', error);
                 alert('Errore inizializzazione: ' + error.message);
             }
 
-            // ============================================
-            // EVENT LISTENERS
-            // ============================================
-            
-            // Login/Logout
+            // Event Listeners
             document.getElementById('loginBtn').addEventListener('click', login);
             document.getElementById('logoutBtn').addEventListener('click', logout);
             
-            // Filtri
             document.getElementById('filterComune').addEventListener('change', filterData);
-            document.getElementById('filterCategoria').addEventListener('change', filterData);
+            document.getElementById('filterTipologia').addEventListener('change', filterData);
             document.getElementById('filterStato').addEventListener('change', filterData);
             document.getElementById('filterMese').addEventListener('change', filterData);
             
-            // Bottoni azioni
             document.getElementById('btnAddAdempimento').addEventListener('click', openAddModal);
             document.getElementById('btnExport').addEventListener('click', exportCSV);
-            document.getElementById('btnManageEnti').addEventListener('click', openGestioneEnti);
             document.getElementById('btnSync').addEventListener('click', syncData);
             
-            // Modal
             document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-            document.getElementById('btnCloseEntiModal').addEventListener('click', closeEntiModal);
-            document.getElementById('btnAddEnte').addEventListener('click', openAddEnteModal);
             
-            console.log('✅ Event listeners registrati');
+            console.log('✅ Sistema pronto');
         });
     </script>
 </body>
