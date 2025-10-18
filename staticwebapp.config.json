@@ -6,6 +6,10 @@
       "statusCode": 200
     }
   ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+  },
   "responseOverrides": {
     "404": {
       "serve": "/index.html",
