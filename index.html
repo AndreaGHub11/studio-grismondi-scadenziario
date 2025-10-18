@@ -468,7 +468,7 @@
         <p>Sistema Scadenziario Integrato</p>
         <button class="login-btn" id="loginBtn">
             🔐 Accedi con Microsoft
-        button>
+        </button>
     </div>
 
     <!-- Main Application -->
@@ -480,418 +480,6 @@
                     <strong id="userName">Utente</strong>
                     <small id="userRole">Caricamento...</small>
                 </div>
-                <div class="adempimenti-list">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Categoria</th>
-                                <th>Descrizione</th>
-                                <th>Scadenza</th>
-                                <th>Priorità</th>
-                                <th>Stato</th>
-                                <th>Note</th>
-                                <th>Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${adempimenti.map(a => createAdempimentoRow(a)).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            return card;
-        }
-
-        function createAdempimentoRow(adempimento) {
-            const scadenza = new Date(adempimento.Scadenza);
-            const oggi = new Date();
-            const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-            
-            let scadenzaClass = '';
-            if (diff < 0 && adempimento.Stato !== 'Completato') {
-                scadenzaClass = 'priority-high';
-            } else if (diff >= 0 && diff <= 7) {
-                scadenzaClass = 'priority-medium';
-            }
-
-            const priorityClass = adempimento.Priorita === 'Alta' ? 'priority-high' : 
-                                 adempimento.Priorita === 'Media' ? 'priority-medium' : 'priority-low';
-
-            const statoClass = adempimento.Stato === 'Completato' ? 'completato' :
-                              adempimento.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
-
-            return `
-                <tr>
-                    <td>${adempimento.Categoria}</td>
-                    <td>${adempimento.Title}</td>
-                    <td class="${scadenzaClass}">${formatDate(adempimento.Scadenza)}</td>
-                    <td class="${priorityClass}">${adempimento.Priorita}</td>
-                    <td><span class="status-badge ${statoClass}">${adempimento.Stato}</span></td>
-                    <td>${adempimento.Note || '-'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="icon-btn btn-edit-adempimento" data-id="${adempimento.ID}" title="Modifica">✏️</button>
-                            <button class="icon-btn btn-delete-adempimento" data-id="${adempimento.ID}" title="Elimina">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }
-
-        function toggleComune(header) {
-            // Funzione rimossa - ora gestita da event listener in renderComuni()
-        }
-
-        // ============================================
-        // CRUD ADEMPIMENTI
-        // ============================================
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Nuovo Adempimento';
-            document.getElementById('adempimentoForm').reset();
-            document.getElementById('editId').value = '';
-            document.getElementById('adempimentoModal').classList.add('open');
-        }
-
-        async function editAdempimento(id) {
-            const adempimento = allAdempimenti.find(a => a.ID === id);
-            if (!adempimento) return;
-
-            document.getElementById('modalTitle').textContent = 'Modifica Adempimento';
-            document.getElementById('editId').value = id;
-            document.getElementById('formComune').value = adempimento.EnteId;
-            document.getElementById('formCategoria').value = adempimento.Categoria;
-            document.getElementById('formDescrizione').value = adempimento.Title;
-            document.getElementById('formScadenza').value = adempimento.Scadenza.split('T')[0];
-            document.getElementById('formPriorita').value = adempimento.Priorita;
-            document.getElementById('formStato').value = adempimento.Stato;
-            document.getElementById('formNote').value = adempimento.Note || '';
-
-            document.getElementById('adempimentoModal').classList.add('open');
-        }
-
-        async function deleteAdempimento(id) {
-            if (!confirm('Sei sicuro di voler eliminare questo adempimento?')) return;
-
-            try {
-                showLoading(true);
-                
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${id})`,
-                    'DELETE'
-                );
-
-                showAlert('Adempimento eliminato con successo', 'success');
-                await loadAllData();
-                
-            } catch (error) {
-                console.error('Error deleting:', error);
-                showAlert('Errore durante l\'eliminazione', 'error');
-                showLoading(false);
-            }
-        }
-
-        document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const editId = document.getElementById('editId').value;
-            const data = {
-                __metadata: { type: 'SP.Data.AdempimentiListItem' },
-                Title: document.getElementById('formDescrizione').value,
-                EnteId: parseInt(document.getElementById('formComune').value),
-                Categoria: document.getElementById('formCategoria').value,
-                Scadenza: document.getElementById('formScadenza').value,
-                Priorita: document.getElementById('formPriorita').value,
-                Stato: document.getElementById('formStato').value,
-                Note: document.getElementById('formNote').value
-            };
-
-            try {
-                showLoading(true);
-
-                if (editId) {
-                    // Update
-                    await callSharePointAPI(
-                        `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${editId})`,
-                        'POST',
-                        {
-                            ...data,
-                            __metadata: { 
-                                ...data.__metadata,
-                                type: 'SP.Data.AdempimentiListItem'
-                            }
-                        }
-                    );
-                    showAlert('Adempimento aggiornato con successo', 'success');
-                } else {
-                    // Create
-                    await callSharePointAPI(
-                        `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items`,
-                        'POST',
-                        data
-                    );
-                    showAlert('Adempimento creato con successo', 'success');
-                }
-
-                closeModal();
-                await loadAllData();
-
-            } catch (error) {
-                console.error('Error saving:', error);
-                showAlert('Errore durante il salvataggio', 'error');
-                showLoading(false);
-            }
-        });
-
-        function closeModal() {
-            document.getElementById('adempimentoModal').classList.remove('open');
-        }
-
-        // ============================================
-        // GESTIONE ENTI (ADMIN ONLY)
-        // ============================================
-        async function openGestioneEnti() {
-            if (userRole !== 'Admin') {
-                showAlert('Solo gli amministratori possono gestire gli enti', 'error');
-                return;
-            }
-
-            const entiList = document.getElementById('entiList');
-            entiList.innerHTML = `
-                <table style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Nome Comune</th>
-                            <th>Provincia</th>
-                            <th>Stato</th>
-                            <th>Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${allEnti.map(ente => `
-                            <tr>
-                                <td>${ente.Title}</td>
-                                <td>${ente.Provincia}</td>
-                                <td>${ente.Attivo ? '✅ Attivo' : '❌ Disattivo'}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-toggle-ente" data-id="${ente.ID}" data-attivo="${ente.Attivo}">
-                                        ${ente.Attivo ? 'Disattiva' : 'Attiva'}
-                                    </button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-
-            // Aggiungi event listeners per toggle enti
-            document.querySelectorAll('.btn-toggle-ente').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    toggleEnteStatus(parseInt(this.dataset.id));
-                });
-            });
-
-            document.getElementById('entiModal').classList.add('open');
-        }
-
-        async function openAddEnteModal() {
-            const nome = prompt('Nome Comune:');
-            if (!nome) return;
-
-            const provincia = prompt('Sigla Provincia (es. MI, BG, BS):');
-            if (!provincia) return;
-
-            try {
-                showLoading(true);
-
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ENTI}')/items`,
-                    'POST',
-                    {
-                        __metadata: { type: 'SP.Data.EntiListItem' },
-                        Title: nome,
-                        Provincia: provincia.toUpperCase(),
-                        Attivo: true
-                    }
-                );
-
-                showAlert('Ente aggiunto con successo', 'success');
-                await loadAllData();
-                openGestioneEnti();
-
-            } catch (error) {
-                console.error('Error adding ente:', error);
-                showAlert('Errore durante l\'aggiunta dell\'ente', 'error');
-                showLoading(false);
-            }
-        }
-
-        async function toggleEnteStatus(id) {
-            const ente = allEnti.find(e => e.ID === id);
-            if (!ente) return;
-
-            try {
-                showLoading(true);
-
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ENTI}')/items(${id})`,
-                    'POST',
-                    {
-                        __metadata: { type: 'SP.Data.EntiListItem' },
-                        Attivo: !ente.Attivo
-                    }
-                );
-
-                showAlert('Stato ente aggiornato', 'success');
-                await loadAllData();
-                openGestioneEnti();
-
-            } catch (error) {
-                console.error('Error updating ente:', error);
-                showAlert('Errore durante l\'aggiornamento', 'error');
-                showLoading(false);
-            }
-        }
-
-        function closeEntiModal() {
-            document.getElementById('entiModal').classList.remove('open');
-        }
-
-        // ============================================
-        // EXPORT CSV (ADMIN ONLY)
-        // ============================================
-        function exportCSV() {
-            if (userRole !== 'Admin') {
-                showAlert('Solo gli amministratori possono esportare i dati', 'error');
-                return;
-            }
-
-            const headers = ['Comune', 'Provincia', 'Categoria', 'Descrizione', 'Scadenza', 'Priorità', 'Stato', 'Note'];
-            const rows = [];
-
-            allAdempimenti.forEach(adempimento => {
-                const ente = allEnti.find(e => e.ID === adempimento.EnteId);
-                if (!ente) return;
-
-                rows.push([
-                    ente.Title,
-                    ente.Provincia,
-                    adempimento.Categoria,
-                    adempimento.Title,
-                    formatDate(adempimento.Scadenza),
-                    adempimento.Priorita,
-                    adempimento.Stato,
-                    adempimento.Note || ''
-                ]);
-            });
-
-            let csv = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `scadenziario_${formatDate(new Date())}.csv`;
-            link.click();
-
-            showAlert('Export completato con successo', 'success');
-        }
-
-        // ============================================
-        // UTILITY FUNCTIONS
-        // ============================================
-        function filterData() {
-            renderComuni();
-        }
-
-        async function syncData() {
-            showAlert('Sincronizzazione in corso...', 'info');
-            await loadAllData();
-            showAlert('Dati sincronizzati con successo', 'success');
-        }
-
-        function showLoading(show) {
-            document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
-            document.getElementById('comuniContainer').style.display = show ? 'none' : 'block';
-        }
-
-        function showAlert(message, type) {
-            const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            
-            container.innerHTML = '';
-            container.appendChild(alert);
-
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('it-IT');
-        }
-
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        window.addEventListener('load', async () => {
-            console.log('🚀 Applicazione caricata');
-            console.log('📦 MSAL Instance:', msalInstance);
-            console.log('🔑 MSAL Config:', msalConfig);
-            
-            try {
-                await msalInstance.initialize();
-                console.log('✅ MSAL inizializzato');
-                
-                const accounts = msalInstance.getAllAccounts();
-                console.log('👥 Account trovati:', accounts.length);
-                
-                if (accounts.length > 0) {
-                    console.log('🔄 Account esistente, auto-login...');
-                    await handleAuthentication();
-                } else {
-                    console.log('📝 Nessun account, mostra schermata login');
-                }
-            } catch (error) {
-                console.error('❌ Errore inizializzazione MSAL:', error);
-                alert('Errore inizializzazione: ' + error.message);
-            }
-
-            // ============================================
-            // EVENT LISTENERS
-            // ============================================
-            
-            // Login/Logout
-            document.getElementById('loginBtn').addEventListener('click', login);
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            // Filtri
-            document.getElementById('filterComune').addEventListener('change', filterData);
-            document.getElementById('filterCategoria').addEventListener('change', filterData);
-            document.getElementById('filterStato').addEventListener('change', filterData);
-            document.getElementById('filterMese').addEventListener('change', filterData);
-            
-            // Bottoni azioni
-            document.getElementById('btnAddAdempimento').addEventListener('click', openAddModal);
-            document.getElementById('btnExport').addEventListener('click', exportCSV);
-            document.getElementById('btnManageEnti').addEventListener('click', openGestioneEnti);
-            document.getElementById('btnSync').addEventListener('click', syncData);
-            
-            // Modal
-            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-            document.getElementById('btnCloseEntiModal').addEventListener('click', closeEntiModal);
-            document.getElementById('btnAddEnte').addEventListener('click', openAddEnteModal);
-            
-            console.log('✅ Event listeners registrati');
-        });
-    </script>
-</body>
-</html>
                 <button class="logout-btn" id="logoutBtn">Esci</button>
             </div>
         </div>
@@ -1376,7 +964,7 @@
             }).length;
 
             card.innerHTML = `
-                <div class="comune-header" onclick="toggleComune(this)">
+                <div class="comune-header comune-toggle">
                     <div class="comune-name">${ente.Title} (${ente.Provincia})</div>
                     <div class="comune-stats">
                         <span class="stat-badge">${adempimenti.length} totali</span>
@@ -1385,3 +973,411 @@
                         <span class="expand-icon">▼</span>
                     </div>
                 </div>
+                <div class="adempimenti-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Descrizione</th>
+                                <th>Scadenza</th>
+                                <th>Priorità</th>
+                                <th>Stato</th>
+                                <th>Note</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${adempimenti.map(a => createAdempimentoRow(a)).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function createAdempimentoRow(adempimento) {
+            const scadenza = new Date(adempimento.Scadenza);
+            const oggi = new Date();
+            const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
+            
+            let scadenzaClass = '';
+            if (diff < 0 && adempimento.Stato !== 'Completato') {
+                scadenzaClass = 'priority-high';
+            } else if (diff >= 0 && diff <= 7) {
+                scadenzaClass = 'priority-medium';
+            }
+
+            const priorityClass = adempimento.Priorita === 'Alta' ? 'priority-high' : 
+                                 adempimento.Priorita === 'Media' ? 'priority-medium' : 'priority-low';
+
+            const statoClass = adempimento.Stato === 'Completato' ? 'completato' :
+                              adempimento.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
+
+            return `
+                <tr>
+                    <td>${adempimento.Categoria}</td>
+                    <td>${adempimento.Title}</td>
+                    <td class="${scadenzaClass}">${formatDate(adempimento.Scadenza)}</td>
+                    <td class="${priorityClass}">${adempimento.Priorita}</td>
+                    <td><span class="status-badge ${statoClass}">${adempimento.Stato}</span></td>
+                    <td>${adempimento.Note || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="icon-btn btn-edit-adempimento" data-id="${adempimento.ID}" title="Modifica">✏️</button>
+                            <button class="icon-btn btn-delete-adempimento" data-id="${adempimento.ID}" title="Elimina">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // ============================================
+        // CRUD ADEMPIMENTI
+        // ============================================
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Nuovo Adempimento';
+            document.getElementById('adempimentoForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('adempimentoModal').classList.add('open');
+        }
+
+        async function editAdempimento(id) {
+            const adempimento = allAdempimenti.find(a => a.ID === id);
+            if (!adempimento) return;
+
+            document.getElementById('modalTitle').textContent = 'Modifica Adempimento';
+            document.getElementById('editId').value = id;
+            document.getElementById('formComune').value = adempimento.EnteId;
+            document.getElementById('formCategoria').value = adempimento.Categoria;
+            document.getElementById('formDescrizione').value = adempimento.Title;
+            document.getElementById('formScadenza').value = adempimento.Scadenza.split('T')[0];
+            document.getElementById('formPriorita').value = adempimento.Priorita;
+            document.getElementById('formStato').value = adempimento.Stato;
+            document.getElementById('formNote').value = adempimento.Note || '';
+
+            document.getElementById('adempimentoModal').classList.add('open');
+        }
+
+        async function deleteAdempimento(id) {
+            if (!confirm('Sei sicuro di voler eliminare questo adempimento?')) return;
+
+            try {
+                showLoading(true);
+                
+                await callSharePointAPI(
+                    `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${id})`,
+                    'DELETE'
+                );
+
+                showAlert('Adempimento eliminato con successo', 'success');
+                await loadAllData();
+                
+            } catch (error) {
+                console.error('Error deleting:', error);
+                showAlert('Errore durante l\'eliminazione', 'error');
+                showLoading(false);
+            }
+        }
+
+        document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const editId = document.getElementById('editId').value;
+            const data = {
+                __metadata: { type: 'SP.Data.AdempimentiListItem' },
+                Title: document.getElementById('formDescrizione').value,
+                EnteId: parseInt(document.getElementById('formComune').value),
+                Categoria: document.getElementById('formCategoria').value,
+                Scadenza: document.getElementById('formScadenza').value,
+                Priorita: document.getElementById('formPriorita').value,
+                Stato: document.getElementById('formStato').value,
+                Note: document.getElementById('formNote').value
+            };
+
+            try {
+                showLoading(true);
+
+                if (editId) {
+                    // Update
+                    await callSharePointAPI(
+                        `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${editId})`,
+                        'POST',
+                        {
+                            ...data,
+                            __metadata: { 
+                                ...data.__metadata,
+                                type: 'SP.Data.AdempimentiListItem'
+                            }
+                        }
+                    );
+                    showAlert('Adempimento aggiornato con successo', 'success');
+                } else {
+                    // Create
+                    await callSharePointAPI(
+                        `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items`,
+                        'POST',
+                        data
+                    );
+                    showAlert('Adempimento creato con successo', 'success');
+                }
+
+                closeModal();
+                await loadAllData();
+
+            } catch (error) {
+                console.error('Error saving:', error);
+                showAlert('Errore durante il salvataggio', 'error');
+                showLoading(false);
+            }
+        });
+
+        function closeModal() {
+            document.getElementById('adempimentoModal').classList.remove('open');
+        }
+
+        // ============================================
+        // GESTIONE ENTI (ADMIN ONLY)
+        // ============================================
+        async function openGestioneEnti() {
+            if (userRole !== 'Admin') {
+                showAlert('Solo gli amministratori possono gestire gli enti', 'error');
+                return;
+            }
+
+            const entiList = document.getElementById('entiList');
+            entiList.innerHTML = `
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Nome Comune</th>
+                            <th>Provincia</th>
+                            <th>Stato</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${allEnti.map(ente => `
+                            <tr>
+                                <td>${ente.Title}</td>
+                                <td>${ente.Provincia}</td>
+                                <td>${ente.Attivo ? '✅ Attivo' : '❌ Disattivo'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-toggle-ente" data-id="${ente.ID}" data-attivo="${ente.Attivo}">
+                                        ${ente.Attivo ? 'Disattiva' : 'Attiva'}
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            // Aggiungi event listeners per toggle enti
+            document.querySelectorAll('.btn-toggle-ente').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    toggleEnteStatus(parseInt(this.dataset.id));
+                });
+            });
+
+            document.getElementById('entiModal').classList.add('open');
+        }
+
+        async function openAddEnteModal() {
+            const nome = prompt('Nome Comune:');
+            if (!nome) return;
+
+            const provincia = prompt('Sigla Provincia (es. MI, BG, BS):');
+            if (!provincia) return;
+
+            try {
+                showLoading(true);
+
+                await callSharePointAPI(
+                    `web/lists/getbytitle('${LISTS.ENTI}')/items`,
+                    'POST',
+                    {
+                        __metadata: { type: 'SP.Data.EntiListItem' },
+                        Title: nome,
+                        Provincia: provincia.toUpperCase(),
+                        Attivo: true
+                    }
+                );
+
+                showAlert('Ente aggiunto con successo', 'success');
+                await loadAllData();
+                openGestioneEnti();
+
+            } catch (error) {
+                console.error('Error adding ente:', error);
+                showAlert('Errore durante l\'aggiunta dell\'ente', 'error');
+                showLoading(false);
+            }
+        }
+
+        async function toggleEnteStatus(id) {
+            const ente = allEnti.find(e => e.ID === id);
+            if (!ente) return;
+
+            try {
+                showLoading(true);
+
+                await callSharePointAPI(
+                    `web/lists/getbytitle('${LISTS.ENTI}')/items(${id})`,
+                    'POST',
+                    {
+                        __metadata: { type: 'SP.Data.EntiListItem' },
+                        Attivo: !ente.Attivo
+                    }
+                );
+
+                showAlert('Stato ente aggiornato', 'success');
+                await loadAllData();
+                openGestioneEnti();
+
+            } catch (error) {
+                console.error('Error updating ente:', error);
+                showAlert('Errore durante l\'aggiornamento', 'error');
+                showLoading(false);
+            }
+        }
+
+        function closeEntiModal() {
+            document.getElementById('entiModal').classList.remove('open');
+        }
+
+        // ============================================
+        // EXPORT CSV (ADMIN ONLY)
+        // ============================================
+        function exportCSV() {
+            if (userRole !== 'Admin') {
+                showAlert('Solo gli amministratori possono esportare i dati', 'error');
+                return;
+            }
+
+            const headers = ['Comune', 'Provincia', 'Categoria', 'Descrizione', 'Scadenza', 'Priorità', 'Stato', 'Note'];
+            const rows = [];
+
+            allAdempimenti.forEach(adempimento => {
+                const ente = allEnti.find(e => e.ID === adempimento.EnteId);
+                if (!ente) return;
+
+                rows.push([
+                    ente.Title,
+                    ente.Provincia,
+                    adempimento.Categoria,
+                    adempimento.Title,
+                    formatDate(adempimento.Scadenza),
+                    adempimento.Priorita,
+                    adempimento.Stato,
+                    adempimento.Note || ''
+                ]);
+            });
+
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `scadenziario_${formatDate(new Date())}.csv`;
+            link.click();
+
+            showAlert('Export completato con successo', 'success');
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function filterData() {
+            renderComuni();
+        }
+
+        async function syncData() {
+            showAlert('Sincronizzazione in corso...', 'info');
+            await loadAllData();
+            showAlert('Dati sincronizzati con successo', 'success');
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
+            document.getElementById('comuniContainer').style.display = show ? 'none' : 'block';
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            container.innerHTML = '';
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('it-IT');
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        window.addEventListener('load', async () => {
+            console.log('🚀 Applicazione caricata');
+            console.log('📦 MSAL Instance:', msalInstance);
+            console.log('🔑 MSAL Config:', msalConfig);
+            
+            try {
+                await msalInstance.initialize();
+                console.log('✅ MSAL inizializzato');
+                
+                const accounts = msalInstance.getAllAccounts();
+                console.log('👥 Account trovati:', accounts.length);
+                
+                if (accounts.length > 0) {
+                    console.log('🔄 Account esistente, auto-login...');
+                    await handleAuthentication();
+                } else {
+                    console.log('📝 Nessun account, mostra schermata login');
+                }
+            } catch (error) {
+                console.error('❌ Errore inizializzazione MSAL:', error);
+                alert('Errore inizializzazione: ' + error.message);
+            }
+
+            // ============================================
+            // EVENT LISTENERS
+            // ============================================
+            
+            // Login/Logout
+            document.getElementById('loginBtn').addEventListener('click', login);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Filtri
+            document.getElementById('filterComune').addEventListener('change', filterData);
+            document.getElementById('filterCategoria').addEventListener('change', filterData);
+            document.getElementById('filterStato').addEventListener('change', filterData);
+            document.getElementById('filterMese').addEventListener('change', filterData);
+            
+            // Bottoni azioni
+            document.getElementById('btnAddAdempimento').addEventListener('click', openAddModal);
+            document.getElementById('btnExport').addEventListener('click', exportCSV);
+            document.getElementById('btnManageEnti').addEventListener('click', openGestioneEnti);
+            document.getElementById('btnSync').addEventListener('click', syncData);
+            
+            // Modal
+            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+            document.getElementById('btnCloseEntiModal').addEventListener('click', closeEntiModal);
+            document.getElementById('btnAddEnte').addEventListener('click', openAddEnteModal);
+            
+            console.log('✅ Event listeners registrati');
+        });
+    </script>
+</body>
+</html>
