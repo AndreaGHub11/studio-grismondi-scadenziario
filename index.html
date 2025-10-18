@@ -599,7 +599,7 @@
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
         // SharePoint Configuration
-        const SHAREPOINT_SITE = 'https://studiogrismondi.sharepoint.com/sites/SitodiComunicazione';
+        const SHAREPOINT_SITE = 'https://studiogrismondi.sharepoint.com';
         
         // Liste SharePoint - NOMI CORRETTI
         const LISTS = {
@@ -611,7 +611,7 @@
 
         // Utenti autorizzati
         const AUTHORIZED_USERS = {
-            ADMIN: ['info@studiogrismondisrl.it', 'roberta@studiogrismondisrl.it'],
+            ADMIN: ['info@studiogrismondisrl.it'], // Andrea e Roberta usano lo stesso account
             USER: ['miriana@studiogrismondisrl.it', 'nicoletta@studiogrismondisrl.it']
         };
 
