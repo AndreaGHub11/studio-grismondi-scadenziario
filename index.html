@@ -593,7 +593,12 @@
         };
 
         const loginRequest = {
-            scopes: ['User.Read', 'Sites.ReadWrite.All']
+            scopes: [
+                'User.Read',
+                'Sites.Read.All',
+                'Sites.ReadWrite.All',
+                'Files.ReadWrite.All'
+            ]
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
