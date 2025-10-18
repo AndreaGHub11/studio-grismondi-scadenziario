@@ -18,27 +18,6 @@
             padding: 20px;
         }
 
-        .alert-banner {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            padding: 15px 30px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
-            animation: pulse 2s infinite;
-            display: none;
-        }
-
-        .alert-banner.visible {
-            display: block;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
-        }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -60,6 +39,11 @@
             margin-bottom: 10px;
         }
 
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
         .user-section {
             background: #34495e;
             color: white;
@@ -68,6 +52,12 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
             gap: 15px;
         }
 
@@ -82,7 +72,7 @@
             background: #e74c3c;
         }
 
-        select, button, input {
+        select, button {
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -100,6 +90,7 @@
         button:hover {
             background: #2980b9;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         button:disabled {
@@ -110,38 +101,44 @@
 
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            padding: 20px 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
             background: #ecf0f1;
         }
 
         .stat-card {
             background: white;
-            padding: 15px;
+            padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
         .stat-number {
-            font-size: 2.2em;
+            font-size: 3em;
             font-weight: bold;
-            margin: 8px 0;
+            margin: 10px 0;
         }
 
         .stat-label {
             color: #7f8c8d;
-            font-size: 0.9em;
+            font-size: 1.1em;
         }
 
         .stat-totali .stat-number { color: #3498db; }
+        .stat-corso .stat-number { color: #f39c12; }
         .stat-completati .stat-number { color: #27ae60; }
-        .stat-dafare .stat-number { color: #f39c12; }
-        .stat-scaduti .stat-number { color: #e74c3c; }
+        .stat-ritardo .stat-number { color: #e74c3c; }
 
         .controls {
-            padding: 25px 30px;
+            padding: 30px;
             background: white;
             border-top: 3px solid #ecf0f1;
         }
@@ -162,7 +159,7 @@
         .filter-group label {
             font-weight: bold;
             color: #2c3e50;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .filter-group select,
@@ -173,18 +170,37 @@
             font-size: 14px;
         }
 
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
         .action-buttons {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
 
-        .btn-primary { background: #3498db; }
-        .btn-success { background: #27ae60; }
-        .btn-danger { background: #e74c3c; }
-        .btn-warning { background: #f39c12; }
-        .btn-secondary { background: #95a5a6; }
-        .btn-purple { background: #9b59b6; }
+        .btn-primary {
+            background: #3498db;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
 
         .adempimenti-list {
             padding: 30px;
@@ -201,51 +217,42 @@
         }
 
         .adempimento-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transform: translateX(5px);
         }
 
-        .adempimento-card.categoria-contabilita { border-left-color: #3498db; }
-        .adempimento-card.categoria-tributi { border-left-color: #e74c3c; }
-        .adempimento-card.categoria-personale { border-left-color: #9b59b6; }
-        .adempimento-card.categoria-rendicontazione { border-left-color: #27ae60; }
-        .adempimento-card.categoria-monitoraggi { border-left-color: #f39c12; }
+        .adempimento-card.priorita-alta {
+            border-left-color: #e74c3c;
+        }
+
+        .adempimento-card.priorita-media {
+            border-left-color: #f39c12;
+        }
+
+        .adempimento-card.priorita-bassa {
+            border-left-color: #27ae60;
+        }
 
         .adempimento-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
             margin-bottom: 15px;
-            gap: 15px;
-            cursor: pointer;
-        }
-
-        .adempimento-header:hover {
-            opacity: 0.8;
-        }
-
-        .adempimento-title-section {
-            flex: 1;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .adempimento-title {
-            font-size: 1.3em;
+            font-size: 1.4em;
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 8px;
+            flex: 1;
         }
 
-        .adempimento-meta {
+        .adempimento-badges {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             flex-wrap: wrap;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .adempimento-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
         .badge {
@@ -254,153 +261,72 @@
             font-size: 12px;
             font-weight: bold;
             color: white;
-            white-space: nowrap;
         }
 
-        .badge-categoria-contabilita { background: #3498db; }
-        .badge-categoria-tributi { background: #e74c3c; }
-        .badge-categoria-personale { background: #9b59b6; }
-        .badge-categoria-rendicontazione { background: #27ae60; }
-        .badge-categoria-monitoraggi { background: #f39c12; }
-        .badge-scaduto { background: #e74c3c; }
-        .badge-prossimo { background: #f39c12; }
+        .badge-priorita-alta { background: #e74c3c; }
+        .badge-priorita-media { background: #f39c12; }
+        .badge-priorita-bassa { background: #27ae60; }
+        .badge-stato-completato { background: #27ae60; }
+        .badge-stato-corso { background: #f39c12; }
+        .badge-stato-ritardo { background: #e74c3c; }
+        .badge-stato-non-iniziato { background: #95a5a6; }
 
-        .progress-section {
-            margin: 15px 0;
+        .adempimento-body {
+            margin-bottom: 15px;
         }
 
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
+        .adempimento-description {
             color: #555;
+            margin-bottom: 10px;
+            line-height: 1.6;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 10px;
+        .adempimento-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .adempimento-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .adempimento-meta-item strong {
+            color: #2c3e50;
+        }
+
+        .comuni-list {
+            margin-top: 10px;
+            padding: 10px;
             background: #ecf0f1;
             border-radius: 5px;
-            overflow: hidden;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-            transition: width 0.3s;
-        }
-
-        .toggle-icon {
-            font-size: 1.5em;
-            color: #3498db;
-            transition: transform 0.3s;
-        }
-
-        .toggle-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .enti-details {
-            display: none;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #ecf0f1;
-        }
-
-        .enti-details.visible {
-            display: block;
-        }
-
-        .enti-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-        }
-
-        .ente-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s;
-        }
-
-        .ente-item:hover {
-            border-color: #3498db;
-            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.2);
-        }
-
-        .ente-item.completato {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-
-        .ente-header {
+        .comuni-tags {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .ente-nome {
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 15px;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
+            margin-top: 8px;
         }
 
-        .checkbox-custom {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            accent-color: #27ae60;
-        }
-
-        .checkbox-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #27ae60;
-        }
-
-        .note-section {
-            margin-top: 10px;
-        }
-
-        .note-label {
+        .comune-tag {
+            background: #3498db;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-size: 12px;
-            color: #7f8c8d;
-            margin-bottom: 5px;
-        }
-
-        .note-input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 13px;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .note-input:focus {
-            outline: none;
-            border-color: #3498db;
         }
 
         .adempimento-actions {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 15px;
             padding-top: 15px;
-            border-top: 2px solid #ecf0f1;
-            flex-wrap: wrap;
+            border-top: 1px solid #ecf0f1;
         }
 
         .adempimento-actions button {
@@ -420,7 +346,6 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow-y: auto;
         }
 
         .modal.active {
@@ -431,10 +356,11 @@
             background: white;
             padding: 30px;
             border-radius: 15px;
-            max-width: 900px;
+            max-width: 800px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
         .modal-header {
@@ -460,6 +386,13 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: #c0392b;
         }
 
         .form-group {
@@ -485,8 +418,15 @@
         }
 
         .form-group textarea {
-            min-height: 80px;
+            min-height: 100px;
             resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
         }
 
         .comuni-selector {
@@ -504,6 +444,7 @@
             padding: 8px;
             margin-bottom: 5px;
             border-radius: 5px;
+            transition: background 0.2s;
         }
 
         .comune-checkbox:hover {
@@ -515,12 +456,25 @@
             margin-right: 10px;
         }
 
+        .comune-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
         .select-all-comuni {
             margin-bottom: 15px;
             padding: 10px;
             background: #3498db;
             color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             width: 100%;
+        }
+
+        .select-all-comuni:hover {
+            background: #2980b9;
         }
 
         .form-actions {
@@ -542,6 +496,12 @@
             margin-bottom: 20px;
         }
 
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -555,27 +515,53 @@
                 grid-template-columns: 1fr;
             }
 
-            .enti-grid {
-                grid-template-columns: 1fr;
+            .adempimento-header {
+                flex-direction: column;
             }
+
+            .adempimento-actions {
+                flex-direction: column;
+            }
+
+            .adempimento-actions button {
+                width: 100%;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .loading-spinner {
+            border: 4px solid #ecf0f1;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Alert Banner -->
-    <div class="alert-banner" id="alertBanner"></div>
-
     <div class="container">
         <!-- Header -->
         <div class="header">
             <h1>📅 Scadenziario Studio Grismondi</h1>
-            <p>Sistema Gestione Adempimenti - <span id="currentMonthDisplay">Ottobre 2025</span></p>
+            <p>Sistema di Gestione Adempimenti per Enti Locali</p>
         </div>
 
         <!-- User Section -->
         <div class="user-section">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <span>Utente:</span>
+            <div class="user-info">
+                <span>Utente corrente:</span>
                 <span class="user-badge" id="currentUserBadge">Andrea Grismondi</span>
             </div>
             <div>
@@ -594,17 +580,17 @@
                 <div class="stat-label">Totali</div>
                 <div class="stat-number" id="statTotali">0</div>
             </div>
+            <div class="stat-card stat-corso">
+                <div class="stat-label">In Corso</div>
+                <div class="stat-number" id="statCorso">0</div>
+            </div>
             <div class="stat-card stat-completati">
                 <div class="stat-label">Completati</div>
                 <div class="stat-number" id="statCompletati">0</div>
             </div>
-            <div class="stat-card stat-dafare">
-                <div class="stat-label">Da Fare</div>
-                <div class="stat-number" id="statDaFare">0</div>
-            </div>
-            <div class="stat-card stat-scaduti">
-                <div class="stat-label">Scaduti</div>
-                <div class="stat-number" id="statScaduti">0</div>
+            <div class="stat-card stat-ritardo">
+                <div class="stat-label">In Ritardo</div>
+                <div class="stat-number" id="statRitardo">0</div>
             </div>
         </div>
 
@@ -612,91 +598,95 @@
         <div class="controls">
             <div class="filters">
                 <div class="filter-group">
-                    <label>Mese</label>
-                    <input type="month" id="filtroMese" onchange="applicaFiltri()">
-                </div>
-                <div class="filter-group">
-                    <label>Categoria</label>
-                    <select id="filtroCategoria" onchange="applicaFiltri()">
-                        <option value="">Tutte</option>
-                        <option value="Contabilità">Contabilità</option>
-                        <option value="Tributi">Tributi</option>
-                        <option value="Personale">Personale</option>
-                        <option value="Rendicontazione">Rendicontazione</option>
-                        <option value="Monitoraggi">Monitoraggi</option>
+                    <label>Anno</label>
+                    <select id="filtroAnno" onchange="applicaFiltri()">
+                        <option value="">Tutti gli anni</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Stato</label>
                     <select id="filtroStato" onchange="applicaFiltri()">
-                        <option value="">Tutti</option>
-                        <option value="completati">Solo Completati</option>
-                        <option value="da_fare">Da Fare</option>
-                        <option value="scaduti">Scaduti</option>
+                        <option value="">Tutti gli stati</option>
+                        <option value="Non Iniziato">Non Iniziato</option>
+                        <option value="In Corso">In Corso</option>
+                        <option value="Completato">Completato</option>
+                        <option value="In Ritardo">In Ritardo</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label>Ricerca</label>
-                    <input type="text" id="filtroRicerca" placeholder="Cerca..." onkeyup="applicaFiltri()">
+                    <label>Priorità</label>
+                    <select id="filtroPriorita" onchange="applicaFiltri()">
+                        <option value="">Tutte le priorità</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Media</option>
+                        <option value="Bassa">Bassa</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Comune</label>
+                    <select id="filtroComune" onchange="applicaFiltri()">
+                        <option value="">Tutti i comuni</option>
+                    </select>
                 </div>
             </div>
             <div class="action-buttons">
                 <button class="btn-primary" id="btnNuovo" onclick="apriModalCreazione()">➕ Nuovo Adempimento</button>
                 <button class="btn-secondary" onclick="pulisciFiltri()">🔄 Pulisci Filtri</button>
-                <button class="btn-success" onclick="esportaDati()">📥 Esporta CSV</button>
-                <button class="btn-warning" onclick="ripristinaDati()">📤 Importa</button>
-                <button class="btn-purple" onclick="gestioneEnti()">🏛️ Gestisci Enti</button>
+                <button class="btn-success" onclick="esportaDati()">📥 Esporta Dati</button>
+                <button class="btn-warning" onclick="ripristinaDati()">📤 Ripristina Backup</button>
             </div>
         </div>
 
         <!-- Lista Adempimenti -->
         <div class="adempimenti-list" id="adempimentiContainer">
-            <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-                <div style="font-size: 3em; margin-bottom: 20px;">📋</div>
+            <div class="loading">
+                <div class="loading-spinner"></div>
                 <p>Caricamento adempimenti...</p>
             </div>
         </div>
     </div>
 
-    <!-- Modal Adempimento -->
+    <!-- Modal Creazione/Modifica -->
     <div class="modal" id="modalAdempimento">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitolo">Nuovo Adempimento</h2>
-                <button class="close-modal" onclick="chiudiModal('modalAdempimento')">✕</button>
+                <button class="close-modal" onclick="chiudiModal()">✕</button>
             </div>
             <form id="formAdempimento" onsubmit="salvaAdempimento(event)">
                 <input type="hidden" id="adempimentoId">
                 
                 <div class="form-group">
-                    <label>Titolo *</label>
-                    <input type="text" id="inputTitolo" required placeholder="Es: F24EP stipendi SETTEMBRE">
+                    <label for="inputTitolo">Titolo *</label>
+                    <input type="text" id="inputTitolo" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Descrizione</label>
-                    <textarea id="inputDescrizione" placeholder="Dettagli..."></textarea>
+                    <label for="inputDescrizione">Descrizione</label>
+                    <textarea id="inputDescrizione"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Categoria *</label>
-                    <select id="inputCategoria" required>
-                        <option value="Contabilità">Contabilità</option>
-                        <option value="Tributi">Tributi</option>
-                        <option value="Personale">Personale</option>
-                        <option value="Rendicontazione">Rendicontazione</option>
-                        <option value="Monitoraggi">Monitoraggi</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Scadenza *</label>
+                    <label for="inputScadenza">Data Scadenza *</label>
                     <input type="date" id="inputScadenza" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Email Promemoria (separati da virgola)</label>
-                    <input type="text" id="inputEmail" placeholder="mario@studio.it, laura@studio.it">
+                    <label for="inputPriorita">Priorità *</label>
+                    <select id="inputPriorita" required>
+                        <option value="Bassa">Bassa</option>
+                        <option value="Media" selected>Media</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputStato">Stato *</label>
+                    <select id="inputStato" required>
+                        <option value="Non Iniziato" selected>Non Iniziato</option>
+                        <option value="In Corso">In Corso</option>
+                        <option value="Completato">Completato</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -706,34 +696,19 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-success">💾 Salva</button>
-                    <button type="button" class="btn-secondary" onclick="chiudiModal('modalAdempimento')">Annulla</button>
+                    <button type="submit" class="btn-success">💾 Salva Adempimento</button>
+                    <button type="button" class="btn-secondary" onclick="chiudiModal()">Annulla</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Gestione Enti -->
-    <div class="modal" id="modalEnti">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Gestione Enti</h2>
-                <button class="close-modal" onclick="chiudiModal('modalEnti')">✕</button>
-            </div>
-            <div id="listaEnti"></div>
-            <div class="form-actions">
-                <button class="btn-primary" onclick="aggiungiEnte()">➕ Aggiungi Ente</button>
-                <button class="btn-secondary" onclick="chiudiModal('modalEnti')">Chiudi</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // ============================================
-        // CONFIGURAZIONE
+        // CONFIGURAZIONE GLOBALE
         // ============================================
         
-        const COMUNI_DEFAULT = [
+        const COMUNI = [
             'Bossico', 'Carobbio degli Angeli', 'Castro', 'Cavernago',
             'Cenate Sotto', 'Colere', 'Filago', 'Foppolo', 'Onore',
             'Osio Sopra', 'Osio Sotto', 'Parzanica', 'Ponte San Pietro',
@@ -741,44 +716,59 @@
             'Ubiale Clanezzo', 'Zanica'
         ];
 
+        const UTENTI = {
+            'Andrea Grismondi': { ruolo: 'admin' },
+            'Roberta': { ruolo: 'user' },
+            'Nicoletta': { ruolo: 'user' },
+            'Miriana': { ruolo: 'user' }
+        };
+
         const STORAGE_KEY = 'scadenziari_adempimenti';
-        const STORAGE_KEY_COMUNI = 'scadenziari_comuni';
         
         let adempimenti = [];
-        let comuni = [];
         let utenteCorrente = 'Andrea Grismondi';
-        let meseCorrente = '';
+        let adempimentoInModifica = null;
 
         // ============================================
         // INIZIALIZZAZIONE
         // ============================================
 
         function inizializzaSistema() {
-            console.log('🚀 Inizializzazione Sistema...');
+            console.log('🚀 Inizializzazione Sistema Scadenziario...');
             
+            // Carica dati da localStorage
             caricaDati();
-            impostaMeseCorrente();
-            popolaFiltroMese();
+            
+            // Popola selettori
+            popolaFiltroComuni();
+            popolaFiltroAnni();
             popolaComuniModal();
-            verificaScadenzeImminenti();
+            
+            // Aggiorna UI
             aggiornaStatistiche();
             renderizzaAdempimenti();
+            aggiornaPermessi();
             
-            console.log('✅ Sistema inizializzato');
+            console.log('✅ Sistema inizializzato con successo');
+            console.log('📊 Adempimenti caricati:', adempimenti.length);
         }
+
+        // ============================================
+        // GESTIONE PERSISTENZA DATI
+        // ============================================
 
         function caricaDati() {
             try {
-                const comuniSalvati = localStorage.getItem(STORAGE_KEY_COMUNI);
-                comuni = comuniSalvati ? JSON.parse(comuniSalvati) : [...COMUNI_DEFAULT];
-                
                 const datiSalvati = localStorage.getItem(STORAGE_KEY);
-                adempimenti = datiSalvati ? JSON.parse(datiSalvati) : [];
-                
-                console.log('✅ Dati caricati:', adempimenti.length, 'adempimenti');
+                if (datiSalvati) {
+                    adempimenti = JSON.parse(datiSalvati);
+                    console.log('✅ Dati caricati da localStorage:', adempimenti.length, 'adempimenti');
+                } else {
+                    adempimenti = [];
+                    console.log('ℹ️ Nessun dato salvato, array vuoto inizializzato');
+                }
             } catch (error) {
-                console.error('❌ Errore caricamento:', error);
-                comuni = [...COMUNI_DEFAULT];
+                console.error('❌ Errore nel caricamento dati:', error);
                 adempimenti = [];
             }
         }
@@ -786,29 +776,64 @@
         function salvaDati() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(adempimenti));
-                localStorage.setItem(STORAGE_KEY_COMUNI, JSON.stringify(comuni));
-                console.log('💾 Dati salvati');
+                console.log('💾 Dati salvati in localStorage:', adempimenti.length, 'adempimenti');
                 return true;
             } catch (error) {
-                console.error('❌ Errore salvataggio:', error);
-                alert('Errore nel salvataggio');
+                console.error('❌ Errore nel salvataggio dati:', error);
+                alert('Errore nel salvataggio dei dati. Controlla lo spazio disponibile.');
                 return false;
             }
         }
 
-        function impostaMeseCorrente() {
-            const oggi = new Date();
-            const anno = oggi.getFullYear();
-            const mese = String(oggi.getMonth() + 1).padStart(2, '0');
-            meseCorrente = `${anno}-${mese}`;
-            document.getElementById('filtroMese').value = meseCorrente;
-            
-            const nomeMese = oggi.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
-            document.getElementById('currentMonthDisplay').textContent = nomeMese.charAt(0).toUpperCase() + nomeMese.slice(1);
+        function esportaDati() {
+            try {
+                const dataStr = JSON.stringify(adempimenti, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'scadenziario_backup_' + new Date().toISOString().split('T')[0] + '.json';
+                link.click();
+                URL.revokeObjectURL(url);
+                console.log('📥 Backup esportato con successo');
+            } catch (error) {
+                console.error('❌ Errore esportazione:', error);
+                alert('Errore durante l\'esportazione dei dati');
+            }
         }
 
-        function popolaFiltroMese() {
-            // Il filtro mese è già un input type="month", non serve popolare
+        function ripristinaDati() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const datiImportati = JSON.parse(e.target.result);
+                            if (Array.isArray(datiImportati)) {
+                                if (confirm('Confermi il ripristino? Tutti i dati attuali saranno sovrascritti.')) {
+                                    adempimenti = datiImportati;
+                                    salvaDati();
+                                    aggiornaStatistiche();
+                                    renderizzaAdempimenti();
+                                    alert('✅ Dati ripristinati con successo!');
+                                    console.log('📤 Backup ripristinato:', adempimenti.length, 'adempimenti');
+                                }
+                            } else {
+                                throw new Error('Formato file non valido');
+                            }
+                        } catch (error) {
+                            console.error('❌ Errore ripristino:', error);
+                            alert('Errore: file non valido o corrotto');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
         }
 
         // ============================================
@@ -816,82 +841,139 @@
         // ============================================
 
         function switchUtente() {
-            utenteCorrente = document.getElementById('userSelector').value;
+            const selector = document.getElementById('userSelector');
+            utenteCorrente = selector.value;
+            
             const badge = document.getElementById('currentUserBadge');
             badge.textContent = utenteCorrente;
-            badge.className = 'user-badge' + (utenteCorrente === 'Andrea Grismondi' ? ' admin-badge' : '');
+            
+            if (UTENTI[utenteCorrente].ruolo === 'admin') {
+                badge.classList.add('admin-badge');
+            } else {
+                badge.classList.remove('admin-badge');
+            }
+            
+            aggiornaPermessi();
+            console.log('👤 Utente cambiato:', utenteCorrente, '- Ruolo:', UTENTI[utenteCorrente].ruolo);
+        }
+
+        function aggiornaPermessi() {
+            const isAdmin = UTENTI[utenteCorrente].ruolo === 'admin';
+            const btnNuovo = document.getElementById('btnNuovo');
+            
+            if (btnNuovo) {
+                btnNuovo.disabled = !isAdmin;
+            }
+            
             renderizzaAdempimenti();
         }
 
         function isUtenteAdmin() {
-            return utenteCorrente === 'Andrea Grismondi';
+            return UTENTI[utenteCorrente].ruolo === 'admin';
         }
 
         // ============================================
-        // ALERT SCADENZE
+        // POPOLAMENTO FILTRI E SELETTORI
         // ============================================
 
-        function verificaScadenzeImminenti() {
-            const oggi = new Date();
-            oggi.setHours(0, 0, 0, 0);
-            const treGiorni = new Date(oggi);
-            treGiorni.setDate(treGiorni.getDate() + 3);
+        function popolaFiltroComuni() {
+            const filtroComune = document.getElementById('filtroComune');
+            filtroComune.innerHTML = '<option value="">Tutti i comuni</option>';
             
-            const scadenzeImminenti = adempimenti.filter(a => {
-                const scadenza = new Date(a.Scadenza);
-                scadenza.setHours(0, 0, 0, 0);
-                return scadenza <= treGiorni && scadenza >= oggi;
+            COMUNI.forEach(comune => {
+                const option = document.createElement('option');
+                option.value = comune;
+                option.textContent = comune;
+                filtroComune.appendChild(option);
+            });
+        }
+
+        function popolaFiltroAnni() {
+            const filtroAnno = document.getElementById('filtroAnno');
+            const anni = new Set();
+            
+            adempimenti.forEach(adempimento => {
+                if (adempimento.Scadenza) {
+                    const anno = new Date(adempimento.Scadenza).getFullYear();
+                    anni.add(anno);
+                }
             });
             
-            const banner = document.getElementById('alertBanner');
-            if (scadenzeImminenti.length > 0) {
-                banner.textContent = `⚠️ ATTENZIONE: ${scadenzeImminenti.length} adempimento/i in scadenza nei prossimi 3 giorni!`;
-                banner.classList.add('visible');
-            } else {
-                banner.classList.remove('visible');
+            const annoCorrente = new Date().getFullYear();
+            for (let i = -2; i <= 2; i++) {
+                anni.add(annoCorrente + i);
             }
+            
+            filtroAnno.innerHTML = '<option value="">Tutti gli anni</option>';
+            Array.from(anni).sort().forEach(anno => {
+                const option = document.createElement('option');
+                option.value = anno;
+                option.textContent = anno;
+                filtroAnno.appendChild(option);
+            });
+        }
+
+        function popolaComuniModal() {
+            const container = document.getElementById('comuniSelector');
+            container.innerHTML = '';
+            
+            COMUNI.forEach(comune => {
+                const div = document.createElement('div');
+                div.className = 'comune-checkbox';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = 'comune_' + comune.replace(/\s/g, '_');
+                checkbox.value = comune;
+                checkbox.name = 'comuni';
+                
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = comune;
+                
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                container.appendChild(div);
+            });
         }
 
         // ============================================
-        // STATISTICHE
+        // GESTIONE STATISTICHE
         // ============================================
 
         function aggiornaStatistiche() {
             const oggi = new Date();
             oggi.setHours(0, 0, 0, 0);
             
-            let totali = 0;
+            let totali = adempimenti.length;
             let completati = 0;
-            let daFare = 0;
-            let scaduti = 0;
+            let inCorso = 0;
+            let inRitardo = 0;
             
             adempimenti.forEach(adempimento => {
                 const scadenza = new Date(adempimento.Scadenza);
                 scadenza.setHours(0, 0, 0, 0);
                 
-                adempimento.Comuni.split(';').forEach(comune => {
-                    const stato = adempimento.StatiComuni?.[comune.trim()] || { fatto: false, note: '' };
-                    totali++;
-                    
-                    if (stato.fatto) {
-                        completati++;
-                    } else {
-                        daFare++;
-                        if (scadenza < oggi) {
-                            scaduti++;
-                        }
+                if (adempimento.Stato === 'Completato') {
+                    completati++;
+                } else if (adempimento.Stato === 'In Corso') {
+                    inCorso++;
+                    if (scadenza < oggi) {
+                        inRitardo++;
                     }
-                });
+                } else if (adempimento.Stato === 'Non Iniziato' && scadenza < oggi) {
+                    inRitardo++;
+                }
             });
             
             document.getElementById('statTotali').textContent = totali;
+            document.getElementById('statCorso').textContent = inCorso;
             document.getElementById('statCompletati').textContent = completati;
-            document.getElementById('statDaFare').textContent = daFare;
-            document.getElementById('statScaduti').textContent = scaduti;
+            document.getElementById('statRitardo').textContent = inRitardo;
         }
 
         // ============================================
-        // RENDERIZZAZIONE
+        // RENDERIZZAZIONE ADEMPIMENTI
         // ============================================
 
         function renderizzaAdempimenti() {
@@ -903,223 +985,150 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">📋</div>
                         <h3>Nessun adempimento trovato</h3>
-                        <p>Non ci sono adempimenti per i filtri selezionati.</p>
+                        <p>Non ci sono adempimenti che corrispondono ai filtri selezionati.</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = adempimentiFiltrati.map(adempimento => creaCardAdempimento(adempimento)).join('');
+            container.innerHTML = '';
+            
+            adempimentiFiltrati.forEach(adempimento => {
+                const card = creaCardAdempimento(adempimento);
+                container.appendChild(card);
+            });
         }
 
         function creaCardAdempimento(adempimento) {
+            const card = document.createElement('div');
+            card.className = 'adempimento-card priorita-' + adempimento.Priorita.toLowerCase();
+            
+            const statoEffettivo = calcolaStatoEffettivo(adempimento);
+            
+            card.innerHTML = `
+                <div class="adempimento-header">
+                    <div class="adempimento-title">${adempimento.Titolo}</div>
+                    <div class="adempimento-badges">
+                        <span class="badge badge-priorita-${adempimento.Priorita.toLowerCase()}">${adempimento.Priorita}</span>
+                        <span class="badge badge-stato-${statoEffettivo.toLowerCase().replace(/\s/g, '-')}">${statoEffettivo}</span>
+                    </div>
+                </div>
+                
+                <div class="adempimento-body">
+                    ${adempimento.Descrizione ? `<div class="adempimento-description">${adempimento.Descrizione}</div>` : ''}
+                    
+                    <div class="adempimento-meta">
+                        <div class="adempimento-meta-item">
+                            <strong>📅 Scadenza:</strong> ${formattaData(adempimento.Scadenza)}
+                        </div>
+                        <div class="adempimento-meta-item">
+                            <strong>🏛️ Comuni:</strong> ${adempimento.Comuni.split(';').length}
+                        </div>
+                    </div>
+                    
+                    <div class="comuni-list">
+                        <strong>Comuni interessati:</strong>
+                        <div class="comuni-tags">
+                            ${adempimento.Comuni.split(';').map(c => `<span class="comune-tag">${c.trim()}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                ${isUtenteAdmin() ? `
+                <div class="adempimento-actions">
+                    <button class="btn-warning" onclick="modificaAdempimento(${adempimento.ID})">✏️ Modifica</button>
+                    <button class="btn-danger" onclick="eliminaAdempimento(${adempimento.ID})">🗑️ Elimina</button>
+                </div>
+                ` : ''}
+            `;
+            
+            return card;
+        }
+
+        function calcolaStatoEffettivo(adempimento) {
+            if (adempimento.Stato === 'Completato') {
+                return 'Completato';
+            }
+            
             const oggi = new Date();
             oggi.setHours(0, 0, 0, 0);
             const scadenza = new Date(adempimento.Scadenza);
             scadenza.setHours(0, 0, 0, 0);
             
-            let badgeScadenza = '';
-            if (scadenza < oggi) {
-                badgeScadenza = '<span class="badge badge-scaduto">SCADUTO</span>';
-            } else {
-                const giorni = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-                if (giorni <= 3) {
-                    badgeScadenza = `<span class="badge badge-prossimo">SCADE TRA ${giorni} GG</span>`;
-                }
+            if (scadenza < oggi && adempimento.Stato !== 'Completato') {
+                return 'In Ritardo';
             }
             
-            const comuni = adempimento.Comuni.split(';');
-            const statiComuni = adempimento.StatiComuni || {};
-            
-            let completati = 0;
-            comuni.forEach(comune => {
-                const stato = statiComuni[comune.trim()] || { fatto: false };
-                if (stato.fatto) completati++;
-            });
-            
-            const percentuale = Math.round((completati / comuni.length) * 100);
-            
-            return `
-                <div class="adempimento-card categoria-${adempimento.Categoria.toLowerCase()}">
-                    <div class="adempimento-header" onclick="toggleEntiDetails(${adempimento.ID})">
-                        <div class="adempimento-title-section">
-                            <div class="adempimento-title">${adempimento.Titolo}</div>
-                            <div class="adempimento-meta">
-                                <div class="adempimento-meta-item">
-                                    <span class="badge badge-categoria-${adempimento.Categoria.toLowerCase()}">${adempimento.Categoria}</span>
-                                </div>
-                                <div class="adempimento-meta-item">
-                                    📅 ${formattaData(adempimento.Scadenza)}
-                                </div>
-                                <div class="adempimento-meta-item">
-                                    🏛️ ${comuni.length} comuni
-                                </div>
-                                ${badgeScadenza}
-                            </div>
-                        </div>
-                        <div>
-                            <span class="toggle-icon" id="toggle-${adempimento.ID}">▼</span>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-section">
-                        <div class="progress-info">
-                            <span><strong>Progresso:</strong> ${completati}/${comuni.length} completati</span>
-                            <span><strong>${percentuale}%</strong></span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percentuale}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="enti-details" id="enti-${adempimento.ID}">
-                        <div class="enti-grid">
-                            ${comuni.map(comune => {
-                                const comunePulito = comune.trim();
-                                const stato = statiComuni[comunePulito] || { fatto: false, note: '' };
-                                return `
-                                    <div class="ente-item ${stato.fatto ? 'completato' : ''}">
-                                        <div class="ente-header">
-                                            <div class="ente-nome">${comunePulito}</div>
-                                            <div class="checkbox-container">
-                                                <input type="checkbox" 
-                                                       class="checkbox-custom" 
-                                                       ${stato.fatto ? 'checked' : ''}
-                                                       onchange="toggleCompletatoComune(${adempimento.ID}, '${comunePulito}', this.checked)">
-                                                <span class="checkbox-label">${stato.fatto ? '✅ Fatto' : 'Da Fare'}</span>
-                                            </div>
-                                        </div>
-                                        <div class="note-section">
-                                            <div class="note-label">📝 Note:</div>
-                                            <textarea class="note-input" 
-                                                      placeholder="Aggiungi note per ${comunePulito}..."
-                                                      onchange="aggiornaNoteComune(${adempimento.ID}, '${comunePulito}', this.value)">${stato.note || ''}</textarea>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                        
-                        ${isUtenteAdmin() ? `
-                        <div class="adempimento-actions">
-                            <button class="btn-warning" onclick="modificaAdempimento(${adempimento.ID})">✏️ Modifica</button>
-                            <button class="btn-danger" onclick="eliminaAdempimento(${adempimento.ID})">🗑️ Elimina</button>
-                            ${adempimento.Email ? `<button class="btn-purple" onclick="inviaPromemoria(${adempimento.ID})">📧 Invia Promemoria</button>` : ''}
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        function toggleEntiDetails(id) {
-            const details = document.getElementById(`enti-${id}`);
-            const icon = document.getElementById(`toggle-${id}`);
-            
-            if (details.classList.contains('visible')) {
-                details.classList.remove('visible');
-                icon.classList.remove('expanded');
-            } else {
-                details.classList.add('visible');
-                icon.classList.add('expanded');
-            }
+            return adempimento.Stato;
         }
 
         function formattaData(dataStr) {
             const data = new Date(dataStr);
-            return data.toLocaleDateString('it-IT', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+            const giorni = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+            const mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+            
+            return `${giorni[data.getDay()]} ${data.getDate()} ${mesi[data.getMonth()]} ${data.getFullYear()}`;
         }
 
         // ============================================
-        // GESTIONE STATI COMUNI
-        // ============================================
-
-        function toggleCompletatoComune(adempimentoId, comune, fatto) {
-            const adempimento = adempimenti.find(a => a.ID === adempimentoId);
-            if (!adempimento) return;
-            
-            if (!adempimento.StatiComuni) adempimento.StatiComuni = {};
-            if (!adempimento.StatiComuni[comune]) adempimento.StatiComuni[comune] = { fatto: false, note: '' };
-            
-            adempimento.StatiComuni[comune].fatto = fatto;
-            salvaDati();
-            aggiornaStatistiche();
-            renderizzaAdempimenti();
-        }
-
-        function aggiornaNoteComune(adempimentoId, comune, note) {
-            const adempimento = adempimenti.find(a => a.ID === adempimentoId);
-            if (!adempimento) return;
-            
-            if (!adempimento.StatiComuni) adempimento.StatiComuni = {};
-            if (!adempimento.StatiComuni[comune]) adempimento.StatiComuni[comune] = { fatto: false, note: '' };
-            
-            adempimento.StatiComuni[comune].note = note;
-            salvaDati();
-        }
-
-        // ============================================
-        // FILTRI
+        // GESTIONE FILTRI
         // ============================================
 
         function applicaFiltri() {
-            const mese = document.getElementById('filtroMese').value;
-            const categoria = document.getElementById('filtroCategoria').value;
-            const stato = document.getElementById('filtroStato').value;
-            const ricerca = document.getElementById('filtroRicerca').value.toLowerCase();
+            const filtroAnno = document.getElementById('filtroAnno').value;
+            const filtroStato = document.getElementById('filtroStato').value;
+            const filtroPriorita = document.getElementById('filtroPriorita').value;
+            const filtroComune = document.getElementById('filtroComune').value;
             
-            const oggi = new Date();
-            oggi.setHours(0, 0, 0, 0);
+            let risultati = [...adempimenti];
             
-            return adempimenti.filter(a => {
-                // Filtro mese
-                if (mese && !a.Scadenza.startsWith(mese)) return false;
-                
-                // Filtro categoria
-                if (categoria && a.Categoria !== categoria) return false;
-                
-                // Filtro ricerca
-                if (ricerca && !a.Titolo.toLowerCase().includes(ricerca) && !a.Descrizione?.toLowerCase().includes(ricerca)) return false;
-                
-                // Filtro stato
-                if (stato) {
-                    const scadenza = new Date(a.Scadenza);
-                    scadenza.setHours(0, 0, 0, 0);
-                    
-                    const statiComuni = a.StatiComuni || {};
+            if (filtroAnno) {
+                risultati = risultati.filter(a => {
+                    const anno = new Date(a.Scadenza).getFullYear();
+                    return anno.toString() === filtroAnno;
+                });
+            }
+            
+            if (filtroStato) {
+                risultati = risultati.filter(a => {
+                    const statoEffettivo = calcolaStatoEffettivo(a);
+                    return statoEffettivo === filtroStato;
+                });
+            }
+            
+            if (filtroPriorita) {
+                risultati = risultati.filter(a => a.Priorita === filtroPriorita);
+            }
+            
+            if (filtroComune) {
+                risultati = risultati.filter(a => {
                     const comuni = a.Comuni.split(';').map(c => c.trim());
-                    
-                    if (stato === 'completati') {
-                        return comuni.every(c => statiComuni[c]?.fatto);
-                    } else if (stato === 'da_fare') {
-                        return comuni.some(c => !statiComuni[c]?.fatto);
-                    } else if (stato === 'scaduti') {
-                        return scadenza < oggi && comuni.some(c => !statiComuni[c]?.fatto);
-                    }
-                }
-                
-                return true;
-            }).sort((a, b) => new Date(a.Scadenza) - new Date(b.Scadenza));
+                    return comuni.includes(filtroComune);
+                });
+            }
+            
+            return risultati.sort((a, b) => new Date(a.Scadenza) - new Date(b.Scadenza));
         }
 
         function pulisciFiltri() {
-            impostaMeseCorrente();
-            document.getElementById('filtroCategoria').value = '';
+            document.getElementById('filtroAnno').value = '';
             document.getElementById('filtroStato').value = '';
-            document.getElementById('filtroRicerca').value = '';
+            document.getElementById('filtroPriorita').value = '';
+            document.getElementById('filtroComune').value = '';
             renderizzaAdempimenti();
         }
 
         // ============================================
-        // CRUD ADEMPIMENTI
+        // GESTIONE MODAL
         // ============================================
 
         function apriModalCreazione() {
             if (!isUtenteAdmin()) {
-                alert('Solo gli amministratori possono creare adempimenti');
+                alert('Solo gli amministratori possono creare nuovi adempimenti');
                 return;
             }
             
+            adempimentoInModifica = null;
             document.getElementById('modalTitolo').textContent = 'Nuovo Adempimento';
             document.getElementById('formAdempimento').reset();
             document.getElementById('adempimentoId').value = '';
@@ -1132,20 +1141,24 @@
 
         function modificaAdempimento(id) {
             if (!isUtenteAdmin()) {
-                alert('Solo gli amministratori possono modificare adempimenti');
+                alert('Solo gli amministratori possono modificare gli adempimenti');
                 return;
             }
             
             const adempimento = adempimenti.find(a => a.ID === id);
-            if (!adempimento) return;
+            if (!adempimento) {
+                alert('Adempimento non trovato');
+                return;
+            }
             
+            adempimentoInModifica = adempimento;
             document.getElementById('modalTitolo').textContent = 'Modifica Adempimento';
             document.getElementById('adempimentoId').value = adempimento.ID;
             document.getElementById('inputTitolo').value = adempimento.Titolo;
             document.getElementById('inputDescrizione').value = adempimento.Descrizione || '';
-            document.getElementById('inputCategoria').value = adempimento.Categoria;
             document.getElementById('inputScadenza').value = adempimento.Scadenza;
-            document.getElementById('inputEmail').value = adempimento.Email || '';
+            document.getElementById('inputPriorita').value = adempimento.Priorita;
+            document.getElementById('inputStato').value = adempimento.Stato;
             
             const comuniSelezionati = adempimento.Comuni.split(';').map(c => c.trim());
             const checkboxes = document.querySelectorAll('#comuniSelector input[type="checkbox"]');
@@ -1155,6 +1168,21 @@
             
             document.getElementById('modalAdempimento').classList.add('active');
         }
+
+        function chiudiModal() {
+            document.getElementById('modalAdempimento').classList.remove('active');
+            adempimentoInModifica = null;
+        }
+
+        function toggleTuttiComuni() {
+            const checkboxes = document.querySelectorAll('#comuniSelector input[type="checkbox"]');
+            const tuttiSelezionati = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !tuttiSelezionati);
+        }
+
+        // ============================================
+        // CRUD ADEMPIMENTI
+        // ============================================
 
         function salvaAdempimento(event) {
             event.preventDefault();
@@ -1176,9 +1204,9 @@
             const dati = {
                 Titolo: document.getElementById('inputTitolo').value.trim(),
                 Descrizione: document.getElementById('inputDescrizione').value.trim(),
-                Categoria: document.getElementById('inputCategoria').value,
                 Scadenza: document.getElementById('inputScadenza').value,
-                Email: document.getElementById('inputEmail').value.trim(),
+                Priorita: document.getElementById('inputPriorita').value,
+                Stato: document.getElementById('inputStato').value,
                 Comuni: comuniSelezionati.join(';')
             };
             
@@ -1187,26 +1215,23 @@
             if (idModifica) {
                 const index = adempimenti.findIndex(a => a.ID === parseInt(idModifica));
                 if (index !== -1) {
-                    adempimenti[index] = { 
-                        ...adempimenti[index], 
-                        ...dati 
-                    };
+                    adempimenti[index] = { ...adempimenti[index], ...dati };
+                    console.log('✏️ Adempimento modificato:', adempimenti[index]);
                 }
             } else {
                 const nuovoId = adempimenti.length > 0 ? Math.max(...adempimenti.map(a => a.ID)) + 1 : 1;
-                adempimenti.push({ 
-                    ID: nuovoId, 
-                    ...dati,
-                    StatiComuni: {}
-                });
+                const nuovoAdempimento = { ID: nuovoId, ...dati };
+                adempimenti.push(nuovoAdempimento);
+                console.log('➕ Nuovo adempimento creato:', nuovoAdempimento);
             }
             
             salvaDati();
-            verificaScadenzeImminenti();
             aggiornaStatistiche();
+            popolaFiltroAnni();
             renderizzaAdempimenti();
-            chiudiModal('modalAdempimento');
-            alert('✅ Adempimento salvato!');
+            chiudiModal();
+            
+            alert('✅ Adempimento salvato con successo!');
         }
 
         function eliminaAdempimento(id) {
@@ -1216,192 +1241,44 @@
             }
             
             const adempimento = adempimenti.find(a => a.ID === id);
-            if (!adempimento) return;
+            if (!adempimento) {
+                alert('Adempimento non trovato');
+                return;
+            }
             
-            if (confirm(`Confermi l'eliminazione di "${adempimento.Titolo}"?`)) {
+            if (confirm(`Confermi l'eliminazione dell'adempimento "${adempimento.Titolo}"?`)) {
                 adempimenti = adempimenti.filter(a => a.ID !== id);
                 salvaDati();
-                verificaScadenzeImminenti();
                 aggiornaStatistiche();
                 renderizzaAdempimenti();
-                alert('✅ Adempimento eliminato');
+                console.log('🗑️ Adempimento eliminato:', id);
+                alert('✅ Adempimento eliminato con successo');
             }
         }
 
         // ============================================
-        // INVIO PROMEMORIA
-        // ============================================
-
-        function inviaPromemoria(id) {
-            const adempimento = adempimenti.find(a => a.ID === id);
-            if (!adempimento || !adempimento.Email) return;
-            
-            const comuni = adempimento.Comuni.split(';');
-            const statiComuni = adempimento.StatiComuni || {};
-            
-            const comuniDaCompletare = comuni.filter(c => {
-                const stato = statiComuni[c.trim()] || { fatto: false };
-                return !stato.fatto;
-            }).map(c => c.trim());
-            
-            const scadenza = new Date(adempimento.Scadenza);
-            const oggi = new Date();
-            const giorniMancanti = Math.ceil((scadenza - oggi) / (1000 * 60 * 60 * 24));
-            
-            const destinatari = adempimento.Email;
-            const oggetto = `Promemoria - ${adempimento.Titolo} - Scade ${scadenza.toLocaleDateString('it-IT')}`;
-            const corpo = `Gentile collega,
-
-Ti ricordo che l'adempimento "${adempimento.Titolo}" scade il ${scadenza.toLocaleDateString('it-IT')} (${giorniMancanti > 0 ? 'tra ' + giorniMancanti + ' giorni' : 'OGGI'}).
-
-${adempimento.Descrizione ? '\nDescrizione: ' + adempimento.Descrizione + '\n' : ''}
-Categoria: ${adempimento.Categoria}
-
-Enti da completare (${comuniDaCompletare.length}/${comuni.length}):
-${comuniDaCompletare.map(c => '- ' + c).join('\n')}
-
-Cordiali saluti,
-Studio Grismondi`;
-            
-            const mailtoLink = `mailto:${destinatari}?subject=${encodeURIComponent(oggetto)}&body=${encodeURIComponent(corpo)}`;
-            window.location.href = mailtoLink;
-        }
-
-        // ============================================
-        // GESTIONE ENTI
-        // ============================================
-
-        function gestioneEnti() {
-            const container = document.getElementById('listaEnti');
-            container.innerHTML = comuni.sort().map((comune, index) => `
-                <div style="padding: 15px; margin: 10px 0; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <strong>${comune}</strong>
-                    ${isUtenteAdmin() ? `<button class="btn-danger" onclick="rimuoviEnte(${index})">🗑️ Rimuovi</button>` : ''}
-                </div>
-            `).join('');
-            document.getElementById('modalEnti').classList.add('active');
-        }
-
-        function aggiungiEnte() {
-            const nome = prompt('Inserisci il nome del nuovo ente:');
-            if (nome && nome.trim() && !comuni.includes(nome.trim())) {
-                comuni.push(nome.trim());
-                salvaDati();
-                gestioneEnti();
-                popolaComuniModal();
-            }
-        }
-
-        function rimuoviEnte(index) {
-            if (confirm(`Rimuovere ${comuni[index]} dagli enti?`)) {
-                comuni.splice(index, 1);
-                salvaDati();
-                gestioneEnti();
-                popolaComuniModal();
-            }
-        }
-
-        function popolaComuniModal() {
-            const container = document.getElementById('comuniSelector');
-            container.innerHTML = comuni.sort().map(comune => `
-                <div class="comune-checkbox">
-                    <input type="checkbox" id="comune_${comune.replace(/\s/g, '_')}" value="${comune}" name="comuni">
-                    <label for="comune_${comune.replace(/\s/g, '_')}">${comune}</label>
-                </div>
-            `).join('');
-        }
-
-        function toggleTuttiComuni() {
-            const checkboxes = document.querySelectorAll('#comuniSelector input[type="checkbox"]');
-            const tuttiSelezionati = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => cb.checked = !tuttiSelezionati);
-        }
-
-        // ============================================
-        // ESPORTA/IMPORTA
-        // ============================================
-
-        function esportaDati() {
-            try {
-                let csvContent = "Titolo,Categoria,Scadenza,Comune,Fatto,Note\n";
-                
-                adempimenti.forEach(adempimento => {
-                    adempimento.Comuni.split(';').forEach(comune => {
-                        const comunePulito = comune.trim();
-                        const stato = adempimento.StatiComuni?.[comunePulito] || { fatto: false, note: '' };
-                        csvContent += `"${adempimento.Titolo}","${adempimento.Categoria}","${adempimento.Scadenza}","${comunePulito}","${stato.fatto ? 'SI' : 'NO'}","${stato.note || ''}"\n`;
-                    });
-                });
-                
-                const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(dataBlob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'scadenziario_' + new Date().toISOString().split('T')[0] + '.csv';
-                link.click();
-                URL.revokeObjectURL(url);
-                alert('✅ Dati esportati!');
-            } catch (error) {
-                console.error('❌ Errore esportazione:', error);
-                alert('Errore durante l\'esportazione');
-            }
-        }
-
-        function ripristinaDati() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            const datiImportati = JSON.parse(e.target.result);
-                            if (confirm('Confermi il ripristino? I dati attuali saranno sovrascritti.')) {
-                                if (datiImportati.adempimenti) adempimenti = datiImportati.adempimenti;
-                                if (datiImportati.comuni) comuni = datiImportati.comuni;
-                                salvaDati();
-                                inizializzaSistema();
-                                alert('✅ Dati ripristinati!');
-                            }
-                        } catch (error) {
-                            alert('Errore: file non valido');
-                        }
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            input.click();
-        }
-
-        // ============================================
-        // UTILITY
-        // ============================================
-
-        function chiudiModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // ============================================
-        // EVENT LISTENERS
+        // CHIUSURA MODAL CON ESC
         // ============================================
 
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.classList.remove('active');
-                });
+                chiudiModal();
             }
         });
 
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(event) {
-                if (event.target === this) {
-                    this.classList.remove('active');
-                }
-            });
+        // ============================================
+        // CHIUSURA MODAL CLICK ESTERNO
+        // ============================================
+
+        document.getElementById('modalAdempimento').addEventListener('click', function(event) {
+            if (event.target === this) {
+                chiudiModal();
+            }
         });
+
+        // ============================================
+        // INIZIALIZZAZIONE AL CARICAMENTO PAGINA
+        // ============================================
 
         window.addEventListener('DOMContentLoaded', inizializzaSistema);
 
