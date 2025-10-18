@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi</title>
+    <title>Scadenziario Studio Grismondi V13</title>
     
+    <!-- MSAL.js Library -->
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,6 +22,7 @@
             padding: 20px;
         }
         
+        /* LOGIN SCREEN */
         .login-container {
             max-width: 500px;
             margin: 100px auto;
@@ -62,6 +68,7 @@
             box-shadow: 0 8px 30px rgba(79, 172, 254, 0.6);
         }
         
+        /* APP CONTAINER */
         .app-container {
             display: none;
             max-width: 1800px;
@@ -72,6 +79,7 @@
             overflow: hidden;
         }
         
+        /* HEADER */
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -125,6 +133,7 @@
             color: #4facfe;
         }
         
+        /* CONTROLS */
         .controls {
             padding: 25px 40px;
             background: linear-gradient(to right, #f8fbff 0%, #f0fff4 100%);
@@ -147,7 +156,7 @@
             font-size: 14px;
         }
         
-        select, input[type="month"] {
+        select, input[type="month"], input[type="text"], input[type="date"], input[type="number"], textarea {
             padding: 10px 15px;
             border: 2px solid #ddd;
             border-radius: 8px;
@@ -155,12 +164,13 @@
             transition: all 0.3s;
         }
         
-        select:focus, input[type="month"]:focus {
+        select:focus, input:focus, textarea:focus {
             outline: none;
             border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
         
+        /* BUTTONS */
         .btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -192,14 +202,21 @@
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
         }
         
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 13px;
+        }
+        
         .admin-only {
             display: none;
         }
         
+        /* CONTENT */
         .content {
             padding: 40px;
         }
         
+        /* LOADING */
         .loading {
             text-align: center;
             padding: 60px;
@@ -221,6 +238,7 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* COMUNE CARDS */
         .comune-card {
             background: white;
             border: 2px solid #e0f2fe;
@@ -305,6 +323,7 @@
             display: block;
         }
         
+        /* TABLES */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -337,6 +356,7 @@
             border-bottom: none;
         }
         
+        /* STATUS BADGES */
         .status-badge {
             display: inline-block;
             padding: 5px 12px;
@@ -360,6 +380,7 @@
             color: #721c24;
         }
         
+        /* PRIORITY */
         .priority-high {
             color: #ff6b6b;
             font-weight: 700;
@@ -370,6 +391,7 @@
             font-weight: 700;
         }
         
+        /* ACTION BUTTONS */
         .action-buttons {
             display: flex;
             gap: 8px;
@@ -388,6 +410,7 @@
             transform: scale(1.3);
         }
         
+        /* MODALS */
         .modal {
             display: none;
             position: fixed;
@@ -427,6 +450,7 @@
             font-size: 24px;
         }
         
+        /* FORMS */
         .form-group {
             margin-bottom: 20px;
         }
@@ -450,14 +474,6 @@
             transition: all 0.3s;
         }
         
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-        
         .form-group textarea {
             min-height: 100px;
             resize: vertical;
@@ -469,6 +485,17 @@
             margin-top: 30px;
         }
         
+        .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .form-row select {
+            flex: 1;
+        }
+        
+        /* ALERTS */
         .alert {
             padding: 18px 20px;
             margin-bottom: 25px;
@@ -494,19 +521,20 @@
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
-
+        
+        /* EMPTY STATE */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #666;
         }
-
+        
         .empty-state-icon {
             font-size: 80px;
             margin-bottom: 20px;
             opacity: 0.5;
         }
-
+        
         .empty-state h3 {
             color: #4facfe;
             margin-bottom: 10px;
@@ -514,23 +542,18 @@
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
+    <!-- LOGIN SCREEN -->
     <div id="loginContainer" class="login-container">
         <div class="logo">🏢</div>
         <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario Professionale</p>
-        <button class="login-btn" id="loginBtn">
-            🔐 Accedi con Microsoft
-        </button>
+        <p>Sistema Scadenziario V13</p>
+        <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
-    <!-- Main Application -->
+    <!-- MAIN APPLICATION -->
     <div id="appContainer" class="app-container">
         <div class="header">
-            <h1>
-                <span>📅</span>
-                Scadenziario Studio Grismondi
-            </h1>
+            <h1><span>📅</span>Scadenziario Studio Grismondi</h1>
             <div class="user-info">
                 <div class="user-name">
                     <strong id="userName">Utente</strong>
@@ -567,17 +590,9 @@
                 <input type="month" id="filterMese">
             </div>
 
-            <button class="btn btn-success" id="btnAddAdempimento">
-                ➕ Nuovo Adempimento
-            </button>
-
-            <button class="btn admin-only" id="btnExport">
-                📊 Esporta CSV
-            </button>
-
-            <button class="btn" id="btnSync">
-                🔄 Sincronizza
-            </button>
+            <button class="btn btn-success" id="btnAddAdempimento">➕ Nuovo Adempimento</button>
+            <button class="btn admin-only" id="btnExport">📊 Esporta CSV</button>
+            <button class="btn" id="btnSync">🔄 Sincronizza</button>
         </div>
 
         <div class="content">
@@ -585,14 +600,12 @@
                 <div class="spinner"></div>
                 <p>Caricamento dati da SharePoint...</p>
             </div>
-
             <div id="alertContainer"></div>
-
             <div id="comuniContainer"></div>
         </div>
     </div>
 
-    <!-- Modal Adempimento -->
+    <!-- MODAL ADEMPIMENTO -->
     <div id="adempimentoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -603,9 +616,14 @@
                 
                 <div class="form-group">
                     <label>Comune *</label>
-                    <select id="formComune" required>
-                        <option value="">Seleziona comune...</option>
-                    </select>
+                    <div class="form-row">
+                        <select id="formComune" required>
+                            <option value="">Seleziona comune...</option>
+                        </select>
+                        <button type="button" class="btn btn-success btn-small" id="btnOpenEnteModal">
+                            ➕ Nuovo Comune
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -656,10 +674,37 @@
         </div>
     </div>
 
-    <script>
-        console.log('🚀 Studio Grismondi V12 - Inizializzazione');
+    <!-- MODAL NUOVO ENTE -->
+    <div id="enteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏛️ Nuovo Comune</h2>
+            </div>
+            <form id="enteForm">
+                <div class="form-group">
+                    <label>Nome Comune *</label>
+                    <input type="text" id="formEnteNome" required placeholder="es. Milano, Bergamo, Brescia...">
+                </div>
 
-        // CONFIG
+                <div class="form-group">
+                    <label>Provincia</label>
+                    <input type="text" id="formEnteProvincia" placeholder="es. MI, BG, BS..." maxlength="2" style="text-transform: uppercase;">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💾 Crea Comune</button>
+                    <button type="button" class="btn" id="btnCloseEnteModal">❌ Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Studio Grismondi Scadenziario V13');
+
+        // ============================================
+        // CONFIGURAZIONE AZURE AD & SHAREPOINT
+        // ============================================
         const msalConfig = {
             auth: {
                 clientId: '49aa6405-1925-418e-a707-6a41979edba6',
@@ -684,24 +729,31 @@
             ENTI: 'Scadenziario_Enti',
             ADEMPIMENTI: 'Scadenziario_Adempimenti'
         };
-
         const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
 
-        let currentUser, userRole, accessToken, siteId;
+        // ============================================
+        // VARIABILI GLOBALI
+        // ============================================
+        let currentUser = null;
+        let userRole = null;
+        let accessToken = null;
+        let siteId = null;
         let allEnti = [];
         let allAdempimenti = [];
         let tipologieUniche = new Set();
         let statiUnici = new Set();
 
-        // AUTH
+        // ============================================
+        // AUTENTICAZIONE
+        // ============================================
         async function login() {
             try {
-                const resp = await msalInstance.loginPopup(loginRequest);
-                currentUser = resp.account;
+                const response = await msalInstance.loginPopup(loginRequest);
+                currentUser = response.account;
                 await handleAuth();
-            } catch (err) {
-                console.error('Login error:', err);
-                showAlert('Errore login: ' + err.message, 'error');
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Errore durante il login: ' + error.message, 'error');
             }
         }
 
@@ -711,16 +763,19 @@
                 if (!account) return;
 
                 currentUser = account;
-                const tokenResp = await msalInstance.acquireTokenSilent({
+                
+                const tokenResponse = await msalInstance.acquireTokenSilent({
                     ...loginRequest,
                     account: currentUser
                 });
                 
-                accessToken = tokenResp.accessToken;
+                accessToken = tokenResponse.accessToken;
                 userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
                 
+                // Mostra app
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
+                
                 document.getElementById('userName').textContent = currentUser.name || currentUser.username;
                 document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
 
@@ -729,11 +784,12 @@
                 }
 
                 await loadData();
-            } catch (err) {
-                if (err.name === 'InteractionRequiredAuthError') {
+            } catch (error) {
+                if (error.name === 'InteractionRequiredAuthError') {
                     await login();
                 } else {
-                    showAlert('Errore autenticazione', 'error');
+                    console.error('Auth error:', error);
+                    showAlert('Errore di autenticazione', 'error');
                 }
             }
         }
@@ -743,7 +799,9 @@
             location.reload();
         }
 
-        // API
+        // ============================================
+        // MICROSOFT GRAPH API
+        // ============================================
         async function callGraph(endpoint, method = 'GET', body = null) {
             const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
             const options = {
@@ -758,10 +816,16 @@
                 options.body = JSON.stringify(body);
             }
 
-            const resp = await fetch(url, options);
-            if (!resp.ok) throw new Error(`API: ${resp.status}`);
-            if (method === 'DELETE' || resp.status === 204) return { success: true };
-            return await resp.json();
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`Graph API error: ${response.status}`);
+            }
+            
+            if (method === 'DELETE' || response.status === 204) {
+                return { success: true };
+            }
+            
+            return await response.json();
         }
 
         async function getSiteId() {
@@ -774,12 +838,17 @@
         async function getListItems(listName) {
             const site = await getSiteId();
             const result = await callGraph(`sites/${site}/lists/${listName}/items?expand=fields`);
-            return result.value.map(item => ({ ID: item.id, ...item.fields }));
+            return result.value.map(item => ({
+                ID: item.id,
+                ...item.fields
+            }));
         }
 
         async function createItem(listName, data) {
             const site = await getSiteId();
-            return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
+            return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', {
+                fields: data
+            });
         }
 
         async function updateItem(listName, itemId, data) {
@@ -792,22 +861,27 @@
             return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
         }
 
-        // LOAD DATA
+        // ============================================
+        // DATA LOADING
+        // ============================================
         async function loadData() {
             try {
                 showLoading(true);
+                
                 allEnti = await getListItems(LISTS.ENTI);
                 allEnti = allEnti.filter(e => e.StatoEnte !== 'Disattivo');
+                
                 allAdempimenti = await getListItems(LISTS.ADEMPIMENTI);
                 
                 extractUniqueValues();
                 populateDropdowns();
                 renderComuni();
+                
                 showLoading(false);
                 showAlert('✅ Dati caricati con successo!', 'success');
-            } catch (err) {
-                console.error('Load error:', err);
-                showAlert('Errore caricamento: ' + err.message, 'error');
+            } catch (error) {
+                console.error('Load error:', error);
+                showAlert('Errore nel caricamento: ' + error.message, 'error');
                 showLoading(false);
             }
         }
@@ -815,6 +889,7 @@
         function extractUniqueValues() {
             tipologieUniche.clear();
             statiUnici.clear();
+            
             allAdempimenti.forEach(a => {
                 if (a.Tipologia) tipologieUniche.add(a.Tipologia);
                 if (a.Stato) statiUnici.add(a.Stato);
@@ -822,6 +897,7 @@
         }
 
         function populateDropdowns() {
+            // Dropdown Comuni
             const filterComune = document.getElementById('filterComune');
             const formComune = document.getElementById('formComune');
             
@@ -829,15 +905,22 @@
             formComune.innerHTML = '<option value="">Seleziona comune...</option>';
             
             allEnti.forEach(ente => {
+                const nome = ente.Comune || ente.Title;
+                const provincia = ente.Provincia ? ` (${ente.Provincia})` : '';
+                
                 const opt1 = document.createElement('option');
                 opt1.value = ente.ID;
-                opt1.textContent = ente.Comune || ente.Title;
+                opt1.textContent = nome + provincia;
                 filterComune.appendChild(opt1);
-                formComune.appendChild(opt1.cloneNode(true));
+                
+                const opt2 = opt1.cloneNode(true);
+                formComune.appendChild(opt2);
             });
 
+            // Dropdown Tipologie
             const filterTip = document.getElementById('filterTipologia');
             filterTip.innerHTML = '<option value="">Tutte</option>';
+            
             Array.from(tipologieUniche).sort().forEach(t => {
                 const opt = document.createElement('option');
                 opt.value = t;
@@ -845,8 +928,10 @@
                 filterTip.appendChild(opt);
             });
 
+            // Dropdown Stati
             const filterStato = document.getElementById('filterStato');
             filterStato.innerHTML = '<option value="">Tutti</option>';
+            
             Array.from(statiUnici).sort().forEach(s => {
                 const opt = document.createElement('option');
                 opt.value = s;
@@ -855,6 +940,9 @@
             });
         }
 
+        // ============================================
+        // RENDERING
+        // ============================================
         function renderComuni() {
             const container = document.getElementById('comuniContainer');
             container.innerHTML = '';
@@ -867,6 +955,7 @@
             };
 
             let filteredEnti = [...allEnti];
+            
             if (filters.comune) {
                 filteredEnti = filteredEnti.filter(e => e.ID == filters.comune);
             }
@@ -876,7 +965,7 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">📂</div>
                         <h3>Nessun ente trovato</h3>
-                        <p>Aggiungi enti nella lista SharePoint "Scadenziario_Enti"</p>
+                        <p>Clicca "Nuovo Adempimento" e poi "Nuovo Comune" per iniziare!</p>
                     </div>
                 `;
                 return;
@@ -884,47 +973,38 @@
 
             filteredEnti.forEach(ente => {
                 const adempimenti = getAdempimentiForEnte(ente, filters);
+                
+                if (adempimenti.length === 0 && filters.comune === '') return;
+                
                 const card = createComuneCard(ente, adempimenti);
                 container.appendChild(card);
             });
 
             // Event listeners
-            document.querySelectorAll('.comune-toggle').forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    const list = this.nextElementSibling;
-                    const icon = this.querySelector('.expand-icon');
-                    list.classList.toggle('open');
-                    icon.classList.toggle('open');
-                });
-            });
-
-            document.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', () => editAdempimento(parseInt(btn.dataset.id)));
-            });
-
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', () => deleteAdempimento(parseInt(btn.dataset.id)));
-            });
+            attachEventListeners();
         }
 
         function getAdempimentiForEnte(ente, filters) {
             const comuneName = ente.Comune || ente.Title;
-            let adempimenti = allAdempimenti.filter(a => 
-                a.Title && a.Title.includes(comuneName)
-            );
+            let adempimenti = allAdempimenti.filter(a => {
+                return a.Title && a.Title.includes(comuneName);
+            });
 
             if (filters.tipologia) {
                 adempimenti = adempimenti.filter(a => a.Tipologia === filters.tipologia);
             }
+            
             if (filters.stato) {
                 adempimenti = adempimenti.filter(a => a.Stato === filters.stato);
             }
+            
             if (filters.mese) {
                 const [year, month] = filters.mese.split('-');
                 adempimenti = adempimenti.filter(a => {
-                    if (!a.DataScadenza) return false;
-                    const d = new Date(a.DataScadenza);
-                    return d.getFullYear() == year && (d.getMonth() + 1) == month;
+                    if (!a.Scadenza) return false;
+                    const scadenzaDate = new Date(a.Scadenza);
+                    return scadenzaDate.getFullYear() == year && 
+                           (scadenzaDate.getMonth() + 1) == month;
                 });
             }
 
@@ -937,96 +1017,123 @@
 
             const oggi = new Date();
             const scaduti = adempimenti.filter(a => {
-                if (!a.DataScadenza) return false;
-                const scad = new Date(a.DataScadenza);
-                return scad < oggi && a.Stato !== 'Completato';
+                const scadenza = new Date(a.Scadenza);
+                return scadenza < oggi && a.Stato !== 'Completato';
             }).length;
 
             const prossimi = adempimenti.filter(a => {
-                if (!a.DataScadenza) return false;
-                const scad = new Date(a.DataScadenza);
-                const diff = (scad - oggi) / (1000 * 60 * 60 * 24);
+                const scadenza = new Date(a.Scadenza);
+                const diff = (scadenza - oggi) / (1000 * 60 * 60 * 24);
                 return diff >= 0 && diff <= 7 && a.Stato !== 'Completato';
             }).length;
 
             const comuneName = ente.Comune || ente.Title;
+            const provincia = ente.Provincia ? ` (${ente.Provincia})` : '';
 
             card.innerHTML = `
                 <div class="comune-header comune-toggle">
-                    <div class="comune-name">
-                        <span>🏛️</span>
-                        ${comuneName}
-                    </div>
+                    <div class="comune-name">🏛️ ${comuneName}${provincia}</div>
                     <div class="comune-stats">
                         <span class="stat-badge">${adempimenti.length} totali</span>
                         ${scaduti > 0 ? `<span class="stat-badge scaduti">${scaduti} scaduti</span>` : ''}
-                        ${prossimi > 0 ? `<span class="stat-badge prossimi">${prossimi} prossimi</span>` : ''}
+                        ${prossimi > 0 ? `<span class="stat-badge prossimi">${prossimi} prossimi 7gg</span>` : ''}
                         <span class="expand-icon">▼</span>
                     </div>
                 </div>
                 <div class="adempimenti-list">
-                    ${adempimenti.length === 0 ? 
-                        '<div class="empty-state"><div class="empty-state-icon">📝</div><p>Nessun adempimento per questo comune</p></div>' :
-                        `<table>
-                            <thead>
-                                <tr>
-                                    <th>Tipologia</th>
-                                    <th>Descrizione</th>
-                                    <th>Scadenza</th>
-                                    <th>Stato</th>
-                                    <th>Progress</th>
-                                    <th>Note</th>
-                                    <th>Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${adempimenti.map(a => createAdempimentoRow(a)).join('')}
-                            </tbody>
-                        </table>`
-                    }
+                    ${adempimenti.length > 0 ? createAdempimentiTable(adempimenti) : '<p style="text-align:center;padding:20px;color:#999;">Nessun adempimento</p>'}
                 </div>
             `;
 
             return card;
         }
 
-        function createAdempimentoRow(a) {
-            const scad = a.DataScadenza ? new Date(a.DataScadenza) : null;
+        function createAdempimentiTable(adempimenti) {
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipologia</th>
+                            <th>Descrizione</th>
+                            <th>Scadenza</th>
+                            <th>Stato</th>
+                            <th>Progress</th>
+                            <th>Note</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${adempimenti.map(a => createAdempimentoRow(a)).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function createAdempimentoRow(adempimento) {
+            const scadenza = new Date(adempimento.Scadenza);
             const oggi = new Date();
-            let scadClass = '';
+            const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
             
-            if (scad) {
-                const diff = Math.floor((scad - oggi) / (1000 * 60 * 60 * 24));
-                if (diff < 0 && a.Stato !== 'Completato') {
-                    scadClass = 'priority-high';
-                } else if (diff >= 0 && diff <= 7) {
-                    scadClass = 'priority-medium';
-                }
+            let scadenzaClass = '';
+            if (diff < 0 && adempimento.Stato !== 'Completato') {
+                scadenzaClass = 'priority-high';
+            } else if (diff >= 0 && diff <= 7) {
+                scadenzaClass = 'priority-medium';
             }
 
-            const statoClass = a.Stato === 'Completato' ? 'completato' :
-                              a.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
+            const statoClass = adempimento.Stato === 'Completato' ? 'completato' :
+                              adempimento.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
 
             return `
                 <tr>
-                    <td>${a.Tipologia || '-'}</td>
-                    <td><strong>${a.Descrizione || a.Title}</strong></td>
-                    <td class="${scadClass}">${scad ? formatDate(a.DataScadenza) : '-'}</td>
-                    <td><span class="status-badge ${statoClass}">${a.Stato || 'Non Iniziato'}</span></td>
-                    <td><strong>${a.Progress || 0}%</strong></td>
-                    <td>${a.Note || '-'}</td>
+                    <td>${adempimento.Tipologia || '-'}</td>
+                    <td>${adempimento.Descrizione || '-'}</td>
+                    <td class="${scadenzaClass}">${formatDate(adempimento.Scadenza)}</td>
+                    <td><span class="status-badge ${statoClass}">${adempimento.Stato || 'Non Iniziato'}</span></td>
+                    <td>${adempimento.Progress || 0}%</td>
+                    <td>${adempimento.Note || '-'}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="icon-btn btn-edit" data-id="${a.ID}" title="Modifica">✏️</button>
-                            <button class="icon-btn btn-delete" data-id="${a.ID}" title="Elimina">🗑️</button>
+                            <button class="icon-btn btn-edit" data-id="${adempimento.ID}" title="Modifica">✏️</button>
+                            <button class="icon-btn btn-delete" data-id="${adempimento.ID}" title="Elimina">🗑️</button>
                         </div>
                     </td>
                 </tr>
             `;
         }
 
-        // CRUD
-        function openAddModal() {
+        function attachEventListeners() {
+            // Toggle cards
+            document.querySelectorAll('.comune-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const list = this.nextElementSibling;
+                    const icon = this.querySelector('.expand-icon');
+                    list.classList.toggle('open');
+                    icon.classList.toggle('open');
+                });
+            });
+
+            // Edit buttons
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    editAdempimento(parseInt(btn.dataset.id));
+                });
+            });
+
+            // Delete buttons
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteAdempimento(parseInt(btn.dataset.id));
+                });
+            });
+        }
+
+        // ============================================
+        // CRUD ADEMPIMENTI
+        // ============================================
+        function openAddAdempimentoModal() {
             document.getElementById('modalTitle').textContent = 'Nuovo Adempimento';
             document.getElementById('adempimentoForm').reset();
             document.getElementById('editId').value = '';
@@ -1034,25 +1141,26 @@
         }
 
         async function editAdempimento(id) {
-            const a = allAdempimenti.find(x => x.ID === id);
-            if (!a) return;
+            const adempimento = allAdempimenti.find(a => a.ID === id);
+            if (!adempimento) return;
 
             document.getElementById('modalTitle').textContent = 'Modifica Adempimento';
             document.getElementById('editId').value = id;
             
-            const comuneMatch = allEnti.find(e => 
-                a.Title && a.Title.includes(e.Comune || e.Title)
-            );
-            if (comuneMatch) {
-                document.getElementById('formComune').value = comuneMatch.ID;
+            // Trova il comune corrispondente
+            const comuneName = adempimento.Title.split(' - ')[0];
+            const ente = allEnti.find(e => (e.Comune || e.Title) === comuneName);
+            
+            if (ente) {
+                document.getElementById('formComune').value = ente.ID;
             }
             
-            document.getElementById('formTipologia').value = a.Tipologia || '';
-            document.getElementById('formDescrizione').value = a.Descrizione || '';
-            document.getElementById('formScadenza').value = a.DataScadenza ? a.DataScadenza.split('T')[0] : '';
-            document.getElementById('formStato').value = a.Stato || 'Non Iniziato';
-            document.getElementById('formProgress').value = a.Progress || 0;
-            document.getElementById('formNote').value = a.Note || '';
+            document.getElementById('formTipologia').value = adempimento.Tipologia || '';
+            document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
+            document.getElementById('formScadenza').value = adempimento.Scadenza ? adempimento.Scadenza.split('T')[0] : '';
+            document.getElementById('formStato').value = adempimento.Stato || 'Non Iniziato';
+            document.getElementById('formProgress').value = adempimento.Progress || 0;
+            document.getElementById('formNote').value = adempimento.Note || '';
 
             document.getElementById('adempimentoModal').classList.add('open');
         }
@@ -1063,15 +1171,34 @@
             try {
                 showLoading(true);
                 await deleteItem(LISTS.ADEMPIMENTI, id);
-                showAlert('✅ Adempimento eliminato', 'success');
+                showAlert('✅ Adempimento eliminato con successo!', 'success');
                 await loadData();
-            } catch (err) {
-                console.error('Delete error:', err);
-                showAlert('Errore eliminazione', 'error');
+            } catch (error) {
+                console.error('Delete error:', error);
+                showAlert('❌ Errore durante l\'eliminazione', 'error');
                 showLoading(false);
             }
         }
 
+        // ============================================
+        // CRUD ENTI
+        // ============================================
+        function openAddEnteModal() {
+            document.getElementById('enteForm').reset();
+            document.getElementById('enteModal').classList.add('open');
+        }
+
+        function closeEnteModal() {
+            document.getElementById('enteModal').classList.remove('open');
+        }
+
+        function closeAdempimentoModal() {
+            document.getElementById('adempimentoModal').classList.remove('open');
+        }
+
+        // ============================================
+        // FORM SUBMISSIONS
+        // ============================================
         document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1079,18 +1206,15 @@
             const comuneId = document.getElementById('formComune').value;
             const ente = allEnti.find(e => e.ID == comuneId);
             const comuneName = ente ? (ente.Comune || ente.Title) : '';
-            const descrizione = document.getElementById('formDescrizione').value;
             
             const data = {
-                Title: `${comuneName} - ${descrizione}`,
-                Descrizione: descrizione,
+                Title: `${comuneName} - ${document.getElementById('formDescrizione').value}`,
                 Tipologia: document.getElementById('formTipologia').value,
-                DataScadenza: document.getElementById('formScadenza').value,
+                Descrizione: document.getElementById('formDescrizione').value,
+                Scadenza: document.getElementById('formScadenza').value,
                 Stato: document.getElementById('formStato').value,
                 Progress: parseInt(document.getElementById('formProgress').value) || 0,
-                Note: document.getElementById('formNote').value,
-                AnnoMese: document.getElementById('formScadenza').value ? 
-                    document.getElementById('formScadenza').value.substring(0, 7) : ''
+                Note: document.getElementById('formNote').value
             };
 
             try {
@@ -1098,49 +1222,79 @@
 
                 if (editId) {
                     await updateItem(LISTS.ADEMPIMENTI, editId, data);
-                    showAlert('✅ Adempimento aggiornato', 'success');
+                    showAlert('✅ Adempimento aggiornato con successo!', 'success');
                 } else {
                     await createItem(LISTS.ADEMPIMENTI, data);
-                    showAlert('✅ Adempimento creato', 'success');
+                    showAlert('✅ Adempimento creato con successo!', 'success');
                 }
 
-                closeModal();
+                closeAdempimentoModal();
                 await loadData();
-            } catch (err) {
-                console.error('Save error:', err);
-                showAlert('Errore salvataggio: ' + err.message, 'error');
+
+            } catch (error) {
+                console.error('Save error:', error);
+                showAlert('❌ Errore durante il salvataggio', 'error');
                 showLoading(false);
             }
         });
 
-        function closeModal() {
-            document.getElementById('adempimentoModal').classList.remove('open');
-        }
+        document.getElementById('enteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('formEnteNome').value;
+            const provincia = document.getElementById('formEnteProvincia').value.toUpperCase();
+            
+            const data = {
+                Title: nome,
+                Comune: nome,
+                Provincia: provincia,
+                StatoEnte: 'Attivo'
+            };
 
+            try {
+                showLoading(true);
+                
+                const result = await createItem(LISTS.ENTI, data);
+                showAlert('✅ Comune creato con successo!', 'success');
+                
+                closeEnteModal();
+                await loadData();
+                
+                // Auto-seleziona il nuovo comune
+                document.getElementById('formComune').value = result.id;
+
+            } catch (error) {
+                console.error('Create ente error:', error);
+                showAlert('❌ Errore durante la creazione del comune', 'error');
+                showLoading(false);
+            }
+        });
+
+        // ============================================
         // EXPORT CSV
+        // ============================================
         function exportCSV() {
             if (userRole !== 'Admin') {
-                showAlert('Solo gli amministratori possono esportare', 'error');
+                showAlert('❌ Solo gli amministratori possono esportare i dati', 'error');
                 return;
             }
 
-            const headers = ['Comune', 'Tipologia', 'Descrizione', 'Scadenza', 'Stato', 'Progress', 'Note'];
+            const headers = ['Comune', 'Provincia', 'Tipologia', 'Descrizione', 'Scadenza', 'Stato', 'Progress', 'Note'];
             const rows = [];
 
-            allAdempimenti.forEach(a => {
-                const comuneMatch = allEnti.find(e => 
-                    a.Title && a.Title.includes(e.Comune || e.Title)
-                );
-                const comuneName = comuneMatch ? (comuneMatch.Comune || comuneMatch.Title) : '';
-
+            allAdempimenti.forEach(adempimento => {
+                const comuneName = adempimento.Title.split(' - ')[0];
+                const ente = allEnti.find(e => (e.Comune || e.Title) === comuneName);
+                
                 rows.push([
                     comuneName,
-                    a.Tipologia || '',
-                    a.Descrizione || a.Title,
-                    a.DataScadenza ? formatDate(a.DataScadenza) : '',
-                    a.Stato || '',
-                    a.Progress || 0,
-                    a.Note || ''
+                    ente ? (ente.Provincia || '') : '',
+                    adempimento.Tipologia || '',
+                    adempimento.Descrizione || '',
+                    formatDate(adempimento.Scadenza),
+                    adempimento.Stato || '',
+                    adempimento.Progress || 0,
+                    adempimento.Note || ''
                 ]);
             });
 
@@ -1152,22 +1306,15 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `scadenziario_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `scadenziario_${formatDate(new Date())}.csv`;
             link.click();
 
-            showAlert('✅ Export completato', 'success');
+            showAlert('✅ Export completato con successo!', 'success');
         }
 
-        // UTILITY
-        function filterData() {
-            renderComuni();
-        }
-
-        async function syncData() {
-            showAlert('🔄 Sincronizzazione in corso...', 'info');
-            await loadData();
-        }
-
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
         function showLoading(show) {
             document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
             document.getElementById('comuniContainer').style.display = show ? 'none' : 'block';
@@ -1182,47 +1329,58 @@
             container.innerHTML = '';
             container.appendChild(alert);
 
-            setTimeout(() => alert.remove(), 5000);
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
         }
 
         function formatDate(dateString) {
-            if (!dateString) return '';
+            if (!dateString) return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('it-IT');
         }
 
-        // INIT
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
         window.addEventListener('load', async () => {
-            console.log('🚀 V12 Studio Grismondi - Avvio');
+            console.log('🚀 Applicazione caricata');
             
             try {
                 await msalInstance.initialize();
+                console.log('✅ MSAL inizializzato');
+                
                 const accounts = msalInstance.getAllAccounts();
                 
                 if (accounts.length > 0) {
+                    console.log('🔄 Account esistente, auto-login...');
                     await handleAuth();
+                } else {
+                    console.log('📝 Nessun account, mostra schermata login');
                 }
-            } catch (err) {
-                console.error('Init error:', err);
+            } catch (error) {
+                console.error('❌ Errore inizializzazione:', error);
+                showAlert('Errore inizializzazione: ' + error.message, 'error');
             }
-
-            // Event listeners
-            document.getElementById('loginBtn').addEventListener('click', login);
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            document.getElementById('filterComune').addEventListener('change', filterData);
-            document.getElementById('filterTipologia').addEventListener('change', filterData);
-            document.getElementById('filterStato').addEventListener('change', filterData);
-            document.getElementById('filterMese').addEventListener('change', filterData);
-            
-            document.getElementById('btnAddAdempimento').addEventListener('click', openAddModal);
-            document.getElementById('btnExport').addEventListener('click', exportCSV);
-            document.getElementById('btnSync').addEventListener('click', syncData);
-            
-            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-            
-            console.log('✅ V12 pronta');
         });
+
+        // Button event listeners
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('btnAddAdempimento').addEventListener('click', openAddAdempimentoModal);
+        document.getElementById('btnOpenEnteModal').addEventListener('click', openAddEnteModal);
+        document.getElementById('btnExport').addEventListener('click', exportCSV);
+        document.getElementById('btnSync').addEventListener('click', loadData);
+        document.getElementById('btnCloseModal').addEventListener('click', closeAdempimentoModal);
+        document.getElementById('btnCloseEnteModal').addEventListener('click', closeEnteModal);
+
+        // Filter event listeners
+        document.getElementById('filterComune').addEventListener('change', renderComuni);
+        document.getElementById('filterTipologia').addEventListener('change', renderComuni);
+        document.getElementById('filterStato').addEventListener('change', renderComuni);
+        document.getElementById('filterMese').addEventListener('change', renderComuni);
+
+        console.log('✅ Event listeners registrati');
     </script>
 </body>
 </html>
