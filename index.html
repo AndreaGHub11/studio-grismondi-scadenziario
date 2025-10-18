@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi</title>
+    <title>Scadenziario Studio Grismondi V11</title>
     
-    <!-- MSAL.js Library per Azure AD Authentication -->
+    <!-- MSAL.js v2.32.2 -->
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -32,15 +28,8 @@
             text-align: center;
         }
         
-        .login-container h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .login-container p {
-            color: #666;
-            margin-bottom: 30px;
-        }
+        .login-container h1 { color: #667eea; margin-bottom: 10px; }
+        .login-container p { color: #666; margin-bottom: 30px; }
         
         .login-btn {
             background: #667eea;
@@ -79,24 +68,11 @@
             align-items: center;
         }
         
-        .header h1 {
-            font-size: 24px;
-        }
+        .header h1 { font-size: 24px; }
         
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-name {
-            text-align: right;
-        }
-        
-        .user-name small {
-            opacity: 0.8;
-            display: block;
-        }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-name { text-align: right; }
+        .user-name small { opacity: 0.8; display: block; }
         
         .logout-btn {
             background: rgba(255,255,255,0.2);
@@ -109,72 +85,9 @@
             transition: all 0.3s;
         }
         
-        .logout-btn:hover {
-            background: white;
-            color: #667eea;
-        }
+        .logout-btn:hover { background: white; color: #667eea; }
         
-        .controls {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .filter-group label {
-            font-weight: 600;
-            color: #333;
-        }
-        
-        select, input[type="month"] {
-            padding: 8px 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        select:focus, input[type="month"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-        
-        .btn:hover {
-            background: #5568d3;
-            transform: translateY(-1px);
-        }
-        
-        .btn-success {
-            background: #27ae60;
-        }
-        
-        .btn-success:hover {
-            background: #229954;
-        }
-        
-        .content {
-            padding: 30px;
-        }
+        .content { padding: 30px; }
         
         .loading {
             text-align: center;
@@ -197,226 +110,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        .comune-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        
-        .comune-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-        
-        .comune-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: #f8f9fa;
-            cursor: pointer;
-            user-select: none;
-        }
-        
-        .comune-header:hover {
-            background: #ecf0f1;
-        }
-        
-        .comune-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-        }
-        
-        .comune-stats {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        
-        .stat-badge {
-            background: #667eea;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .stat-badge.scaduti {
-            background: #e74c3c;
-        }
-        
-        .stat-badge.prossimi {
-            background: #f39c12;
-        }
-        
-        .expand-icon {
-            transition: transform 0.3s;
-        }
-        
-        .expand-icon.open {
-            transform: rotate(180deg);
-        }
-        
-        .adempimenti-list {
-            display: none;
-            padding: 20px;
-        }
-        
-        .adempimenti-list.open {
-            display: block;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            background: #667eea;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        
-        .status-badge.completato {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-badge.in-corso {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-badge.non-iniziato {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .priority-high {
-            color: #e74c3c;
-            font-weight: 700;
-        }
-        
-        .priority-medium {
-            color: #f39c12;
-            font-weight: 700;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-        
-        .icon-btn:hover {
-            transform: scale(1.2);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal.open {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .modal-header h2 {
-            color: #667eea;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .admin-only {
-            display: none;
-        }
-        
         .alert {
             padding: 15px;
             margin-bottom: 20px;
@@ -424,30 +117,35 @@
             font-weight: 500;
         }
         
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        .data-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
         }
         
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .data-display h2 {
+            color: #667eea;
+            margin-bottom: 15px;
         }
         
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .data-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
         }
+        
+        .data-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
     <div id="loginContainer" class="login-container">
         <h1>🏢 Studio Grismondi</h1>
-        <p>Sistema Scadenziario Integrato</p>
+        <p>Sistema Scadenziario V11</p>
         <button class="login-btn" id="loginBtn">
             🔐 Accedi con Microsoft
         </button>
@@ -456,7 +154,7 @@
     <!-- Main Application -->
     <div id="appContainer" class="app-container">
         <div class="header">
-            <h1>📅 Scadenziario Studio Grismondi</h1>
+            <h1>📅 Scadenziario Studio Grismondi V11</h1>
             <div class="user-info">
                 <div class="user-name">
                     <strong id="userName">Utente</strong>
@@ -464,46 +162,6 @@
                 </div>
                 <button class="logout-btn" id="logoutBtn">Esci</button>
             </div>
-        </div>
-
-        <div class="controls">
-            <div class="filter-group">
-                <label>📍 Comune:</label>
-                <select id="filterComune">
-                    <option value="">Tutti i comuni</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>📂 Tipologia:</label>
-                <select id="filterTipologia">
-                    <option value="">Tutte</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>⚠️ Stato:</label>
-                <select id="filterStato">
-                    <option value="">Tutti</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>📅 Mese:</label>
-                <input type="month" id="filterMese">
-            </div>
-
-            <button class="btn btn-success" id="btnAddAdempimento">
-                ➕ Nuovo Adempimento
-            </button>
-
-            <button class="btn admin-only" id="btnExport">
-                📊 Esporta CSV
-            </button>
-
-            <button class="btn" id="btnSync">
-                🔄 Sincronizza
-            </button>
         </div>
 
         <div class="content">
@@ -514,77 +172,21 @@
 
             <div id="alertContainer"></div>
 
-            <div id="comuniContainer"></div>
-        </div>
-    </div>
-
-    <!-- Modal Nuovo/Modifica Adempimento -->
-    <div id="adempimentoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Nuovo Adempimento</h2>
-            </div>
-            <form id="adempimentoForm">
-                <input type="hidden" id="editId">
-                
-                <div class="form-group">
-                    <label>Comune *</label>
-                    <select id="formComune" required>
-                        <option value="">Seleziona comune...</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Tipologia *</label>
-                    <select id="formTipologia" required>
-                        <option value="">Seleziona...</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Descrizione *</label>
-                    <textarea id="formDescrizione" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Scadenza *</label>
-                    <input type="date" id="formScadenza" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Stato *</label>
-                    <select id="formStato" required>
-                        <option value="">Seleziona...</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Progress (%)</label>
-                    <input type="number" id="formProgress" min="0" max="100" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label>Note</label>
-                    <textarea id="formNote"></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">Salva</button>
-                    <button type="button" class="btn" id="btnCloseModal">Annulla</button>
-                </div>
-            </form>
+            <div id="dataContainer"></div>
         </div>
     </div>
 
     <script>
+        console.log('🚀 Scadenziario V11 - Inizializzazione');
+
         // ============================================
-        // CONFIGURAZIONE AZURE AD & SharePoint
+        // CONFIGURAZIONE
         // ============================================
         const msalConfig = {
             auth: {
                 clientId: '49aa6405-1925-418e-a707-6a41979edba6',
                 authority: 'https://login.microsoftonline.com/7f07be7a-b1c7-42ca-8f8b-ff793e29b450',
-                redirectUri: 'https://andreagHub11.github.io/studio-grismondi-scadenziario/'
+                redirectUri: window.location.origin + window.location.pathname
             },
             cache: {
                 cacheLocation: 'localStorage',
@@ -596,106 +198,84 @@
             scopes: [
                 'User.Read',
                 'Sites.Read.All',
-                'Sites.ReadWrite.All',
-                'Files.ReadWrite.All'
+                'Sites.ReadWrite.All'
             ]
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-        // SharePoint Configuration
-        const SHAREPOINT_SITE = 'https://studiogrismondi.sharepoint.com';
-        
-        // Liste SharePoint - NOMI CORRETTI
+        // SharePoint Config
+        const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
+        const SITE_PATH = '/';
+
+        // Liste
         const LISTS = {
             ENTI: 'Scadenziario_Enti',
             ADEMPIMENTI: 'Scadenziario_Adempimenti',
-            PERMESSI: 'Scadenziario_Permessi',
-            ARCHIVIO: 'Scadenziario_Archivio'
+            PERMESSI: 'Scadenziario_Permessi'
         };
 
-        // Utenti autorizzati
-        const AUTHORIZED_USERS = {
-            ADMIN: ['info@studiogrismondisrl.it'], // Andrea e Roberta usano lo stesso account
-            USER: ['miriana@studiogrismondisrl.it', 'nicoletta@studiogrismondisrl.it']
-        };
+        // Utenti
+        const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
 
-        // Stato globale
+        // Stato
         let currentUser = null;
         let userRole = null;
         let accessToken = null;
-        let allEnti = [];
-        let allAdempimenti = [];
-        let tipologieUniche = new Set();
-        let statiUnici = new Set();
+        let siteId = null;
 
         // ============================================
         // AUTENTICAZIONE
         // ============================================
         async function login() {
-            console.log('🔐 Tentativo di login...');
+            console.log('🔐 Login...');
             try {
                 const loginResponse = await msalInstance.loginPopup(loginRequest);
-                console.log('✅ Login response:', loginResponse);
-                
+                console.log('✅ Login OK:', loginResponse.account.username);
                 currentUser = loginResponse.account;
-                await handleAuthentication();
+                await handleAuth();
             } catch (error) {
                 console.error('❌ Login error:', error);
-                showAlert('Errore durante il login: ' + error.message, 'error');
+                showAlert('Errore login: ' + error.message, 'error');
             }
         }
 
-        async function handleAuthentication() {
+        async function handleAuth() {
             try {
                 const account = msalInstance.getAllAccounts()[0];
-                if (!account) {
-                    return;
-                }
+                if (!account) return;
 
                 currentUser = account;
 
-                // Ottieni access token
+                // Token
                 const tokenResponse = await msalInstance.acquireTokenSilent({
                     ...loginRequest,
                     account: currentUser
                 });
                 
                 accessToken = tokenResponse.accessToken;
+                console.log('✅ Token ottenuto');
 
-                // Determina ruolo utente
-                const userEmail = currentUser.username.toLowerCase();
-                if (AUTHORIZED_USERS.ADMIN.includes(userEmail)) {
-                    userRole = 'Admin';
-                } else if (AUTHORIZED_USERS.USER.includes(userEmail)) {
-                    userRole = 'User';
-                } else {
-                    showAlert('Utente non autorizzato. Contatta l\'amministratore.', 'error');
-                    await logout();
-                    return;
-                }
-
-                // Registra accesso
-                await logUserAccess(userEmail, userRole);
-
-                // Mostra applicazione
+                // Ruolo
+                userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
+                
+                // UI
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
-                
                 document.getElementById('userName').textContent = currentUser.name || currentUser.username;
-                document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
+                document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Admin' : '👤 User';
 
-                // Mostra/nascondi funzioni admin
-                if (userRole === 'Admin') {
-                    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-                }
-
-                // Carica dati
-                await loadAllData();
+                // Load data
+                await loadData();
 
             } catch (error) {
-                console.error('Auth error:', error);
-                showAlert('Errore di autenticazione. Riprova.', 'error');
+                console.error('❌ Auth error:', error);
+                // Se serve interazione, fai login di nuovo
+                if (error.name === 'InteractionRequiredAuthError') {
+                    await login();
+                } else {
+                    showAlert('Errore autenticazione', 'error');
+                }
             }
         }
 
@@ -704,532 +284,139 @@
             location.reload();
         }
 
-        async function logUserAccess(email, role) {
-            try {
-                const now = new Date().toISOString();
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.PERMESSI}')/items`,
-                    'POST',
-                    {
-                        __metadata: { type: 'SP.Data.Scadenziario_PermessiListItem' },
-                        Title: currentUser.name || email,
-                        UtenteEmail: email,
-                        Ruolo: role,
-                        StatoAccesso: 'Attivo',
-                        UltimoAccesso: now
-                    }
-                );
-            } catch (error) {
-                console.log('Log access non critico:', error);
-            }
-        }
-
         // ============================================
-        // SHAREPOINT API CALLS
+        // MICROSOFT GRAPH API
         // ============================================
-        async function callSharePointAPI(endpoint, method = 'GET', body = null) {
-            const url = `${SHAREPOINT_SITE}/_api/${endpoint}`;
+        async function callGraph(endpoint, method = 'GET', body = null) {
+            const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
             
-            const headers = {
-                'Authorization': `Bearer ${accessToken}`,
-                'Accept': 'application/json;odata=verbose',
-                'Content-Type': 'application/json;odata=verbose'
-            };
-
-            if (method === 'POST' || method === 'MERGE') {
-                headers['X-RequestDigest'] = await getFormDigest();
-                if (method === 'MERGE') {
-                    headers['X-HTTP-Method'] = 'MERGE';
-                    headers['IF-MATCH'] = '*';
-                }
-            } else if (method === 'DELETE') {
-                headers['X-RequestDigest'] = await getFormDigest();
-                headers['IF-MATCH'] = '*';
-            }
-
             const options = {
-                method: method === 'MERGE' ? 'POST' : method,
-                headers
+                method,
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
             };
 
-            if (body && (method === 'POST' || method === 'MERGE')) {
+            if (body && (method === 'POST' || method === 'PATCH')) {
                 options.body = JSON.stringify(body);
             }
 
             const response = await fetch(url, options);
             
             if (!response.ok) {
-                throw new Error(`SharePoint API error: ${response.status}`);
+                const error = await response.text();
+                console.error('Graph error:', error);
+                throw new Error(`Graph API: ${response.status}`);
             }
 
-            if (method === 'DELETE') {
-                return { success: true };
-            }
-
-            if (response.status === 204) {
+            if (method === 'DELETE' || response.status === 204) {
                 return { success: true };
             }
 
             return await response.json();
         }
 
-        async function getFormDigest() {
-            const response = await fetch(`${SHAREPOINT_SITE}/_api/contextinfo`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Accept': 'application/json;odata=verbose'
-                }
-            });
-            const data = await response.json();
-            return data.d.GetContextWebInformation.FormDigestValue;
+        async function getSiteId() {
+            if (siteId) return siteId;
+            
+            console.log('🔍 Recupero Site ID...');
+            const result = await callGraph(`sites/${SHAREPOINT_HOSTNAME}:${SITE_PATH}`);
+            siteId = result.id;
+            console.log('✅ Site ID:', siteId);
+            return siteId;
         }
 
-        async function loadAllData() {
+        async function getListItems(listName) {
+            const site = await getSiteId();
+            const endpoint = `sites/${site}/lists/${listName}/items?expand=fields`;
+            
+            console.log(`📋 Carico lista: ${listName}`);
+            const result = await callGraph(endpoint);
+            
+            console.log(`✅ ${listName}: ${result.value.length} elementi`);
+            return result.value.map(item => ({
+                ID: item.id,
+                ...item.fields
+            }));
+        }
+
+        // ============================================
+        // CARICAMENTO DATI
+        // ============================================
+        async function loadData() {
             try {
                 showLoading(true);
+
+                console.log('📊 Inizio caricamento dati...');
 
                 // Carica Enti
-                const entiResult = await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ENTI}')/items?$select=ID,Title,Comune,StatoEnte`
-                );
-                allEnti = entiResult.d.results.filter(e => e.StatoEnte !== 'Disattivo');
-
-                // Popola dropdown comuni
-                populateComuneDropdown();
+                const enti = await getListItems(LISTS.ENTI);
+                console.log('✅ Enti caricati:', enti.length);
 
                 // Carica Adempimenti
-                const adempimentiResult = await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items?$select=ID,Title,Descrizione,Tipologia,DataScadenza,Stato,Progress,Note,AnnoMese`
-                );
-                allAdempimenti = adempimentiResult.d.results;
+                const adempimenti = await getListItems(LISTS.ADEMPIMENTI);
+                console.log('✅ Adempimenti caricati:', adempimenti.length);
 
-                // Estrai tipologie e stati unici
-                extractUniqueValues();
+                // Mostra dati
+                displayData(enti, adempimenti);
 
-                // Popola dropdown filtri
-                populateFilters();
-
-                // Renderizza dati
-                renderComuni();
                 showLoading(false);
+                showAlert('Dati caricati con successo!', 'success');
 
             } catch (error) {
-                console.error('Error loading data:', error);
-                showAlert('Errore nel caricamento dei dati: ' + error.message, 'error');
+                console.error('❌ Errore caricamento:', error);
+                showAlert('Errore: ' + error.message, 'error');
                 showLoading(false);
             }
         }
 
-        function extractUniqueValues() {
-            tipologieUniche.clear();
-            statiUnici.clear();
-
-            allAdempimenti.forEach(a => {
-                if (a.Tipologia) tipologieUniche.add(a.Tipologia);
-                if (a.Stato) statiUnici.add(a.Stato);
-            });
-        }
-
-        function populateFilters() {
-            // Tipologie
-            const tipologiaFilter = document.getElementById('filterTipologia');
-            const tipologiaForm = document.getElementById('formTipologia');
+        function displayData(enti, adempimenti) {
+            const container = document.getElementById('dataContainer');
             
-            tipologiaFilter.innerHTML = '<option value="">Tutte</option>';
-            tipologiaForm.innerHTML = '<option value="">Seleziona...</option>';
+            let html = '<div class="data-display">';
+            html += '<h2>📍 Enti Caricati</h2>';
             
-            Array.from(tipologieUniche).sort().forEach(tip => {
-                const opt1 = document.createElement('option');
-                opt1.value = tip;
-                opt1.textContent = tip;
-                tipologiaFilter.appendChild(opt1);
-
-                const opt2 = opt1.cloneNode(true);
-                tipologiaForm.appendChild(opt2);
-            });
-
-            // Stati
-            const statoFilter = document.getElementById('filterStato');
-            const statoForm = document.getElementById('formStato');
-            
-            statoFilter.innerHTML = '<option value="">Tutti</option>';
-            statoForm.innerHTML = '<option value="">Seleziona...</option>';
-            
-            Array.from(statiUnici).sort().forEach(stato => {
-                const opt1 = document.createElement('option');
-                opt1.value = stato;
-                opt1.textContent = stato;
-                statoFilter.appendChild(opt1);
-
-                const opt2 = opt1.cloneNode(true);
-                statoForm.appendChild(opt2);
-            });
-        }
-
-        function populateComuneDropdown() {
-            const filterSelect = document.getElementById('filterComune');
-            const formSelect = document.getElementById('formComune');
-
-            filterSelect.innerHTML = '<option value="">Tutti i comuni</option>';
-            formSelect.innerHTML = '<option value="">Seleziona comune...</option>';
-
-            allEnti.forEach(ente => {
-                const option1 = document.createElement('option');
-                option1.value = ente.ID;
-                option1.textContent = ente.Comune || ente.Title;
-                filterSelect.appendChild(option1);
-
-                const option2 = option1.cloneNode(true);
-                formSelect.appendChild(option2);
-            });
-        }
-
-        function renderComuni() {
-            const container = document.getElementById('comuniContainer');
-            container.innerHTML = '';
-
-            const filters = {
-                comune: document.getElementById('filterComune').value,
-                tipologia: document.getElementById('filterTipologia').value,
-                stato: document.getElementById('filterStato').value,
-                mese: document.getElementById('filterMese').value
-            };
-
-            let filteredEnti = [...allEnti];
-
-            if (filters.comune) {
-                filteredEnti = filteredEnti.filter(e => e.ID == filters.comune);
-            }
-
-            filteredEnti.forEach(ente => {
-                const adempimenti = getAdempimentiForEnte(ente.ID, filters);
-                
-                if (adempimenti.length === 0 && filters.comune === '') return;
-
-                const card = createComuneCard(ente, adempimenti);
-                container.appendChild(card);
-            });
-
-            if (container.children.length === 0) {
-                container.innerHTML = '<div class="alert alert-info">Nessun adempimento trovato con i filtri selezionati.</div>';
-            }
-
-            // Event listeners per toggle
-            document.querySelectorAll('.comune-toggle').forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    const card = this.parentElement;
-                    const list = card.querySelector('.adempimenti-list');
-                    const icon = this.querySelector('.expand-icon');
-                    
-                    list.classList.toggle('open');
-                    icon.classList.toggle('open');
-                });
-            });
-
-            // Event listeners per azioni
-            document.querySelectorAll('.btn-edit-adempimento').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editAdempimento(parseInt(this.dataset.id));
-                });
-            });
-
-            document.querySelectorAll('.btn-delete-adempimento').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    deleteAdempimento(parseInt(this.dataset.id));
-                });
-            });
-        }
-
-        function getAdempimentiForEnte(enteId, filters) {
-            // Gli adempimenti hanno Title che contiene il nome comune, non EnteId
-            const ente = allEnti.find(e => e.ID === enteId);
-            if (!ente) return [];
-
-            const comuneName = ente.Comune || ente.Title;
-            let adempimenti = allAdempimenti.filter(a => 
-                a.Title && a.Title.includes(comuneName)
-            );
-
-            if (filters.tipologia) {
-                adempimenti = adempimenti.filter(a => a.Tipologia === filters.tipologia);
-            }
-
-            if (filters.stato) {
-                adempimenti = adempimenti.filter(a => a.Stato === filters.stato);
-            }
-
-            if (filters.mese) {
-                const [year, month] = filters.mese.split('-');
-                adempimenti = adempimenti.filter(a => {
-                    if (!a.DataScadenza) return false;
-                    const scadenza = new Date(a.DataScadenza);
-                    return scadenza.getFullYear() == year && 
-                           (scadenza.getMonth() + 1) == month;
+            if (enti.length === 0) {
+                html += '<p>Nessun ente trovato</p>';
+            } else {
+                enti.forEach(ente => {
+                    html += `<div class="data-item">
+                        <strong>${ente.Comune || ente.Title}</strong> - 
+                        Stato: ${ente.StatoEnte || 'N/A'}
+                    </div>`;
                 });
             }
-
-            return adempimenti;
-        }
-
-        function createComuneCard(ente, adempimenti) {
-            const card = document.createElement('div');
-            card.className = 'comune-card';
-
-            const oggi = new Date();
-            const scaduti = adempimenti.filter(a => {
-                if (!a.DataScadenza) return false;
-                const scadenza = new Date(a.DataScadenza);
-                return scadenza < oggi && a.Stato !== 'Completato';
-            }).length;
-
-            const prossimi = adempimenti.filter(a => {
-                if (!a.DataScadenza) return false;
-                const scadenza = new Date(a.DataScadenza);
-                const diff = (scadenza - oggi) / (1000 * 60 * 60 * 24);
-                return diff >= 0 && diff <= 7 && a.Stato !== 'Completato';
-            }).length;
-
-            const comuneName = ente.Comune || ente.Title;
-
-            card.innerHTML = `
-                <div class="comune-header comune-toggle">
-                    <div class="comune-name">${comuneName}</div>
-                    <div class="comune-stats">
-                        <span class="stat-badge">${adempimenti.length} totali</span>
-                        ${scaduti > 0 ? `<span class="stat-badge scaduti">${scaduti} scaduti</span>` : ''}
-                        ${prossimi > 0 ? `<span class="stat-badge prossimi">${prossimi} prossimi</span>` : ''}
-                        <span class="expand-icon">▼</span>
-                    </div>
-                </div>
-                <div class="adempimenti-list">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tipologia</th>
-                                <th>Descrizione</th>
-                                <th>Scadenza</th>
-                                <th>Stato</th>
-                                <th>Progress</th>
-                                <th>Note</th>
-                                <th>Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${adempimenti.map(a => createAdempimentoRow(a)).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            return card;
-        }
-
-        function createAdempimentoRow(adempimento) {
-            const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
-            const oggi = new Date();
-            let scadenzaClass = '';
             
-            if (scadenza) {
-                const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-                if (diff < 0 && adempimento.Stato !== 'Completato') {
-                    scadenzaClass = 'priority-high';
-                } else if (diff >= 0 && diff <= 7) {
-                    scadenzaClass = 'priority-medium';
-                }
-            }
+            html += '</div>';
 
-            const statoClass = adempimento.Stato === 'Completato' ? 'completato' :
-                              adempimento.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
-
-            return `
-                <tr>
-                    <td>${adempimento.Tipologia || '-'}</td>
-                    <td>${adempimento.Descrizione || adempimento.Title}</td>
-                    <td class="${scadenzaClass}">${scadenza ? formatDate(adempimento.DataScadenza) : '-'}</td>
-                    <td><span class="status-badge ${statoClass}">${adempimento.Stato || 'Non Iniziato'}</span></td>
-                    <td>${adempimento.Progress || 0}%</td>
-                    <td>${adempimento.Note || '-'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="icon-btn btn-edit-adempimento" data-id="${adempimento.ID}" title="Modifica">✏️</button>
-                            <button class="icon-btn btn-delete-adempimento" data-id="${adempimento.ID}" title="Elimina">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }
-
-        // ============================================
-        // CRUD ADEMPIMENTI
-        // ============================================
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Nuovo Adempimento';
-            document.getElementById('adempimentoForm').reset();
-            document.getElementById('editId').value = '';
-            document.getElementById('adempimentoModal').classList.add('open');
-        }
-
-        async function editAdempimento(id) {
-            const adempimento = allAdempimenti.find(a => a.ID === id);
-            if (!adempimento) return;
-
-            document.getElementById('modalTitle').textContent = 'Modifica Adempimento';
-            document.getElementById('editId').value = id;
+            html += '<div class="data-display">';
+            html += '<h2>📋 Adempimenti Caricati</h2>';
             
-            // Trova il comune dal Title
-            const comuneMatch = allEnti.find(e => 
-                adempimento.Title && adempimento.Title.includes(e.Comune || e.Title)
-            );
-            if (comuneMatch) {
-                document.getElementById('formComune').value = comuneMatch.ID;
+            if (adempimenti.length === 0) {
+                html += '<p>Nessun adempimento trovato</p>';
+            } else {
+                adempimenti.forEach(ad => {
+                    html += `<div class="data-item">
+                        <strong>${ad.Title}</strong><br>
+                        Descrizione: ${ad.Descrizione || 'N/A'}<br>
+                        Scadenza: ${ad.DataScadenza || 'N/A'}<br>
+                        Stato: ${ad.Stato || 'N/A'}
+                    </div>`;
+                });
             }
             
-            document.getElementById('formTipologia').value = adempimento.Tipologia || '';
-            document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
-            document.getElementById('formScadenza').value = adempimento.DataScadenza ? adempimento.DataScadenza.split('T')[0] : '';
-            document.getElementById('formStato').value = adempimento.Stato || '';
-            document.getElementById('formProgress').value = adempimento.Progress || 0;
-            document.getElementById('formNote').value = adempimento.Note || '';
+            html += '</div>';
 
-            document.getElementById('adempimentoModal').classList.add('open');
-        }
-
-        async function deleteAdempimento(id) {
-            if (!confirm('Sei sicuro di voler eliminare questo adempimento?')) return;
-
-            try {
-                showLoading(true);
-                
-                await callSharePointAPI(
-                    `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${id})`,
-                    'DELETE'
-                );
-
-                showAlert('Adempimento eliminato con successo', 'success');
-                await loadAllData();
-                
-            } catch (error) {
-                console.error('Error deleting:', error);
-                showAlert('Errore durante l\'eliminazione', 'error');
-                showLoading(false);
-            }
-        }
-
-        document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const editId = document.getElementById('editId').value;
-            const comuneId = document.getElementById('formComune').value;
-            const ente = allEnti.find(e => e.ID == comuneId);
-            const comuneName = ente ? (ente.Comune || ente.Title) : '';
-            const descrizione = document.getElementById('formDescrizione').value;
-            
-            const data = {
-                __metadata: { type: 'SP.Data.Scadenziario_AdempimentiListItem' },
-                Title: `${comuneName} - ${descrizione}`,
-                Descrizione: descrizione,
-                Tipologia: document.getElementById('formTipologia').value,
-                DataScadenza: document.getElementById('formScadenza').value,
-                Stato: document.getElementById('formStato').value,
-                Progress: parseInt(document.getElementById('formProgress').value) || 0,
-                Note: document.getElementById('formNote').value,
-                AnnoMese: document.getElementById('formScadenza').value ? 
-                    document.getElementById('formScadenza').value.substring(0, 7) : ''
-            };
-
-            try {
-                showLoading(true);
-
-                if (editId) {
-                    await callSharePointAPI(
-                        `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items(${editId})`,
-                        'MERGE',
-                        data
-                    );
-                    showAlert('Adempimento aggiornato con successo', 'success');
-                } else {
-                    await callSharePointAPI(
-                        `web/lists/getbytitle('${LISTS.ADEMPIMENTI}')/items`,
-                        'POST',
-                        data
-                    );
-                    showAlert('Adempimento creato con successo', 'success');
-                }
-
-                closeModal();
-                await loadAllData();
-
-            } catch (error) {
-                console.error('Error saving:', error);
-                showAlert('Errore durante il salvataggio: ' + error.message, 'error');
-                showLoading(false);
-            }
-        });
-
-        function closeModal() {
-            document.getElementById('adempimentoModal').classList.remove('open');
+            container.innerHTML = html;
         }
 
         // ============================================
-        // EXPORT CSV (ADMIN ONLY)
+        // UTILITY
         // ============================================
-        function exportCSV() {
-            if (userRole !== 'Admin') {
-                showAlert('Solo gli amministratori possono esportare i dati', 'error');
-                return;
-            }
-
-            const headers = ['Comune', 'Tipologia', 'Descrizione', 'Scadenza', 'Stato', 'Progress', 'Note'];
-            const rows = [];
-
-            allAdempimenti.forEach(adempimento => {
-                const comuneMatch = allEnti.find(e => 
-                    adempimento.Title && adempimento.Title.includes(e.Comune || e.Title)
-                );
-                const comuneName = comuneMatch ? (comuneMatch.Comune || comuneMatch.Title) : '';
-
-                rows.push([
-                    comuneName,
-                    adempimento.Tipologia || '',
-                    adempimento.Descrizione || adempimento.Title,
-                    adempimento.DataScadenza ? formatDate(adempimento.DataScadenza) : '',
-                    adempimento.Stato || '',
-                    adempimento.Progress || 0,
-                    adempimento.Note || ''
-                ]);
-            });
-
-            let csv = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `scadenziario_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-
-            showAlert('Export completato con successo', 'success');
-        }
-
-        // ============================================
-        // UTILITY FUNCTIONS
-        // ============================================
-        function filterData() {
-            renderComuni();
-        }
-
-        async function syncData() {
-            showAlert('Sincronizzazione in corso...', 'info');
-            await loadAllData();
-            showAlert('Dati sincronizzati con successo', 'success');
-        }
-
         function showLoading(show) {
             document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
-            document.getElementById('comuniContainer').style.display = show ? 'none' : 'block';
+            document.getElementById('dataContainer').style.display = show ? 'none' : 'block';
         }
 
         function showAlert(message, type) {
@@ -1241,22 +428,14 @@
             container.innerHTML = '';
             container.appendChild(alert);
 
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('it-IT');
+            setTimeout(() => alert.remove(), 5000);
         }
 
         // ============================================
-        // INITIALIZATION
+        // INIT
         // ============================================
         window.addEventListener('load', async () => {
-            console.log('🚀 Applicazione caricata - Studio Grismondi');
+            console.log('🚀 V11 - Avvio applicazione');
             
             try {
                 await msalInstance.initialize();
@@ -1265,32 +444,21 @@
                 const accounts = msalInstance.getAllAccounts();
                 
                 if (accounts.length > 0) {
-                    console.log('🔄 Account esistente, auto-login...');
-                    await handleAuthentication();
+                    console.log('🔄 Account esistente');
+                    await handleAuth();
                 } else {
-                    console.log('📝 Nessun account, mostra schermata login');
+                    console.log('📝 Mostra login');
                 }
             } catch (error) {
-                console.error('❌ Errore inizializzazione:', error);
-                alert('Errore inizializzazione: ' + error.message);
+                console.error('❌ Init error:', error);
+                showAlert('Errore inizializzazione', 'error');
             }
 
-            // Event Listeners
+            // Event listeners
             document.getElementById('loginBtn').addEventListener('click', login);
             document.getElementById('logoutBtn').addEventListener('click', logout);
             
-            document.getElementById('filterComune').addEventListener('change', filterData);
-            document.getElementById('filterTipologia').addEventListener('change', filterData);
-            document.getElementById('filterStato').addEventListener('change', filterData);
-            document.getElementById('filterMese').addEventListener('change', filterData);
-            
-            document.getElementById('btnAddAdempimento').addEventListener('click', openAddModal);
-            document.getElementById('btnExport').addEventListener('click', exportCSV);
-            document.getElementById('btnSync').addEventListener('click', syncData);
-            
-            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-            
-            console.log('✅ Sistema pronto');
+            console.log('✅ V11 pronta');
         });
     </script>
 </body>
