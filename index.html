@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V15</title>
+    <title>Scadenziario Studio Grismondi V15.1</title>
     
+    <!-- MSAL.js Library -->
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
     <style>
@@ -48,6 +49,32 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(79, 172, 254, 0.6);
         }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .debug-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-info.error {
+            background: #ffe0e0;
+            color: #c00;
+        }
+
+        .debug-info.success {
+            background: #e0ffe0;
+            color: #080;
+        }
         
         .app-container {
             display: none;
@@ -68,11 +95,9 @@
             align-items: center;
         }
         
-        .header h1 { font-size: 26px; display: flex; align-items: center; gap: 15px; }
+        .header h1 { font-size: 26px; }
+        
         .user-info { display: flex; align-items: center; gap: 20px; }
-        .user-name { text-align: right; }
-        .user-name strong { font-size: 16px; }
-        .user-name small { opacity: 0.9; display: block; font-size: 13px; }
         
         .logout-btn {
             background: rgba(255,255,255,0.2);
@@ -87,629 +112,271 @@
         
         .logout-btn:hover { background: white; color: #4facfe; }
         
-        .controls {
-            padding: 25px 40px;
-            background: linear-gradient(to right, #f8fbff 0%, #f0fff4 100%);
-            border-bottom: 2px solid #e0f2fe;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
+        .content {
+            padding: 40px;
+            text-align: center;
         }
-        
-        .filter-group { display: flex; align-items: center; gap: 10px; }
-        .filter-group label { font-weight: 600; color: #333; font-size: 14px; }
-        
-        select, input[type="month"], input[type="text"], input[type="date"], input[type="number"], textarea {
-            padding: 10px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        select:focus, input:focus, textarea:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            padding: 11px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
-            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #90ee90 0%, #7bed9f 100%);
-            box-shadow: 0 3px 10px rgba(144, 238, 144, 0.3);
-        }
-        
-        .btn-success:hover { box-shadow: 0 5px 15px rgba(144, 238, 144, 0.5); }
-        .btn-small { padding: 8px 15px; font-size: 13px; }
-        .admin-only { display: none; }
-        
-        .content { padding: 40px; }
-        .loading { text-align: center; padding: 60px; color: #666; }
-        
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #4facfe;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 25px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .comune-card {
-            background: white;
-            border: 2px solid #e0f2fe;
-            border-radius: 15px;
+
+        .success-message {
+            font-size: 48px;
+            color: #4facfe;
             margin-bottom: 20px;
-            overflow: hidden;
-            transition: all 0.3s;
         }
-        
-        .comune-card:hover {
-            border-color: #4facfe;
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .comune-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            background: linear-gradient(to right, #f8fbff 0%, #f0fff4 100%);
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.3s;
-        }
-        
-        .comune-header:hover {
-            background: linear-gradient(to right, #e0f2fe 0%, #d4f4dd 100%);
-        }
-        
-        .comune-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .comune-stats { display: flex; gap: 15px; align-items: center; }
-        
-        .stat-badge {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
-        }
-        
-        .stat-badge.scaduti {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-        }
-        
-        .stat-badge.prossimi {
-            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
-            box-shadow: 0 2px 8px rgba(254, 202, 87, 0.3);
-        }
-        
-        .expand-icon { transition: transform 0.3s; font-size: 20px; }
-        .expand-icon.open { transform: rotate(180deg); }
-        
-        .adempimenti-list { display: none; padding: 25px; background: #fafbfc; }
-        .adempimenti-list.open { display: block; }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        th {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-        }
-        
-        td { padding: 15px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-        tr:hover { background: #f8fbff; }
-        tr:last-child td { border-bottom: none; }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-badge.completato { background: #d4edda; color: #155724; }
-        .status-badge.in-corso { background: #fff3cd; color: #856404; }
-        .status-badge.non-iniziato { background: #f8d7da; color: #721c24; }
-        
-        .priority-high { color: #ff6b6b; font-weight: 700; }
-        .priority-medium { color: #feca57; font-weight: 700; }
-        
-        .action-buttons { display: flex; gap: 8px; }
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-        .icon-btn:hover { transform: scale(1.3); }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal.open { display: flex; }
-        
-        .modal-content {
-            background: white;
-            padding: 35px;
-            border-radius: 20px;
-            max-width: 650px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
-        }
-        
-        .modal-header { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid #e0f2fe; }
-        .modal-header h2 { color: #4facfe; font-size: 24px; }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        .form-actions { display: flex; gap: 12px; margin-top: 30px; }
-        .form-row { display: flex; gap: 10px; align-items: center; }
-        .form-row select { flex: 1; }
-        
-        .alert {
-            padding: 18px 20px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        
-        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
-        .empty-state-icon { font-size: 80px; margin-bottom: 20px; opacity: 0.5; }
-        .empty-state h3 { color: #4facfe; margin-bottom: 10px; }
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
     <div id="loginContainer" class="login-container">
         <div class="logo">🏢</div>
         <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario V15 COMPLETA</p>
+        <p>Sistema Scadenziario V15.1</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
+        
+        <!-- Debug Info -->
+        <div id="debugInfo" class="debug-info" style="display: none;">
+            <strong>Debug Log:</strong><br>
+            <div id="debugLog"></div>
+        </div>
     </div>
 
+    <!-- Main Application -->
     <div id="appContainer" class="app-container">
         <div class="header">
-            <h1><span>📅</span>Scadenziario Studio Grismondi</h1>
+            <h1>📅 Scadenziario Studio Grismondi</h1>
             <div class="user-info">
-                <div class="user-name">
-                    <strong id="userName">Utente</strong>
+                <div>
+                    <strong id="userName">Utente</strong><br>
                     <small id="userRole">Caricamento...</small>
                 </div>
                 <button class="logout-btn" id="logoutBtn">Esci</button>
             </div>
         </div>
 
-        <div class="controls">
-            <div class="filter-group">
-                <label>📍 Comune:</label>
-                <select id="filterComune"><option value="">Tutti i comuni</option></select>
-            </div>
-
-            <div class="filter-group">
-                <label>📂 Tipologia:</label>
-                <select id="filterTipologia"><option value="">Tutte</option></select>
-            </div>
-
-            <div class="filter-group">
-                <label>⚠️ Stato:</label>
-                <select id="filterStato"><option value="">Tutti</option></select>
-            </div>
-
-            <div class="filter-group">
-                <label>📅 Mese:</label>
-                <input type="month" id="filterMese">
-            </div>
-
-            <button class="btn btn-success" id="btnAddAdempimento">➕ Nuovo Adempimento</button>
-            <button class="btn admin-only" id="btnExport">📊 Esporta CSV</button>
-            <button class="btn" id="btnSync">🔄 Sincronizza</button>
-        </div>
-
         <div class="content">
-            <div id="loadingIndicator" class="loading">
-                <div class="spinner"></div>
-                <p>Caricamento dati da SharePoint...</p>
-            </div>
-            <div id="alertContainer"></div>
-            <div id="comuniContainer"></div>
-        </div>
-    </div>
-
-    <!-- MODAL ADEMPIMENTO -->
-    <div id="adempimentoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Nuovo Adempimento</h2>
-            </div>
-            <form id="adempimentoForm">
-                <input type="hidden" id="editId">
-                
-                <div class="form-group">
-                    <label>Comune *</label>
-                    <div class="form-row">
-                        <select id="formComune" required>
-                            <option value="">Seleziona comune...</option>
-                        </select>
-                        <button type="button" class="btn btn-success btn-small" id="btnOpenEnteModal">
-                            ➕ Nuovo Comune
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Tipologia *</label>
-                    <select id="formTipologia" required>
-                        <option value="">Seleziona...</option>
-                        <option value="Contabilità">Contabilità</option>
-                        <option value="Tributi">Tributi</option>
-                        <option value="Personale">Personale</option>
-                        <option value="Altro">Altro</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Descrizione *</label>
-                    <textarea id="formDescrizione" required placeholder="Descrivi l'adempimento..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Scadenza *</label>
-                    <input type="date" id="formScadenza" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Stato *</label>
-                    <select id="formStato" required>
-                        <option value="Non Iniziato">Non Iniziato</option>
-                        <option value="In Corso">In Corso</option>
-                        <option value="Completato">Completato</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Progress (%)</label>
-                    <input type="number" id="formProgress" min="0" max="100" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label>Note</label>
-                    <textarea id="formNote" placeholder="Note aggiuntive..."></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Salva</button>
-                    <button type="button" class="btn" id="btnCloseModal">❌ Annulla</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL NUOVO ENTE -->
-    <div id="enteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🏛️ Nuovo Comune</h2>
-            </div>
-            <form id="enteForm">
-                <div class="form-group">
-                    <label>Nome Comune *</label>
-                    <input type="text" id="formEnteNome" required placeholder="es. Milano, Bergamo, Brescia...">
-                </div>
-
-                <div class="form-group">
-                    <label>Provincia</label>
-                    <input type="text" id="formEnteProvincia" placeholder="es. MI, BG, BS..." maxlength="2" style="text-transform: uppercase;">
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Crea Comune</button>
-                    <button type="button" class="btn" id="btnCloseEnteModal">❌ Annulla</button>
-                </div>
-            </form>
+            <div class="success-message">✅</div>
+            <h2>Login Effettuato con Successo!</h2>
+            <p>Benvenuto <strong id="welcomeName"></strong></p>
+            <p style="margin-top: 20px; color: #666;">
+                Sistema pronto per l'uso.<br>
+                (Le funzionalità complete verranno caricate nel prossimo step)
+            </p>
         </div>
     </div>
 
     <script>
-        console.log('🚀 Studio Grismondi Scadenziario V15 COMPLETA');
+        // ============================================
+        // DEBUG UTILITIES
+        // ============================================
+        function addLog(message, isError = false) {
+            console.log('[DEBUG]', message);
+            const debugInfo = document.getElementById('debugInfo');
+            const debugLog = document.getElementById('debugLog');
+            
+            if (debugInfo && debugLog) {
+                debugInfo.style.display = 'block';
+                if (isError) {
+                    debugInfo.classList.add('error');
+                } else {
+                    debugInfo.classList.remove('error');
+                }
+                
+                const timestamp = new Date().toLocaleTimeString();
+                debugLog.innerHTML += `[${timestamp}] ${message}<br>`;
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+
+        // ============================================
+        // AZURE AD CONFIGURATION
+        // ============================================
+        addLog('🔧 Inizializzazione configurazione...');
 
         const msalConfig = {
             auth: {
                 clientId: '931c14fe-e538-4ae3-a336-0d3a9fd75c49',
                 authority: 'https://login.microsoftonline.com/7f07be7a-b1c7-42ca-8f8b-ff793e29b450',
-                redirectUri: 'https://andreaghub11.github.io/studio-grismondi-scadenziario/'
+                redirectUri: window.location.origin + window.location.pathname
             },
-            cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: true }
+            cache: {
+                cacheLocation: 'localStorage',
+                storeAuthStateInCookie: true
+            }
         };
 
-        const loginRequest = { scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'] };
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
+        addLog('✅ Config creata');
+        addLog(`Redirect URI: ${msalConfig.auth.redirectUri}`);
 
-        const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
-        const SITE_PATH = '/sites/SitodiComunicazione';
-        const LISTS = { ENTI: 'Scadenziario_Enti', ADEMPIMENTI: 'Scadenziario_Adempimenti' };
-        const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
+        const loginRequest = {
+            scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All']
+        };
 
-        let currentUser, userRole, accessToken, siteId;
-        let allEnti = [], allAdempimenti = [];
-        let tipologieUniche = new Set(), statiUnici = new Set();
+        addLog('🔑 Scopes: ' + loginRequest.scopes.join(', '));
 
+        // ============================================
+        // MSAL INITIALIZATION
+        // ============================================
+        let msalInstance;
+
+        try {
+            addLog('📦 Creazione MSAL instance...');
+            msalInstance = new msal.PublicClientApplication(msalConfig);
+            addLog('✅ MSAL instance creata!');
+        } catch (error) {
+            addLog('❌ ERRORE creazione MSAL: ' + error.message, true);
+        }
+
+        // Global variables
+        let currentUser = null;
+        let accessToken = null;
+
+        // ============================================
+        // LOGIN FUNCTION
+        // ============================================
         async function login() {
+            addLog('🚀 Avvio procedura login...');
+            
             try {
-                const response = await msalInstance.loginPopup(loginRequest);
-                currentUser = response.account;
-                await handleAuth();
+                addLog('📋 Chiamata loginPopup...');
+                const loginResponse = await msalInstance.loginPopup(loginRequest);
+                
+                addLog('✅ Login response ricevuta!');
+                addLog(`User: ${loginResponse.account.username}`);
+                
+                currentUser = loginResponse.account;
+                await handleAuthentication();
+                
             } catch (error) {
-                console.error('Login error:', error);
-                showAlert('❌ Errore login: ' + error.message, 'error');
+                addLog('❌ ERRORE LOGIN: ' + error.message, true);
+                addLog('Error name: ' + error.name, true);
+                
+                if (error.errorCode) {
+                    addLog('Error code: ' + error.errorCode, true);
+                }
+                
+                alert('❌ Errore durante il login:\n\n' + error.message + '\n\nControlla il debug log qui sotto.');
             }
         }
 
-        async function handleAuth() {
+        // ============================================
+        // AUTHENTICATION HANDLER
+        // ============================================
+        async function handleAuthentication() {
             try {
+                addLog('🔐 Gestione autenticazione...');
+                
                 const account = msalInstance.getAllAccounts()[0];
-                if (!account) return;
+                if (!account) {
+                    addLog('⚠️ Nessun account trovato', true);
+                    return;
+                }
 
                 currentUser = account;
-                const tokenResponse = await msalInstance.acquireTokenSilent({ ...loginRequest, account: currentUser });
-                accessToken = tokenResponse.accessToken;
-                userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
+                addLog('✅ Account trovato: ' + currentUser.username);
+
+                // Get access token
+                addLog('🎫 Richiesta token...');
+                const tokenResponse = await msalInstance.acquireTokenSilent({
+                    ...loginRequest,
+                    account: currentUser
+                });
                 
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('appContainer').style.display = 'block';
-                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
-                document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
+                accessToken = tokenResponse.accessToken;
+                addLog('✅ Token acquisito!');
 
-                if (userRole === 'Admin') {
-                    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-                }
-
-                await loadData();
+                // Show app
+                showApp();
+                
             } catch (error) {
+                addLog('❌ ERRORE autenticazione: ' + error.message, true);
+                
                 if (error.name === 'InteractionRequiredAuthError') {
+                    addLog('🔄 Richiesta interazione utente...', true);
                     await login();
-                } else {
-                    console.error('Auth error:', error);
-                    showAlert('❌ Errore autenticazione', 'error');
                 }
             }
         }
 
+        // ============================================
+        // SHOW APP
+        // ============================================
+        function showApp() {
+            addLog('🎨 Mostra applicazione...');
+            
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            
+            document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+            document.getElementById('welcomeName').textContent = currentUser.name || currentUser.username;
+            document.getElementById('userRole').textContent = '👤 Utente';
+            
+            addLog('✅ App mostrata con successo!');
+            
+            // Add success class to debug
+            document.getElementById('debugInfo').classList.add('success');
+        }
+
+        // ============================================
+        // LOGOUT
+        // ============================================
         async function logout() {
+            addLog('👋 Logout...');
             await msalInstance.logoutPopup();
             location.reload();
         }
 
-        async function callGraph(endpoint, method = 'GET', body = null) {
-            const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
-            const options = {
-                method,
-                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }
-            };
-
-            if (body && (method === 'POST' || method === 'PATCH')) {
-                options.body = JSON.stringify(body);
-            }
-
-            const response = await fetch(url, options);
-            if (!response.ok) throw new Error(`Graph API error: ${response.status}`);
-            if (method === 'DELETE' || response.status === 204) return { success: true };
-            return await response.json();
-        }
-
-        async function getSiteId() {
-            if (siteId) return siteId;
-            const result = await callGraph(`sites/${SHAREPOINT_HOSTNAME}:${SITE_PATH}`);
-            siteId = result.id;
-            return siteId;
-        }
-
-        async function getListItems(listName) {
-            const site = await getSiteId();
-            const result = await callGraph(`sites/${site}/lists/${listName}/items?expand=fields`);
-            return result.value.map(item => ({ ID: item.id, ...item.fields }));
-        }
-
-        async function createItem(listName, data) {
-            const site = await getSiteId();
-            return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
-        }
-
-        async function updateItem(listName, itemId, data) {
-            const site = await getSiteId();
-            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
-        }
-
-        async function deleteItem(listName, itemId) {
-            const site = await getSiteId();
-            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
-        }
-
-        async function loadData() {
+        // ============================================
+        // PAGE LOAD EVENT
+        // ============================================
+        window.addEventListener('load', async () => {
+            addLog('🌐 Pagina caricata');
+            
             try {
-                showLoading(true);
-                allEnti = await getListItems(LISTS.ENTI);
-                allEnti = allEnti.filter(e => e.StatoEnte !== 'Disattivo');
-                allAdempimenti = await getListItems(LISTS.ADEMPIMENTI);
+                addLog('🔧 Inizializzazione MSAL...');
+                await msalInstance.initialize();
+                addLog('✅ MSAL inizializzato!');
                 
-                extractUniqueValues();
-                populateDropdowns();
-                renderComuni();
-                showLoading(false);
-                showAlert(`✅ Caricati ${allEnti.length} comuni e ${allAdempimenti.length} adempimenti!`, 'success');
+                const accounts = msalInstance.getAllAccounts();
+                addLog(`👥 Account trovati: ${accounts.length}`);
+                
+                if (accounts.length > 0) {
+                    addLog('🔄 Auto-login con account esistente...');
+                    currentUser = accounts[0];
+                    await handleAuthentication();
+                } else {
+                    addLog('📝 Nessun account, attesa login manuale...');
+                }
+                
             } catch (error) {
-                console.error('Load error:', error);
-                showLoading(false);
-                showAlert('❌ Errore: ' + error.message, 'error');
+                addLog('❌ ERRORE inizializzazione: ' + error.message, true);
             }
-        }
 
-        function extractUniqueValues() {
-            tipologieUniche.clear();
-            statiUnici.clear();
-            allAdempimenti.forEach(a => {
-                if (a.Tipologia) tipologieUniche.add(a.Tipologia);
-                if (a.Stato) statiUnici.add(a.Stato);
-            });
-        }
-
-        function populateDropdowns() {
-            const filterComune = document.getElementById('filterComune');
-            const formComune = document.getElementById('formComune');
+            // ============================================
+            // EVENT LISTENERS
+            // ============================================
+            addLog('🔗 Registrazione event listeners...');
             
-            filterComune.innerHTML = '<option value="">Tutti i comuni</option>';
-            formComune.innerHTML = '<option value="">Seleziona comune...</option>';
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    addLog('👆 Click su bottone login');
+                    login();
+                });
+                addLog('✅ Event listener login registrato');
+            } else {
+                addLog('❌ Bottone login non trovato!', true);
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+                addLog('✅ Event listener logout registrato');
+            }
             
-            allEnti.forEach(ente => {
-                const nome = ente.Comune || ente.Title;
-                const provincia = ente.Provincia ? ` (${ente.Provincia})` : '';
-                const opt1 = document.createElement('option');
-                opt1.value = ente.ID;
-                opt1.textContent = nome + provincia;
-                filterComune.appendChild(opt1);
-                formComune.appendChild(opt1.cloneNode(true));
-            });
+            addLog('🎊 Setup completato!');
+        });
 
-            const filterTip = document.getElementById('filterTipologia');
-            filterTip.innerHTML = '<option value="">Tutte</option>';
-            Array.from(tipologieUniche).sort().forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t;
-                opt.textContent = t;
-                filterTip.appendChild(opt);
-            });
-
-            const filterStato = document.getElementById('filterStato');
-            filterStato.innerHTML = '<option value="">Tutti</option>';
-            Array.from(statiUnici).sort().forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s;
-                opt.textContent = s;
-                filterStato.appendChild(opt);
-            });
-        }
-
-        function renderComuni() {
-            const container = document.getElementById('comuniContainer');
-            container.innerHTML = '';
-
-            const filters = {
-                comune: document.getElementById('filterComune').value,
-                tipologia: document.getElementById('filterTipologia').value,
-                stato: document.getElementById('filterStato').value,
-                mese: document.getElementById('filterMese').value
-            };
-
-            let filteredEnti = [...allEnti];
-            if (filters.comune) {
-                filteredEnti = filteredEnti.filter(e => e.ID == filters.comune);
-            }
-
-            if (filteredEnti.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📂</div>
-                        <h3>Nessun ente trovato</h3>
-                        <p>Clicca "Nuovo Adempimento" e poi "Nuovo Comune" per iniziare!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            filteredEnti.forEach(ente => {
-                const adempimenti = getAdempimentiForEnte(ente, filters);
-                const card = createComuneCard(ente, adempimenti);
-                container.appendChild(card);
-            });
-
-            attachEventListeners();
-        }
-
-        function getAdempimentiForEnte(ente, filters) {
-            const comuneName = ente.Comune || ente.Title;
-            let adempimenti = allAdempimenti.filter(a => a.Title && a.Title.includes(comuneName));
-
-            if (filters.tipologia) adempimenti = adempimenti.filter(a => a.Tipologia === filters.tipologia);
-            if (filters.stato) adempimenti = adempimenti.filter
+        // Initial log
+        addLog('🚀 Script caricato');
+    </script>
+</body>
+</html>
