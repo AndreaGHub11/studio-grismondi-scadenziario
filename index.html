@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V13-LITE</title>
+    <title>Scadenziario Studio Grismondi V13</title>
+    
+    <!-- MSAL.js Library -->
+    <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
     <style>
         * {
@@ -19,7 +22,55 @@
             padding: 20px;
         }
         
+        /* LOGIN SCREEN */
+        .login-container {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(79, 172, 254, 0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .login-container h1 {
+            color: #4facfe;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .login-container p {
+            color: #666;
+            margin-bottom: 35px;
+            font-size: 16px;
+        }
+        
+        .login-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(79, 172, 254, 0.6);
+        }
+        
+        /* APP CONTAINER */
         .app-container {
+            display: none;
             max-width: 1800px;
             margin: 0 auto;
             background: white;
@@ -28,27 +79,61 @@
             overflow: hidden;
         }
         
+        /* HEADER */
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             padding: 30px 40px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 26px;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 15px;
         }
         
-        .header p {
-            margin-top: 10px;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-name {
+            text-align: right;
+        }
+        
+        .user-name strong {
+            font-size: 16px;
+        }
+        
+        .user-name small {
             opacity: 0.9;
+            display: block;
+            font-size: 13px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
             font-size: 14px;
         }
         
+        .logout-btn:hover {
+            background: white;
+            color: #4facfe;
+        }
+        
+        /* CONTROLS */
         .controls {
             padding: 25px 40px;
             background: linear-gradient(to right, #f8fbff 0%, #f0fff4 100%);
@@ -85,6 +170,7 @@
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
         
+        /* BUTTONS */
         .btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -117,10 +203,16 @@
             font-size: 13px;
         }
         
+        .admin-only {
+            display: none;
+        }
+        
+        /* CONTENT */
         .content {
             padding: 40px;
         }
         
+        /* LOADING */
         .loading {
             text-align: center;
             padding: 60px;
@@ -142,6 +234,7 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* COMUNE CARDS */
         .comune-card {
             background: white;
             border: 2px solid #e0f2fe;
@@ -226,6 +319,7 @@
             display: block;
         }
         
+        /* TABLES */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -258,6 +352,7 @@
             border-bottom: none;
         }
         
+        /* STATUS BADGES */
         .status-badge {
             display: inline-block;
             padding: 5px 12px;
@@ -281,6 +376,7 @@
             color: #721c24;
         }
         
+        /* PRIORITY */
         .priority-high {
             color: #ff6b6b;
             font-weight: 700;
@@ -291,6 +387,7 @@
             font-weight: 700;
         }
         
+        /* ACTION BUTTONS */
         .action-buttons {
             display: flex;
             gap: 8px;
@@ -309,6 +406,7 @@
             transform: scale(1.3);
         }
         
+        /* MODALS */
         .modal {
             display: none;
             position: fixed;
@@ -348,6 +446,7 @@
             font-size: 24px;
         }
         
+        /* FORMS */
         .form-group {
             margin-bottom: 20px;
         }
@@ -392,6 +491,7 @@
             flex: 1;
         }
         
+        /* ALERTS */
         .alert {
             padding: 18px 20px;
             margin-bottom: 25px;
@@ -418,6 +518,7 @@
             border: 1px solid #bee5eb;
         }
         
+        /* EMPTY STATE */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -437,10 +538,25 @@
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- LOGIN SCREEN -->
+    <div id="loginContainer" class="login-container">
+        <div class="logo">🏢</div>
+        <h1>Studio Grismondi</h1>
+        <p>Sistema Scadenziario V13-FULL</p>
+        <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
+    </div>
+
+    <!-- MAIN APPLICATION -->
+    <div id="appContainer" class="app-container">
         <div class="header">
             <h1><span>📅</span>Scadenziario Studio Grismondi</h1>
-            <p>V13-LITE - Accesso Diretto (No Login)</p>
+            <div class="user-info">
+                <div class="user-name">
+                    <strong id="userName">Utente</strong>
+                    <small id="userRole">Caricamento...</small>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Esci</button>
+            </div>
         </div>
 
         <div class="controls">
@@ -471,6 +587,7 @@
             </div>
 
             <button class="btn btn-success" id="btnAddAdempimento">➕ Nuovo Adempimento</button>
+            <button class="btn admin-only" id="btnExport">📊 Esporta CSV</button>
             <button class="btn" id="btnSync">🔄 Sincronizza</button>
         </div>
 
@@ -579,99 +696,165 @@
     </div>
 
     <script>
-        console.log('🚀 Studio Grismondi Scadenziario V13-LITE (No Auth)');
+        console.log('🚀 Studio Grismondi Scadenziario V13-FULL');
 
         // ============================================
-        // CONFIGURAZIONE SHAREPOINT
+        // CONFIGURAZIONE AZURE AD & SHAREPOINT
         // ============================================
-        const SHAREPOINT_SITE = 'https://studiogrismondi.sharepoint.com/sites/SitodiComunicazione';
+        const msalConfig = {
+            auth: {
+                clientId: '4a9ee2df-2008-429a-b37f-ec4b45b9eabd',
+                authority: 'https://login.microsoftonline.com/7f07be7a-b1c7-42ca-8f8b-ff793e29b450',
+                redirectUri: window.location.origin + window.location.pathname
+            },
+            cache: {
+                cacheLocation: 'localStorage',
+                storeAuthStateInCookie: true
+            }
+        };
+
+        const loginRequest = {
+            scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All']
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
+        const SITE_PATH = '/sites/SitodiComunicazione';
         const LISTS = {
             ENTI: 'Scadenziario_Enti',
             ADEMPIMENTI: 'Scadenziario_Adempimenti'
         };
+        const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
 
         // ============================================
         // VARIABILI GLOBALI
         // ============================================
+        let currentUser = null;
+        let userRole = null;
+        let accessToken = null;
+        let siteId = null;
         let allEnti = [];
         let allAdempimenti = [];
         let tipologieUniche = new Set();
         let statiUnici = new Set();
 
         // ============================================
-        // SHAREPOINT REST API
+        // AUTENTICAZIONE
         // ============================================
-        async function callSharePoint(endpoint, method = 'GET', body = null) {
-            const url = `${SHAREPOINT_SITE}/_api/${endpoint}`;
-            
-            const headers = {
-                'Accept': 'application/json;odata=verbose',
-                'Content-Type': 'application/json;odata=verbose'
-            };
-
-            if (method === 'POST' || method === 'PATCH') {
-                headers['X-RequestDigest'] = await getFormDigest();
+        async function login() {
+            try {
+                const response = await msalInstance.loginPopup(loginRequest);
+                currentUser = response.account;
+                await handleAuth();
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('❌ Errore durante il login: ' + error.message, 'error');
             }
+        }
 
-            if (method === 'PATCH') {
-                headers['X-HTTP-Method'] = 'MERGE';
-                headers['IF-MATCH'] = '*';
+        async function handleAuth() {
+            try {
+                const account = msalInstance.getAllAccounts()[0];
+                if (!account) return;
+
+                currentUser = account;
+                
+                const tokenResponse = await msalInstance.acquireTokenSilent({
+                    ...loginRequest,
+                    account: currentUser
+                });
+                
+                accessToken = tokenResponse.accessToken;
+                userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
+                
+                // Mostra app
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
+
+                if (userRole === 'Admin') {
+                    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+                }
+
+                await loadData();
+            } catch (error) {
+                if (error.name === 'InteractionRequiredAuthError') {
+                    await login();
+                } else {
+                    console.error('Auth error:', error);
+                    showAlert('❌ Errore di autenticazione', 'error');
+                }
             }
+        }
 
+        async function logout() {
+            await msalInstance.logoutPopup();
+            location.reload();
+        }
+
+        // ============================================
+        // MICROSOFT GRAPH API
+        // ============================================
+        async function callGraph(endpoint, method = 'GET', body = null) {
+            const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
             const options = {
-                method: method === 'PATCH' ? 'POST' : method,
-                headers,
-                credentials: 'include'
+                method,
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
             };
 
-            if (body && method !== 'GET') {
+            if (body && (method === 'POST' || method === 'PATCH')) {
                 options.body = JSON.stringify(body);
             }
 
             const response = await fetch(url, options);
-            
             if (!response.ok) {
-                throw new Error(`SharePoint error: ${response.status} ${response.statusText}`);
+                throw new Error(`Graph API error: ${response.status}`);
             }
-
-            if (method === 'DELETE') {
+            
+            if (method === 'DELETE' || response.status === 204) {
                 return { success: true };
             }
-
-            const data = await response.json();
-            return data.d;
+            
+            return await response.json();
         }
 
-        async function getFormDigest() {
-            const response = await fetch(`${SHAREPOINT_SITE}/_api/contextinfo`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json;odata=verbose'
-                },
-                credentials: 'include'
-            });
-            
-            const data = await response.json();
-            return data.d.GetContextWebInformation.FormDigestValue;
+        async function getSiteId() {
+            if (siteId) return siteId;
+            const result = await callGraph(`sites/${SHAREPOINT_HOSTNAME}:${SITE_PATH}`);
+            siteId = result.id;
+            return siteId;
         }
 
         async function getListItems(listName) {
-            const result = await callSharePoint(`web/lists/getbytitle('${listName}')/items`);
-            return result.results || [];
+            const site = await getSiteId();
+            const result = await callGraph(`sites/${site}/lists/${listName}/items?expand=fields`);
+            return result.value.map(item => ({
+                ID: item.id,
+                ...item.fields
+            }));
         }
 
         async function createItem(listName, data) {
-            data.__metadata = { type: `SP.Data.${listName}ListItem` };
-            return await callSharePoint(`web/lists/getbytitle('${listName}')/items`, 'POST', data);
+            const site = await getSiteId();
+            return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', {
+                fields: data
+            });
         }
 
         async function updateItem(listName, itemId, data) {
-            data.__metadata = { type: `SP.Data.${listName}ListItem` };
-            return await callSharePoint(`web/lists/getbytitle('${listName}')/items(${itemId})`, 'PATCH', data);
+            const site = await getSiteId();
+            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
         }
 
         async function deleteItem(listName, itemId) {
-            return await callSharePoint(`web/lists/getbytitle('${listName}')/items(${itemId})`, 'DELETE');
+            const site = await getSiteId();
+            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
         }
 
         // ============================================
@@ -694,7 +877,7 @@
                 showAlert('✅ Dati caricati con successo!', 'success');
             } catch (error) {
                 console.error('Load error:', error);
-                showAlert('❌ Errore caricamento: ' + error.message + '\n\nVerifica che le liste SharePoint siano accessibili.', 'error');
+                showAlert('❌ Errore nel caricamento: ' + error.message, 'error');
                 showLoading(false);
             }
         }
@@ -710,6 +893,7 @@
         }
 
         function populateDropdowns() {
+            // Dropdown Comuni
             const filterComune = document.getElementById('filterComune');
             const formComune = document.getElementById('formComune');
             
@@ -721,7 +905,7 @@
                 const provincia = ente.Provincia ? ` (${ente.Provincia})` : '';
                 
                 const opt1 = document.createElement('option');
-                opt1.value = ente.ID || ente.Id;
+                opt1.value = ente.ID;
                 opt1.textContent = nome + provincia;
                 filterComune.appendChild(opt1);
                 
@@ -729,6 +913,7 @@
                 formComune.appendChild(opt2);
             });
 
+            // Dropdown Tipologie
             const filterTip = document.getElementById('filterTipologia');
             filterTip.innerHTML = '<option value="">Tutte</option>';
             Array.from(tipologieUniche).sort().forEach(t => {
@@ -738,6 +923,7 @@
                 filterTip.appendChild(opt);
             });
 
+            // Dropdown Stati
             const filterStato = document.getElementById('filterStato');
             filterStato.innerHTML = '<option value="">Tutti</option>';
             Array.from(statiUnici).sort().forEach(s => {
@@ -765,7 +951,7 @@
             let filteredEnti = [...allEnti];
             
             if (filters.comune) {
-                filteredEnti = filteredEnti.filter(e => (e.ID || e.Id) == filters.comune);
+                filteredEnti = filteredEnti.filter(e => e.ID == filters.comune);
             }
 
             if (filteredEnti.length === 0) {
@@ -891,8 +1077,6 @@
             const statoClass = adempimento.Stato === 'Completato' ? 'completato' :
                               adempimento.Stato === 'In Corso' ? 'in-corso' : 'non-iniziato';
 
-            const itemId = adempimento.ID || adempimento.Id;
-
             return `
                 <tr>
                     <td>${adempimento.Tipologia || '-'}</td>
@@ -903,8 +1087,8 @@
                     <td>${adempimento.Note || '-'}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="icon-btn btn-edit" data-id="${itemId}" title="Modifica">✏️</button>
-                            <button class="icon-btn btn-delete" data-id="${itemId}" title="Elimina">🗑️</button>
+                            <button class="icon-btn btn-edit" data-id="${adempimento.ID}" title="Modifica">✏️</button>
+                            <button class="icon-btn btn-delete" data-id="${adempimento.ID}" title="Elimina">🗑️</button>
                         </div>
                     </td>
                 </tr>
@@ -947,7 +1131,7 @@
         }
 
         async function editAdempimento(id) {
-            const adempimento = allAdempimenti.find(a => (a.ID || a.Id) === id);
+            const adempimento = allAdempimenti.find(a => a.ID === id);
             if (!adempimento) return;
 
             document.getElementById('modalTitle').textContent = 'Modifica Adempimento';
@@ -957,7 +1141,7 @@
             const ente = allEnti.find(e => (e.Comune || e.Title) === comuneName);
             
             if (ente) {
-                document.getElementById('formComune').value = ente.ID || ente.Id;
+                document.getElementById('formComune').value = ente.ID;
             }
             
             document.getElementById('formTipologia').value = adempimento.Tipologia || '';
@@ -980,7 +1164,7 @@
                 await loadData();
             } catch (error) {
                 console.error('Delete error:', error);
-                showAlert('❌ Errore durante l\'eliminazione: ' + error.message, 'error');
+                showAlert('❌ Errore durante l\'eliminazione', 'error');
                 showLoading(false);
             }
         }
@@ -1009,7 +1193,7 @@
             
             const editId = document.getElementById('editId').value;
             const comuneId = document.getElementById('formComune').value;
-            const ente = allEnti.find(e => (e.ID || e.Id) == comuneId);
+            const ente = allEnti.find(e => e.ID == comuneId);
             const comuneName = ente ? (ente.Comune || ente.Title) : '';
             
             const data = {
@@ -1038,7 +1222,7 @@
 
             } catch (error) {
                 console.error('Save error:', error);
-                showAlert('❌ Errore durante il salvataggio: ' + error.message, 'error');
+                showAlert('❌ Errore durante il salvataggio', 'error');
                 showLoading(false);
             }
         });
@@ -1067,10 +1251,52 @@
 
             } catch (error) {
                 console.error('Create ente error:', error);
-                showAlert('❌ Errore durante la creazione del comune: ' + error.message, 'error');
+                showAlert('❌ Errore durante la creazione del comune', 'error');
                 showLoading(false);
             }
         });
+
+        // ============================================
+        // EXPORT CSV
+        // ============================================
+        function exportCSV() {
+            if (userRole !== 'Admin') {
+                showAlert('❌ Solo gli amministratori possono esportare i dati', 'error');
+                return;
+            }
+
+            const headers = ['Comune', 'Provincia', 'Tipologia', 'Descrizione', 'Scadenza', 'Stato', 'Progress', 'Note'];
+            const rows = [];
+
+            allAdempimenti.forEach(adempimento => {
+                const comuneName = adempimento.Title.split(' - ')[0];
+                const ente = allEnti.find(e => (e.Comune || e.Title) === comuneName);
+                
+                rows.push([
+                    comuneName,
+                    ente ? (ente.Provincia || '') : '',
+                    adempimento.Tipologia || '',
+                    adempimento.Descrizione || '',
+                    formatDate(adempimento.Scadenza),
+                    adempimento.Stato || '',
+                    adempimento.Progress || 0,
+                    adempimento.Note || ''
+                ]);
+            });
+
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `scadenziario_${formatDate(new Date())}.csv`;
+            link.click();
+
+            showAlert('✅ Export completato con successo!', 'success');
+        }
 
         // ============================================
         // UTILITY FUNCTIONS
@@ -1104,15 +1330,32 @@
         // EVENT LISTENERS
         // ============================================
         window.addEventListener('load', async () => {
-            console.log('🚀 Applicazione caricata - V13-LITE');
+            console.log('🚀 Applicazione caricata');
             
-            // Carica dati automaticamente
-            await loadData();
+            try {
+                await msalInstance.initialize();
+                console.log('✅ MSAL inizializzato');
+                
+                const accounts = msalInstance.getAllAccounts();
+                
+                if (accounts.length > 0) {
+                    console.log('🔄 Account esistente, auto-login...');
+                    await handleAuth();
+                } else {
+                    console.log('📝 Nessun account, mostra schermata login');
+                }
+            } catch (error) {
+                console.error('❌ Errore inizializzazione:', error);
+                showAlert('Errore inizializzazione: ' + error.message, 'error');
+            }
         });
 
         // Button event listeners
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
         document.getElementById('btnAddAdempimento').addEventListener('click', openAddAdempimentoModal);
         document.getElementById('btnOpenEnteModal').addEventListener('click', openAddEnteModal);
+        document.getElementById('btnExport').addEventListener('click', exportCSV);
         document.getElementById('btnSync').addEventListener('click', loadData);
         document.getElementById('btnCloseModal').addEventListener('click', closeAdempimentoModal);
         document.getElementById('btnCloseEnteModal').addEventListener('click', closeEnteModal);
