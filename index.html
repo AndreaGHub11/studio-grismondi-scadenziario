@@ -478,12 +478,35 @@
         // ============================================
         // INITIALIZATION
         // ============================================
+        
+        // Funzione per verificare se MSAL è caricato
+        function waitForMsal() {
+            return new Promise((resolve) => {
+                if (typeof msal !== 'undefined') {
+                    resolve();
+                } else {
+                    const checkMsal = setInterval(() => {
+                        if (typeof msal !== 'undefined') {
+                            clearInterval(checkMsal);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
         window.addEventListener('load', async () => {
             console.log('🚀 Applicazione caricata - V14-FINAL');
-            console.log('📋 Client ID:', msalConfig.auth.clientId);
-            console.log('🏢 Tenant ID:', msalConfig.auth.authority.split('/').pop());
             
             try {
+                // Aspetta che MSAL sia caricato
+                console.log('⏳ Attendo caricamento libreria MSAL...');
+                await waitForMsal();
+                console.log('✅ MSAL library caricata!');
+                
+                console.log('📋 Client ID:', msalConfig.auth.clientId);
+                console.log('🏢 Tenant ID:', msalConfig.auth.authority.split('/').pop());
+                
                 await msalInstance.initialize();
                 console.log('✅ MSAL inizializzato');
                 
