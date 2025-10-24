@@ -225,10 +225,10 @@
         
         .comune-row {
             background: white;
-            padding: 12px 18px;
-            margin-bottom: 8px;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
-            border: 2px solid #e5e7eb;
+            padding: 15px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -240,24 +240,29 @@
             box-shadow: 0 2px 8px rgba(79, 172, 254, 0.1);
         }
         
-        .comune-nome {
-            font-weight: 600;
-            font-size: 15px;
-            color: #1f2937;
-        }
+        .comune-info { flex: 1; }
+        .comune-nome { font-weight: 600; color: #1f2937; margin-bottom: 5px; }
+        .comune-note { font-size: 12px; color: #6b7280; font-style: italic; }
         
         .comune-stato {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
         }
         
+        .stato-non-gestito { background: #fee2e2; color: #991b1b; }
+        .stato-in-corso { background: #fef3c7; color: #92400e; }
+        .stato-completato { background: #d1fae5; color: #065f46; }
+        
         .progress-bar {
-            width: 120px;
-            height: 6px;
+            width: 100px;
+            height: 8px;
             background: #e5e7eb;
-            border-radius: 10px;
+            border-radius: 4px;
             overflow: hidden;
+            margin: 0 10px;
         }
         
         .progress-fill {
@@ -266,25 +271,17 @@
             transition: width 0.3s;
         }
         
-        .stato-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            min-width: 100px;
-            text-align: center;
+        .comune-actions {
+            display: flex;
+            gap: 8px;
         }
-        
-        .stato-badge.non-gestito { background: #fee2e2; color: #991b1b; }
-        .stato-badge.in-corso { background: #fef3c7; color: #92400e; }
-        .stato-badge.completato { background: #d1fae5; color: #065f46; }
         
         .icon-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            padding: 4px 8px;
+            font-size: 18px;
+            padding: 5px 8px;
             transition: transform 0.2s;
             border-radius: 4px;
         }
@@ -301,7 +298,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -311,135 +308,98 @@
         
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
+            padding: 35px;
+            border-radius: 20px;
+            max-width: 650px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
         }
         
-        .modal-header {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e5e7eb;
+        .modal-header { 
+            margin-bottom: 25px; 
+            padding-bottom: 20px; 
+            border-bottom: 2px solid #e0f2fe; 
         }
         
-        .modal-header h2 {
-            color: #4facfe;
-            font-size: 22px;
-        }
+        .modal-header h2 { color: #4facfe; font-size: 24px; }
         
-        .form-group {
-            margin-bottom: 18px;
-        }
+        .form-group { margin-bottom: 20px; }
         
         .form-group label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: #333;
             font-size: 14px;
         }
         
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 15px;
             border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
-        }
-        
-        .alert {
-            padding: 15px 18px;
-            margin-bottom: 20px;
             border-radius: 8px;
-            font-weight: 500;
             font-size: 14px;
+            transition: all 0.3s;
         }
         
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-actions { display: flex; gap: 12px; margin-top: 30px; }
         
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #bfdbfe;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
-        }
-        
-        .empty-state-icon {
-            font-size: 70px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-        
-        .empty-state h3 {
-            color: #4facfe;
-            margin-bottom: 8px;
-            font-size: 20px;
-        }
-        
-        .comuni-selector {
-            max-height: 250px;
+        .checkbox-group {
+            max-height: 200px;
             overflow-y: auto;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafbfc;
         }
         
-        .comune-checkbox {
+        .checkbox-item {
             display: flex;
             align-items: center;
-            padding: 6px;
-            margin-bottom: 4px;
+            padding: 8px;
+            margin-bottom: 5px;
             border-radius: 4px;
             transition: background 0.2s;
         }
         
-        .comune-checkbox:hover {
-            background: #f3f4f6;
+        .checkbox-item:hover { background: #f0f9ff; }
+        
+        .checkbox-item input {
+            width: auto;
+            margin-right: 10px;
         }
         
-        .comune-checkbox input {
-            margin-right: 8px;
-            width: auto;
+        .alert {
+            padding: 18px 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 14px;
         }
+        
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        .empty-state { 
+            text-align: center; 
+            padding: 80px 20px; 
+            color: #9ca3af; 
+        }
+        
+        .empty-state-icon { font-size: 80px; margin-bottom: 20px; opacity: 0.5; }
+        .empty-state h3 { color: #6b7280; margin-bottom: 10px; font-size: 20px; }
+        .empty-state p { color: #9ca3af; }
     </style>
 </head>
 <body>
     <div id="loginContainer" class="login-container">
         <div class="logo">🏢</div>
         <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario V16 Completo</p>
+        <p>Sistema Scadenziario V16</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
@@ -448,7 +408,7 @@
             <h1>📅 Scadenziario Studio Grismondi</h1>
             <div class="user-info">
                 <div class="user-name">
-                    <strong id="userName">Utente</strong><br>
+                    <strong id="userName">Utente</strong>
                     <small id="userRole">Caricamento...</small>
                 </div>
                 <button class="logout-btn" id="logoutBtn">Esci</button>
@@ -456,24 +416,41 @@
         </div>
 
         <div class="controls">
-            <button class="btn btn-success" id="btnAddAdempimento">➕ Nuovo Adempimento</button>
-            <select id="filterMese" style="width: 180px;">
-                <option value="">📅 Tutti i mesi</option>
-            </select>
-            <select id="filterTipologia" style="width: 150px;">
-                <option value="">📂 Tutte</option>
-                <option value="Contabilità">Contabilità</option>
-                <option value="Tributi">Tributi</option>
-                <option value="Personale">Personale</option>
-                <option value="Altro">Altro</option>
-            </select>
-            <select id="filterStato" style="width: 140px;">
-                <option value="">⚠️ Tutti</option>
-                <option value="Non Gestito">Non Gestito</option>
-                <option value="In Corso">In Corso</option>
-                <option value="Completato">Completato</option>
-            </select>
-            <button class="btn" id="btnSync">🔄 Sincronizza</button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="font-weight: 600;">📅 Mese:</label>
+                <select id="filterMese" style="min-width: 180px;">
+                    <option value="">Tutti i mesi</option>
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="font-weight: 600;">📂 Tipologia:</label>
+                <select id="filterTipologia">
+                    <option value="">Tutte</option>
+                    <option value="Contabilità">Contabilità</option>
+                    <option value="Tributi">Tributi</option>
+                    <option value="Personale">Personale</option>
+                    <option value="Altro">Altro</option>
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="font-weight: 600;">⚠️ Stato:</label>
+                <select id="filterStato">
+                    <option value="">Tutti</option>
+                    <option value="Non Gestito">Non Gestito</option>
+                    <option value="In Corso">In Corso</option>
+                    <option value="Completato">Completato</option>
+                </select>
+            </div>
+
+            <button class="btn btn-success" id="btnAddAdempimento">
+                ➕ Nuovo Adempimento
+            </button>
+
+            <button class="btn" id="btnSync">
+                🔄 Sincronizza
+            </button>
         </div>
 
         <div class="content">
@@ -481,12 +458,13 @@
                 <div class="spinner"></div>
                 <p>Caricamento dati da SharePoint...</p>
             </div>
+
             <div id="alertContainer"></div>
             <div id="adempimentiContainer"></div>
         </div>
     </div>
 
-    <!-- Modal Adempimento -->
+    <!-- Modal Nuovo Adempimento -->
     <div id="adempimentoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -497,14 +475,17 @@
                     <label>Mese *</label>
                     <input type="month" id="formMese" required>
                 </div>
+
                 <div class="form-group">
                     <label>Titolo *</label>
                     <input type="text" id="formTitolo" required placeholder="es. Versamento IMU">
                 </div>
+
                 <div class="form-group">
                     <label>Descrizione</label>
-                    <textarea id="formDescrizione" placeholder="Descrizione dettagliata..."></textarea>
+                    <textarea id="formDescrizione" placeholder="Descrivi l'adempimento..."></textarea>
                 </div>
+
                 <div class="form-group">
                     <label>Tipologia *</label>
                     <select id="formTipologia" required>
@@ -515,16 +496,21 @@
                         <option value="Altro">Altro</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label>Data Scadenza *</label>
                     <input type="date" id="formDataScadenza" required>
                 </div>
+
                 <div class="form-group">
-                    <label>Comuni da assegnare</label>
-                    <div class="comuni-selector" id="adempimentoComuniCheckboxes"></div>
+                    <label>Comuni da assegnare *</label>
+                    <div class="checkbox-group" id="adempimentoComuniCheckboxes">
+                        <!-- Popolato dinamicamente -->
+                    </div>
                 </div>
+
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Salva</button>
+                    <button type="submit" class="btn btn-success">💾 Crea Adempimento</button>
                     <button type="button" class="btn" id="btnCloseAdempimentoModal">❌ Annulla</button>
                 </div>
             </form>
@@ -535,14 +521,16 @@
     <div id="noteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📝 Note per <span id="noteComune"></span></h2>
+                <h2>📝 Note - <span id="noteComune"></span></h2>
             </div>
             <form id="noteForm">
                 <input type="hidden" id="noteRecordId">
+                
                 <div class="form-group">
                     <label>Note</label>
-                    <textarea id="formNote" placeholder="Aggiungi note..."></textarea>
+                    <textarea id="formNote" rows="6" placeholder="Aggiungi note per questo comune..."></textarea>
                 </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success">💾 Salva Note</button>
                     <button type="button" class="btn" id="btnCloseNoteModal">❌ Chiudi</button>
@@ -567,9 +555,9 @@
         const loginRequest = { scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'] };
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-        // SharePoint Config
+        // ✅ SharePoint Config - CORRETTO!
         const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
-        const SITE_PATH = '/sites/SitodiComunicazione';
+        const SITE_PATH = '/';  // ✅ SITO ALLA ROOT (fix applicato!)
         const LISTS = {
             COMUNI: 'Scadenziario_Comuni',
             ADEMPIMENTI: 'Scadenziario_Adempimenti',
@@ -648,31 +636,41 @@
             }
 
             const resp = await fetch(url, options);
-            if (!resp.ok) throw new Error(`API Error: ${resp.status}`);
+            if (!resp.ok) {
+                const errorText = await resp.text();
+                console.error('API Error:', resp.status, errorText);
+                throw new Error(`API Error: ${resp.status} - ${errorText}`);
+            }
             if (method === 'DELETE' || resp.status === 204) return { success: true };
             return await resp.json();
         }
 
         async function getSiteId() {
             if (siteId) return siteId;
+            console.log('Getting site ID for:', SHAREPOINT_HOSTNAME, SITE_PATH);
             const result = await callGraph(`sites/${SHAREPOINT_HOSTNAME}:${SITE_PATH}`);
             siteId = result.id;
+            console.log('Site ID:', siteId);
             return siteId;
         }
 
         async function getListItems(listName) {
             const site = await getSiteId();
+            console.log(`Loading items from list: ${listName}`);
             const result = await callGraph(`sites/${site}/lists/${listName}/items?expand=fields&$top=5000`);
+            console.log(`Loaded ${result.value.length} items from ${listName}`);
             return result.value.map(item => ({ ID: item.id, ...item.fields }));
         }
 
         async function createItem(listName, data) {
             const site = await getSiteId();
+            console.log(`Creating item in ${listName}:`, data);
             return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
         }
 
         async function updateItem(listName, itemId, data) {
             const site = await getSiteId();
+            console.log(`Updating item ${itemId} in ${listName}:`, data);
             return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
         }
 
@@ -699,151 +697,184 @@
                 showAlert('✅ Dati caricati con successo!', 'success');
             } catch (err) {
                 console.error('Load error:', err);
-                showAlert('Errore caricamento: ' + err.message, 'error');
+                showAlert('❌ Errore caricamento: ' + err.message, 'error');
                 showLoading(false);
             }
         }
 
         function populateComuniSelectors() {
             const container = document.getElementById('adempimentoComuniCheckboxes');
+            if (!container) return;
+            
             container.innerHTML = '';
+            
+            if (allComuni.length === 0) {
+                container.innerHTML = '<p style="color: #666; padding: 10px;">⚠️ Nessun comune attivo trovato. Verifica la lista SharePoint "Scadenziario_Comuni".</p>';
+                return;
+            }
             
             allComuni.forEach(comune => {
                 const div = document.createElement('div');
-                div.className = 'comune-checkbox';
+                div.className = 'checkbox-item';
                 div.innerHTML = `
-                    <input type="checkbox" value="${comune.Title}" id="c_${comune.ID}">
-                    <label for="c_${comune.ID}">${comune.Title}${comune.Provincia ? ' (' + comune.Provincia + ')' : ''}</label>
+                    <input type="checkbox" id="comune_${comune.ID}" value="${comune.Title || comune.Comune}">
+                    <label for="comune_${comune.ID}" style="cursor: pointer; user-select: none;">
+                        ${comune.Title || comune.Comune} ${comune.Provincia ? `(${comune.Provincia})` : ''}
+                    </label>
                 `;
                 container.appendChild(div);
             });
+            
+            console.log(`Populated ${allComuni.length} comuni in selector`);
         }
 
         function populateFilterMesi() {
-            const filterSelect = document.getElementById('filterMese');
-            const mesi = [...new Set(allAdempimenti.map(a => a.AnnoMese))].filter(m => m).sort().reverse();
+            const select = document.getElementById('filterMese');
+            if (!select) return;
             
-            filterSelect.innerHTML = '<option value="">📅 Tutti i mesi</option>';
-            mesi.forEach(mese => {
+            const mesi = new Set();
+            allAdempimenti.forEach(a => {
+                if (a.AnnoMese) mesi.add(a.AnnoMese);
+            });
+            
+            const sortedMesi = Array.from(mesi).sort().reverse();
+            
+            select.innerHTML = '<option value="">Tutti i mesi</option>';
+            sortedMesi.forEach(mese => {
                 const option = document.createElement('option');
                 option.value = mese;
                 option.textContent = formatMese(mese);
-                filterSelect.appendChild(option);
+                select.appendChild(option);
             });
             
-            if (mesi.length > 0) {
-                meseCorrente = mesi[0];
-                filterSelect.value = meseCorrente;
+            if (sortedMesi.length > 0) {
+                meseCorrente = sortedMesi[0];
+                select.value = meseCorrente;
             }
         }
 
         function renderAdempimenti() {
             const container = document.getElementById('adempimentiContainer');
-            const filters = {
-                mese: document.getElementById('filterMese').value,
-                tipologia: document.getElementById('filterTipologia').value,
-                stato: document.getElementById('filterStato').value
-            };
+            if (!container) return;
             
-            let adempimenti = [...allAdempimenti];
+            const filterMese = document.getElementById('filterMese')?.value || '';
+            const filterTipologia = document.getElementById('filterTipologia')?.value || '';
+            const filterStato = document.getElementById('filterStato')?.value || '';
             
-            if (filters.mese) {
-                adempimenti = adempimenti.filter(a => a.AnnoMese === filters.mese);
-            }
-            if (filters.tipologia) {
-                adempimenti = adempimenti.filter(a => a.Tipologia === filters.tipologia);
+            let filtered = [...allAdempimenti];
+            
+            if (filterMese) {
+                filtered = filtered.filter(a => a.AnnoMese === filterMese);
             }
             
-            if (adempimenti.length === 0) {
+            if (filterTipologia) {
+                filtered = filtered.filter(a => a.Tipologia === filterTipologia);
+            }
+            
+            if (filterStato) {
+                filtered = filtered.filter(a => {
+                    const entiAdempimento = allEnti.filter(e => e.AdempimentoID == a.ID);
+                    return entiAdempimento.some(e => e.StatoEnte === filterStato);
+                });
+            }
+            
+            if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📋</div>
                         <h3>Nessun adempimento trovato</h3>
-                        <p>Clicca "Nuovo Adempimento" per iniziare!</p>
+                        <p>Usa "Nuovo Adempimento" per iniziare!</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = '';
-            adempimenti.forEach(adempimento => {
-                const card = createAdempimentoCard(adempimento, filters);
-                container.appendChild(card);
+            container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
+            
+            // Attach toggle listeners
+            document.querySelectorAll('.adempimento-toggle').forEach(el => {
+                el.addEventListener('click', function() {
+                    const card = this.closest('.adempimento-card');
+                    const list = card.querySelector('.comuni-list');
+                    const icon = this.querySelector('.expand-icon');
+                    
+                    list.classList.toggle('open');
+                    icon.classList.toggle('open');
+                });
             });
         }
 
-        function createAdempimentoCard(adempimento, filters) {
-            const entiPerAdempimento = allEnti.filter(e => e.AdempimentoID == adempimento.ID);
+        function createAdempimentoCard(adempimento) {
+            const enti = allEnti.filter(e => e.AdempimentoID == adempimento.ID);
             
-            const totali = entiPerAdempimento.length;
-            const nonGestiti = entiPerAdempimento.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
-            const inCorso = entiPerAdempimento.filter(e => e.StatoEnte === 'In Corso').length;
-            const completati = entiPerAdempimento.filter(e => e.StatoEnte === 'Completato').length;
-            
-            let filteredEnti = [...entiPerAdempimento];
-            if (filters.stato) {
-                filteredEnti = filteredEnti.filter(e => e.StatoEnte === filters.stato);
-            }
-            
-            const card = document.createElement('div');
-            card.className = 'adempimento-card';
+            const totali = enti.length;
+            const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
+            const inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
+            const completati = enti.filter(e => e.StatoEnte === 'Completato').length;
             
             const scadenza = adempimento.DataScadenza ? 
-                new Date(adempimento.DataScadenza).toLocaleDateString('it-IT') : 'N/A';
+                new Date(adempimento.DataScadenza).toLocaleDateString('it-IT') : '-';
             
-            card.innerHTML = `
-                <div class="adempimento-header">
-                    <div style="flex: 1;">
-                        <div class="adempimento-titolo">📋 ${adempimento.Title}</div>
-                        <div class="adempimento-meta">
-                            🏷️ ${adempimento.Tipologia} | 📅 Scadenza: ${scadenza}
+            return `
+                <div class="adempimento-card">
+                    <div class="adempimento-header adempimento-toggle">
+                        <div>
+                            <div class="adempimento-titolo">${adempimento.Title}</div>
+                            <div class="adempimento-meta">
+                                📅 ${formatMese(adempimento.AnnoMese)} | 
+                                📂 ${adempimento.Tipologia} | 
+                                ⏰ Scad: ${scadenza}
+                            </div>
+                        </div>
+                        <div class="adempimento-stats">
+                            <span class="stat-badge totali">${totali} totali</span>
+                            ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti">🔴 ${nonGestiti}</span>` : ''}
+                            ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
+                            ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
+                            <span class="expand-icon">▼</span>
                         </div>
                     </div>
-                    <div class="adempimento-stats">
-                        <span class="stat-badge totali">${totali} comuni</span>
-                        ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti">🔴 ${nonGestiti}</span>` : ''}
-                        ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
-                        ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
-                        <span class="expand-icon">▼</span>
+                    
+                    <div class="comuni-list">
+                        ${enti.map(e => createComuneRow(e)).join('')}
                     </div>
                 </div>
-                <div class="comuni-list">
-                    ${filteredEnti.map(ente => createComuneRow(ente)).join('')}
-                </div>
             `;
-            
-            card.querySelector('.adempimento-header').addEventListener('click', function() {
-                const list = this.nextElementSibling;
-                const icon = this.querySelector('.expand-icon');
-                list.classList.toggle('open');
-                icon.classList.toggle('open');
-            });
-            
-            return card;
         }
 
         function createComuneRow(ente) {
-            const progress = ente.ProgressEnte || 0;
             const stato = ente.StatoEnte || 'Non Gestito';
-            const statoClass = stato.toLowerCase().replace(' ', '-');
+            const progress = ente.ProgressEnte || 0;
+            const note = ente.NoteEnte || '';
+            
+            let statoClass = 'stato-non-gestito';
+            if (stato === 'In Corso') statoClass = 'stato-in-corso';
+            if (stato === 'Completato') statoClass = 'stato-completato';
             
             return `
                 <div class="comune-row">
-                    <div style="flex: 1;">
+                    <div class="comune-info">
                         <div class="comune-nome">${ente.Comune}</div>
-                        ${ente.NoteEnte ? `<div style="font-size: 12px; color: #6b7280; margin-top: 3px;">📝 ${ente.NoteEnte}</div>` : ''}
+                        ${note ? `<div class="comune-note">📝 ${note}</div>` : ''}
                     </div>
-                    <div class="comune-stato">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progress}%"></div>
-                        </div>
-                        <span class="stato-badge ${statoClass}">${stato} ${progress}%</span>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="icon-btn" onclick="cambiaStato('${ente.ID}')" title="Cambia stato">
-                                ${stato === 'Completato' ? '🔄' : '✅'}
-                            </button>
-                            <button class="icon-btn" onclick="openNoteModal('${ente.ID}', '${ente.Comune}')" title="Note">📝</button>
-                        </div>
+                    
+                    <span class="comune-stato ${statoClass}">${stato}</span>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    
+                    <span style="font-size: 12px; font-weight: 600; color: #6b7280; min-width: 45px;">
+                        ${progress}%
+                    </span>
+                    
+                    <div class="comune-actions">
+                        <button class="icon-btn" onclick="cambiaStato(${ente.ID})" title="Cambia stato">
+                            ✅
+                        </button>
+                        <button class="icon-btn" onclick="openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
+                            📝
+                        </button>
                     </div>
                 </div>
             `;
