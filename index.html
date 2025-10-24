@@ -48,6 +48,32 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(79, 172, 254, 0.6);
         }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .debug-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .debug-info.show {
+            display: block;
+        }
+
+        .debug-info.error {
+            background: #ffe0e0;
+            color: #c00;
+        }
         
         .app-container {
             display: none;
@@ -429,6 +455,11 @@
         <h1>Studio Grismondi</h1>
         <p>Sistema Scadenziario V16</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
+        
+        <div id="debugInfo" class="debug-info">
+            <strong>Debug Log:</strong><br>
+            <div id="debugLog"></div>
+        </div>
     </div>
 
     <div id="appContainer" class="app-container">
@@ -612,6 +643,26 @@
     <script>
         console.log('🚀 Scadenziario V16 - Avvio');
 
+        // Debug utilities
+        function addLog(message, isError = false) {
+            console.log('[DEBUG]', message);
+            const debugInfo = document.getElementById('debugInfo');
+            const debugLog = document.getElementById('debugLog');
+            
+            if (debugInfo && debugLog) {
+                debugInfo.classList.add('show');
+                if (isError) {
+                    debugInfo.classList.add('error');
+                }
+                
+                const timestamp = new Date().toLocaleTimeString();
+                debugLog.innerHTML += `[${timestamp}] ${message}<br>`;
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+
+        addLog('🔧 Inizializzazione sistema...');
+
         // Azure AD Configuration
         const msalConfig = {
             auth: {
@@ -624,6 +675,9 @@
 
         const loginRequest = { scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'] };
         const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        addLog('✅ MSAL configurato');
+        addLog(`Redirect URI: ${msalConfig.auth.redirectUri}`);
 
         const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
         const SITE_PATH = '/sites/SitodiComunicazione';
@@ -640,24 +694,43 @@
 
         // Authentication
         async function login() {
+            addLog('🚀 Tentativo login...');
             try {
+                addLog('📋 Chiamata loginPopup...');
                 const resp = await msalInstance.loginPopup(loginRequest);
+                addLog('✅ Login response ricevuta!');
+                addLog(`User: ${resp.account.username}`);
                 currentUser = resp.account;
                 await handleAuth();
             } catch (err) {
+                addLog('❌ ERRORE LOGIN: ' + err.message, true);
+                addLog('Error name: ' + err.name, true);
+                if (err.errorCode) {
+                    addLog('Error code: ' + err.errorCode, true);
+                }
                 showAlert('Errore login: ' + err.message, 'error');
             }
         }
 
         async function handleAuth() {
+            addLog('🔐 Gestione autenticazione...');
             try {
                 const account = msalInstance.getAllAccounts()[0];
-                if (!account) return;
+                if (!account) {
+                    addLog('⚠️ Nessun account trovato', true);
+                    return;
+                }
 
                 currentUser = account;
+                addLog('✅ Account trovato: ' + currentUser.username);
+
+                addLog('🎫 Richiesta token...');
                 const tokenResp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: currentUser });
                 accessToken = tokenResp.accessToken;
+                addLog('✅ Token acquisito!');
+                
                 userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
+                addLog(`👤 Ruolo: ${userRole}`);
                 
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
@@ -668,9 +741,12 @@
                     document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
                 }
 
+                addLog('✅ UI caricata, caricamento dati...');
                 await loadData();
             } catch (err) {
+                addLog('❌ ERRORE autenticazione: ' + err.message, true);
                 if (err.name === 'InteractionRequiredAuthError') {
+                    addLog('🔄 Richiesta interazione utente...');
                     await login();
                 } else {
                     showAlert('Errore autenticazione', 'error');
