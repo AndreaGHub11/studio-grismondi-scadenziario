@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V16.1</title>
+    <title>Scadenziario Studio Grismondi V16.2</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -462,7 +462,7 @@
     <div id="loginContainer" class="login-container">
         <div class="logo">🏢</div>
         <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario V16.1</p>
+        <p>Sistema Scadenziario V16.2</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
@@ -626,7 +626,7 @@
     </div>
 
     <script>
-        console.log('🚀 Scadenziario V16.1 - Avvio con fix checkbox comuni');
+        console.log('🚀 Scadenziario V16.2 - Con RETRY e DELAY');
 
         // MSAL Configuration
         const msalConfig = {
@@ -1089,7 +1089,7 @@
             document.getElementById('noteModal').classList.add('open');
         };
 
-        // Form Handlers
+        // Form Handlers - V16.2 CON RETRY
         document.getElementById('adempimentoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1117,16 +1117,57 @@
                 const newAdempimento = await createItem(LISTS.ADEMPIMENTI, data);
                 console.log('✅ Adempimento creato:', newAdempimento);
                 
-                for (const comune of comuniSelezionati) {
-                    await createItem(LISTS.ENTI, {
-                        AdempimentoID: newAdempimento.id,
-                        Comune: comune,
-                        StatoEnte: 'Non Gestito',
-                        ProgressEnte: 0
-                    });
+                // ✅ NUOVO: Crea comuni con RETRY e DELAY
+                let successCount = 0;
+                for (let i = 0; i < comuniSelezionati.length; i++) {
+                    const comune = comuniSelezionati[i];
+                    
+                    showAlert(`⏳ Creazione comune ${i + 1}/${comuniSelezionati.length}: ${comune}...`, 'info');
+                    
+                    let created = false;
+                    let attempts = 0;
+                    const maxAttempts = 3;
+                    
+                    while (!created && attempts < maxAttempts) {
+                        try {
+                            attempts++;
+                            console.log(`🔄 Tentativo ${attempts}/${maxAttempts} per ${comune}`);
+                            
+                            await createItem(LISTS.ENTI, {
+                                AdempimentoID: parseInt(newAdempimento.id),
+                                Comune: comune,
+                                StatoEnte: 'Non Gestito',
+                                ProgressEnte: 0
+                            });
+                            
+                            created = true;
+                            successCount++;
+                            console.log(`✅ Comune ${comune} creato con successo`);
+                            
+                            // Delay di 500ms tra una richiesta e l'altra
+                            if (i < comuniSelezionati.length - 1) {
+                                await new Promise(resolve => setTimeout(resolve, 500));
+                            }
+                            
+                        } catch (err) {
+                            console.error(`❌ Tentativo ${attempts} fallito per ${comune}:`, err);
+                            
+                            if (attempts < maxAttempts) {
+                                console.log(`⏳ Attendo 1 secondo prima del prossimo tentativo...`);
+                                await new Promise(resolve => setTimeout(resolve, 1000));
+                            } else {
+                                console.error(`❌ ${comune} non creato dopo ${maxAttempts} tentativi`);
+                            }
+                        }
+                    }
                 }
                 
-                showAlert('✅ Adempimento creato con successo!', 'success');
+                if (successCount === comuniSelezionati.length) {
+                    showAlert(`✅ Adempimento creato con ${successCount} comuni!`, 'success');
+                } else {
+                    showAlert(`⚠️ Adempimento creato ma solo ${successCount}/${comuniSelezionati.length} comuni salvati. Riprova!`, 'error');
+                }
+                
                 document.getElementById('adempimentoModal').classList.remove('open');
                 this.reset();
                 await loadData();
@@ -1205,7 +1246,6 @@
                 console.error('❌ Init error:', err);
             }
 
-            // Attach event listeners
             const loginBtn = document.getElementById('loginBtn');
             if (loginBtn) {
                 loginBtn.addEventListener('click', login);
@@ -1222,7 +1262,7 @@
                 btnAddAdempimento.addEventListener('click', function() {
                     console.log('🔄 Opening modal, populating comuni...');
                     document.getElementById('formMese').value = meseCorrente || getCurrentYearMonth();
-                    populateComuniSelectors(); // ✅ CHIAMA ESPLICITAMENTE QUI!
+                    populateComuniSelectors();
                     document.getElementById('adempimentoModal').classList.add('open');
                 });
             }
