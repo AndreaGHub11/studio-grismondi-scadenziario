@@ -947,6 +947,10 @@
             return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
         }
 
+        async function deleteItem(listName, itemId) {
+    const site = await getSiteId();
+    return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
+}
         async function loadData() {
             try {
                 showLoading(true);
