@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V17</title>
+    <title>Scadenziario Studio Grismondi V18</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -122,6 +122,11 @@
         
         .btn-success:hover { box-shadow: 0 5px 15px rgba(144, 238, 144, 0.5); }
         
+        .btn-warning {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            box-shadow: 0 3px 10px rgba(254, 202, 87, 0.3);
+        }
+        
         select, input { 
             padding: 8px 12px; 
             border: 2px solid #ddd; 
@@ -193,6 +198,12 @@
             display: flex;
             gap: 10px;
             align-items: center;
+        }
+        
+        .adempimento-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 15px;
         }
         
         .stat-badge {
@@ -302,6 +313,7 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            overflow-y: auto;
         }
         
         .modal.open { display: flex; }
@@ -310,11 +322,12 @@
             background: white;
             padding: 35px;
             border-radius: 20px;
-            max-width: 650px;
+            max-width: 750px;
             width: 90%;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+            margin: 20px;
         }
         
         .modal-header { 
@@ -347,6 +360,51 @@
         .form-group textarea { min-height: 100px; resize: vertical; }
         .form-actions { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
         
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .checkbox-item:hover {
+            background: #f0f9ff;
+            border-color: #4facfe;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .select-all-btns {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
         .alert {
             padding: 18px 20px;
             margin-bottom: 25px;
@@ -374,7 +432,7 @@
     <div id="loginContainer" class="login-container">
         <div class="logo">🏢</div>
         <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario V17</p>
+        <p>Sistema Scadenziario V18</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
@@ -419,6 +477,14 @@
                 </select>
             </div>
 
+            <button class="btn btn-success" id="btnAddAdempimento">
+                ➕ Nuovo Adempimento
+            </button>
+
+            <button class="btn btn-warning" id="btnAddComune">
+                🏛️ Nuovo Comune
+            </button>
+
             <button class="btn" id="btnSync">
                 🔄 Sincronizza
             </button>
@@ -457,8 +523,90 @@
         </div>
     </div>
 
+    <!-- Modal Adempimento -->
+    <div id="adempimentoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="adempimentoModalTitle">➕ Nuovo Adempimento</h2>
+            </div>
+            <form id="adempimentoForm">
+                <input type="hidden" id="editAdempimentoId">
+                
+                <div class="form-group">
+                    <label>Titolo *</label>
+                    <input type="text" id="formTitolo" required placeholder="es. Versamento IMU">
+                </div>
+
+                <div class="form-group">
+                    <label>Descrizione</label>
+                    <textarea id="formDescrizione" rows="3" placeholder="Descrizione dettagliata..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipologia *</label>
+                    <select id="formTipologia" required>
+                        <option value="">Seleziona...</option>
+                        <option value="Contabilità">Contabilità</option>
+                        <option value="Tributi">Tributi</option>
+                        <option value="Personale">Personale</option>
+                        <option value="Altro">Altro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Mese di Riferimento *</label>
+                    <input type="month" id="formAnnoMese" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Data Scadenza *</label>
+                    <input type="date" id="formDataScadenza" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Comuni da Associare *</label>
+                    <div class="select-all-btns">
+                        <button type="button" class="btn" onclick="selectAllComuni()">✅ Seleziona Tutti</button>
+                        <button type="button" class="btn" onclick="deselectAllComuni()">❌ Deseleziona Tutti</button>
+                    </div>
+                    <div class="checkbox-grid" id="comuniCheckboxes"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💾 Salva Adempimento</button>
+                    <button type="button" class="btn" id="btnCloseAdempimentoModal">❌ Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nuovo Comune -->
+    <div id="comuneModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>🏛️ Nuovo Comune</h2>
+            </div>
+            <form id="comuneForm">
+                <div class="form-group">
+                    <label>Nome Comune *</label>
+                    <input type="text" id="formNomeComune" required placeholder="es. Milano, Bergamo...">
+                </div>
+
+                <div class="form-group">
+                    <label>Provincia</label>
+                    <input type="text" id="formProvincia" placeholder="es. MI, BG, BS..." maxlength="2" style="text-transform: uppercase;">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💾 Crea Comune</button>
+                    <button type="button" class="btn" id="btnCloseComuneModal">❌ Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        console.log('🚀 Scadenziario V17 - VERSIONE DEFINITIVA');
+        console.log('🚀 Scadenziario V18 - VERSIONE COMPLETA');
 
         const msalConfig = {
             auth: {
@@ -575,6 +723,14 @@
             return result.value.map(item => ({ ID: item.id, ...item.fields }));
         }
 
+        async function createItem(listName, data) {
+            const site = await getSiteId();
+            console.log(`➕ Creating item in ${listName}:`, data);
+            const result = await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
+            console.log('✅ Item created:', result);
+            return result;
+        }
+
         async function updateItem(listName, itemId, data) {
             const site = await getSiteId();
             console.log(`✏️ Updating item ${itemId} in ${listName}:`, data);
@@ -594,7 +750,6 @@
                 
                 allEnti = await getListItems(LISTS.ENTI);
                 console.log(`✅ Loaded ${allEnti.length} enti assignments`);
-                console.log('📋 Enti data:', allEnti);
                 
                 populateFilterMesi();
                 renderAdempimenti();
@@ -663,7 +818,7 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">📋</div>
                         <h3>Nessun adempimento trovato</h3>
-                        <p>Usa i filtri per cercare adempimenti!</p>
+                        <p>Clicca "Nuovo Adempimento" per iniziare!</p>
                     </div>
                 `;
                 return;
@@ -672,7 +827,9 @@
             container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
             
             document.querySelectorAll('.adempimento-toggle').forEach(el => {
-                el.addEventListener('click', function() {
+                el.addEventListener('click', function(e) {
+                    if (e.target.closest('.adempimento-actions')) return;
+                    
                     const card = this.closest('.adempimento-card');
                     const list = card.querySelector('.comuni-list');
                     const icon = this.querySelector('.expand-icon');
@@ -684,9 +841,7 @@
         }
 
         function createAdempimentoCard(adempimento) {
-            console.log(`🔍 Rendering adempimento ID ${adempimento.ID}: ${adempimento.Title}`);
             const enti = allEnti.filter(e => e.AdempimentoID == adempimento.ID);
-            console.log(`  📊 Trovati ${enti.length} comuni collegati`);
             
             const totali = enti.length;
             const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
@@ -699,7 +854,7 @@
             return `
                 <div class="adempimento-card">
                     <div class="adempimento-header adempimento-toggle">
-                        <div>
+                        <div style="flex: 1;">
                             <div class="adempimento-titolo">${adempimento.Title || 'Senza titolo'}</div>
                             <div class="adempimento-meta">
                                 📅 ${formatMese(adempimento.AnnoMese)} | 
@@ -712,6 +867,11 @@
                             ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti">🔴 ${nonGestiti}</span>` : ''}
                             ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
                             ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
+                            <div class="adempimento-actions">
+                                <button class="icon-btn" onclick="editAdempimento(${adempimento.ID})" title="Modifica">
+                                    ✏️
+                                </button>
+                            </div>
                             <span class="expand-icon">▼</span>
                         </div>
                     </div>
@@ -761,6 +921,7 @@
             `;
         }
 
+        // Cambia Stato
         window.cambiaStato = async function(enteId) {
             try {
                 const ente = allEnti.find(e => e.ID == enteId);
@@ -794,6 +955,7 @@
             }
         };
 
+        // Open Note Modal
         window.openNoteModal = function(enteId, comune) {
             const ente = allEnti.find(e => e.ID == enteId);
             if (!ente) return;
@@ -804,6 +966,174 @@
             document.getElementById('noteModal').classList.add('open');
         };
 
+        // Open Adempimento Modal (Nuovo o Modifica)
+        window.openAdempimentoModal = function() {
+            document.getElementById('adempimentoModalTitle').textContent = '➕ Nuovo Adempimento';
+            document.getElementById('adempimentoForm').reset();
+            document.getElementById('editAdempimentoId').value = '';
+            
+            populateComuniCheckboxes();
+            
+            document.getElementById('adempimentoModal').classList.add('open');
+        };
+
+        window.editAdempimento = async function(adempimentoId) {
+            const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+            if (!adempimento) return;
+            
+            document.getElementById('adempimentoModalTitle').textContent = '✏️ Modifica Adempimento';
+            document.getElementById('editAdempimentoId').value = adempimentoId;
+            document.getElementById('formTitolo').value = adempimento.Title || '';
+            document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
+            document.getElementById('formTipologia').value = adempimento.Tipologia || '';
+            document.getElementById('formAnnoMese').value = adempimento.AnnoMese || '';
+            
+            if (adempimento.DataScadenza) {
+                const date = new Date(adempimento.DataScadenza);
+                document.getElementById('formDataScadenza').value = date.toISOString().split('T')[0];
+            }
+            
+            const entiAdempimento = allEnti.filter(e => e.AdempimentoID == adempimentoId);
+            const comuniAssegnati = entiAdempimento.map(e => e.Comune);
+            
+            populateComuniCheckboxes(comuniAssegnati);
+            
+            document.getElementById('adempimentoModal').classList.add('open');
+        };
+
+        function populateComuniCheckboxes(selected = []) {
+            const container = document.getElementById('comuniCheckboxes');
+            container.innerHTML = '';
+            
+            allComuni.forEach(comune => {
+                const comuneNome = comune.Title || comune.Comune;
+                const isChecked = selected.includes(comuneNome);
+                
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" 
+                           id="comune_${comune.ID}" 
+                           value="${comuneNome}"
+                           ${isChecked ? 'checked' : ''}>
+                    <label for="comune_${comune.ID}">${comuneNome}</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.selectAllComuni = function() {
+            document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = true);
+        };
+
+        window.deselectAllComuni = function() {
+            document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+        };
+
+        // Save Adempimento
+        document.getElementById('adempimentoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const editId = document.getElementById('editAdempimentoId').value;
+            const titolo = document.getElementById('formTitolo').value;
+            const descrizione = document.getElementById('formDescrizione').value;
+            const tipologia = document.getElementById('formTipologia').value;
+            const annoMese = document.getElementById('formAnnoMese').value;
+            const dataScadenza = document.getElementById('formDataScadenza').value;
+            
+            const comuniSelezionati = Array.from(
+                document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]:checked')
+            ).map(cb => cb.value);
+            
+            if (comuniSelezionati.length === 0) {
+                showAlert('⚠️ Seleziona almeno un comune!', 'error');
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                let adempimentoId;
+                
+                if (editId) {
+                    await updateItem(LISTS.ADEMPIMENTI, editId, {
+                        Title: titolo,
+                        Descrizione: descrizione,
+                        Tipologia: tipologia,
+                        AnnoMese: annoMese,
+                        DataScadenza: dataScadenza,
+                        StatoMese: 'Aperto'
+                    });
+                    adempimentoId = editId;
+                    
+                    const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
+                    console.log('Comuni già associati:', entiEsistenti.map(e => e.Comune));
+                    
+                    showAlert('✅ Adempimento aggiornato!', 'success');
+                } else {
+                    const result = await createItem(LISTS.ADEMPIMENTI, {
+                        Title: titolo,
+                        Descrizione: descrizione,
+                        Tipologia: tipologia,
+                        AnnoMese: annoMese,
+                        DataScadenza: dataScadenza,
+                        StatoMese: 'Aperto'
+                    });
+                    
+                    adempimentoId = result.id;
+                    
+                    for (const comune of comuniSelezionati) {
+                        await createItem(LISTS.ENTI, {
+                            Title: `${titolo} - ${comune}`,
+                            AdempimentoID: parseInt(adempimentoId),
+                            Comune: comune,
+                            StatoEnte: 'Non Gestito',
+                            ProgressEnte: 0,
+                            NoteEnte: ''
+                        });
+                    }
+                    
+                    showAlert('✅ Adempimento creato con successo!', 'success');
+                }
+                
+                document.getElementById('adempimentoModal').classList.remove('open');
+                await loadData();
+                
+            } catch (err) {
+                console.error('Errore salvataggio:', err);
+                showAlert('❌ Errore: ' + err.message, 'error');
+                showLoading(false);
+            }
+        });
+
+        // Save Comune
+        document.getElementById('comuneForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('formNomeComune').value;
+            const provincia = document.getElementById('formProvincia').value.toUpperCase();
+            
+            try {
+                showLoading(true);
+                
+                await createItem(LISTS.COMUNI, {
+                    Title: nome,
+                    Provincia: provincia,
+                    StatoEnte: 'Attivo'
+                });
+                
+                showAlert('✅ Comune creato con successo!', 'success');
+                document.getElementById('comuneModal').classList.remove('open');
+                await loadData();
+                
+            } catch (err) {
+                console.error('Errore creazione comune:', err);
+                showAlert('❌ Errore: ' + err.message, 'error');
+                showLoading(false);
+            }
+        });
+
+        // Save Note
         document.getElementById('noteForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -865,42 +1195,26 @@
                 console.error('❌ Init error:', err);
             }
 
-            const loginBtn = document.getElementById('loginBtn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', login);
-            }
-            
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', logout);
-            }
-            
-            const btnCloseNoteModal = document.getElementById('btnCloseNoteModal');
-            if (btnCloseNoteModal) {
-                btnCloseNoteModal.addEventListener('click', function() {
-                    document.getElementById('noteModal').classList.remove('open');
-                });
-            }
-            
-            const btnSync = document.getElementById('btnSync');
-            if (btnSync) {
-                btnSync.addEventListener('click', loadData);
-            }
-            
-            const filterMese = document.getElementById('filterMese');
-            if (filterMese) {
-                filterMese.addEventListener('change', renderAdempimenti);
-            }
-            
-            const filterTipologia = document.getElementById('filterTipologia');
-            if (filterTipologia) {
-                filterTipologia.addEventListener('change', renderAdempimenti);
-            }
-            
-            const filterStato = document.getElementById('filterStato');
-            if (filterStato) {
-                filterStato.addEventListener('change', renderAdempimenti);
-            }
+            document.getElementById('loginBtn')?.addEventListener('click', login);
+            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+            document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => {
+                document.getElementById('noteModal').classList.remove('open');
+            });
+            document.getElementById('btnCloseAdempimentoModal')?.addEventListener('click', () => {
+                document.getElementById('adempimentoModal').classList.remove('open');
+            });
+            document.getElementById('btnCloseComuneModal')?.addEventListener('click', () => {
+                document.getElementById('comuneModal').classList.remove('open');
+            });
+            document.getElementById('btnSync')?.addEventListener('click', loadData);
+            document.getElementById('btnAddAdempimento')?.addEventListener('click', openAdempimentoModal);
+            document.getElementById('btnAddComune')?.addEventListener('click', () => {
+                document.getElementById('comuneForm').reset();
+                document.getElementById('comuneModal').classList.add('open');
+            });
+            document.getElementById('filterMese')?.addEventListener('change', renderAdempimenti);
+            document.getElementById('filterTipologia')?.addEventListener('change', renderAdempimenti);
+            document.getElementById('filterStato')?.addEventListener('change', renderAdempimenti);
             
             console.log('✅ All event listeners attached');
         });
