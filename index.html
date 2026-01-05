@@ -293,7 +293,98 @@
             outline: none;
             border-color: #4facfe;
         }
-        
+
+        .comuni-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+@media (max-width: 1200px) {
+    .comuni-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .comuni-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.comune-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px 10px;
+    transition: all 0.2s;
+    font-size: 12px;
+}
+
+.comune-card:hover {
+    border-color: #4facfe;
+    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.1);
+}
+
+.comune-nome { 
+    font-weight: 600; 
+    color: #1f2937; 
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.comune-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.progress-bar-small {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 3px;
+}
+
+.progress-bar-small .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #90ee90 100%);
+    transition: width 0.3s;
+}
+
+.comune-actions-small {
+    display: flex;
+    gap: 2px;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.progress-text-small {
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.icon-btn-small {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 4px;
+    transition: transform 0.2s;
+    border-radius: 3px;
+}
+
+.icon-btn-small:hover {
+    transform: scale(1.2);
+    background: #f3f4f6;
+}
+
+.icon-btn-danger:hover {
+    background: #fee2e2;
+}
         .comune-row {
             background: white;
             border: 1px solid #e5e7eb;
@@ -990,6 +1081,9 @@
                                 <button class="icon-btn" onclick="event.stopPropagation(); editAdempimento(${adempimento.ID})" title="Modifica">
                                     ✏️
                                 </button>
+                                <button class="icon-btn icon-btn-danger" onclick="event.stopPropagation(); deleteAdempimento(${adempimento.ID})" title="Elimina">
+    🗑️
+</button>
                             </div>
                             <span class="expand-icon">▼</span>
                         </div>
@@ -1005,58 +1099,53 @@
                             <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID}, 'stato')">🚦 Stato</button>
                             <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID}, 'progress')">📊 Progress</button>
                         </div>
-                        <div id="comuni-rows-${adempimento.ID}">
-                            ${enti.length > 0 ? enti.map(e => createComuneRow(e)).join('') : '<p style="text-align: center; padding: 20px; color: #9ca3af;">Nessun comune assegnato</p>'}
-                        </div>
+                       <div class="comuni-grid" id="comuni-grid-${adempimento.ID}">
+    ${enti.length > 0 ? enti.map(e => createComuneCard(e)).join('') : '<p style="text-align: center; padding: 20px; color: #9ca3af; grid-column: 1 / -1;">Nessun comune assegnato</p>'}
+</div>
                     </div>
                 </div>
             `;
         }
 
-        function createComuneRow(ente) {
-            const stato = ente.StatoEnte || 'Non Gestito';
-            const progress = ente.ProgressEnte || 0;
-            const note = ente.NoteEnte || '';
-            
-            let statusClass = 'status-da-fare';
-            let statusIcon = '🔴';
-            let statusText = 'Da Fare';
-            
-            if (stato === 'In Corso') {
-                statusClass = 'status-in-corso';
-                statusIcon = '🟡';
-                statusText = 'In Corso';
-            } else if (stato === 'Completato') {
-                statusClass = 'status-completato';
-                statusIcon = '🟢';
-                statusText = 'Completato';
-            }
-            
-            return `
-                <div class="comune-row" data-comune="${ente.Comune}">
-                    <div class="comune-info">
-                        <div class="comune-nome">${ente.Comune}</div>
-                        ${note ? `<div class="comune-note">📝 ${note}</div>` : ''}
-                    </div>
-                    
-                    <div class="status-flag ${statusClass}" onclick="cambiaStato(${ente.ID})" title="Click per cambiare stato">
-                        ${statusIcon} ${statusText}
-                    </div>
-                    
-                    <div class="progress-mini-inline">
-                        <div class="progress-mini-fill" style="width: ${progress}%"></div>
-                    </div>
-                    
-                    <span class="progress-text">${progress}%</span>
-                    
-                    <div class="comune-actions">
-                        <button class="icon-btn" onclick="openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
-                            📝
-                        </button>
-                    </div>
+function createComuneCard(ente) {
+    const stato = ente.StatoEnte || 'Non Gestito';
+    const progress = ente.ProgressEnte || 0;
+    const note = ente.NoteEnte || '';
+    
+    let statusClass = 'status-da-fare';
+    let statusIcon = '🔴';
+    let statusText = 'Da Fare';
+    
+    if (stato === 'In Corso') {
+        statusClass = 'status-in-corso';
+        statusIcon = '🟡';
+        statusText = 'In Corso';
+    } else if (stato === 'Completato') {
+        statusClass = 'status-completato';
+        statusIcon = '🟢';
+        statusText = 'OK';
+    }
+    
+    return `
+        <div class="comune-card" data-comune="${ente.Comune}">
+            <div class="comune-nome">${ente.Comune}</div>
+            <div class="comune-status-row">
+                <div class="status-flag ${statusClass}" onclick="cambiaStato(${ente.ID})" title="Click per cambiare stato">
+                    ${statusIcon} ${statusText}
                 </div>
-            `;
-        }
+            </div>
+            <div class="progress-bar-small">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+            </div>
+            <div class="comune-actions-small">
+                <span class="progress-text-small">${progress}%</span>
+                <button class="icon-btn-small" onclick="openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
+                    ${note ? '📝✅' : '📝'}
+                </button>
+            </div>
+        </div>
+    `;
+}
 
         function attachEventListeners() {
             document.querySelectorAll('.adempimento-toggle').forEach(el => {
@@ -1075,18 +1164,18 @@
         }
 
         window.filterComuni = function(adempId, searchText) {
-            const rows = document.querySelectorAll(`#comuni-rows-${adempId} .comune-row`);
+            const cards = document.querySelectorAll(`#comuni-grid-${adempId} .comune-card`);
             const search = searchText.toLowerCase();
             
-            rows.forEach(row => {
-                const comune = row.getAttribute('data-comune').toLowerCase();
-                row.style.display = comune.includes(search) ? '' : 'none';
-            });
+           cards.forEach(card => {
+    const comune = card.getAttribute('data-comune').toLowerCase();
+    card.style.display = comune.includes(search) ? '' : 'none';
+});
         };
 
-        window.sortComuni = function(adempId, sortBy) {
-            const container = document.getElementById(`comuni-rows-${adempId}`);
-            const rows = Array.from(container.querySelectorAll('.comune-row'));
+       window.sortComuni = function(adempId, sortBy) {
+    const container = document.getElementById(`comuni-grid-${adempId}`);
+    const cards = Array.from(container.querySelectorAll('.comune-card'));
             
             rows.sort((a, b) => {
                 if (sortBy === 'nome') {
@@ -1106,7 +1195,7 @@
                 return 0;
             });
             
-            rows.forEach(row => container.appendChild(row));
+            cards.forEach(card => container.appendChild(card));
         };
 
         window.cambiaStato = async function(enteId) {
@@ -1141,6 +1230,36 @@
                 showLoading(false);
             }
         };
+
+        window.deleteAdempimento = async function(adempimentoId) {
+    const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+    if (!adempimento) return;
+    
+    const entiCollegati = allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
+    const conferma = confirm(`⚠️ ATTENZIONE!\n\nStai per eliminare l'adempimento:\n"${adempimento.Title}"\n\nVerranno eliminati anche tutti i ${entiCollegati} comuni collegati.\n\nSei sicuro?`);
+    
+    if (!conferma) return;
+    
+    try {
+        showLoading(true);
+        
+        const entiDaEliminare = allEnti.filter(e => e.AdempimentoID == adempimentoId);
+        
+        for (const ente of entiDaEliminare) {
+            await deleteItem(LISTS.ENTI, ente.ID);
+        }
+        
+        await deleteItem(LISTS.ADEMPIMENTI, adempimentoId);
+        
+        showAlert('✅ Adempimento eliminato con successo!', 'success');
+        await loadData();
+        
+    } catch (err) {
+        console.error('Errore eliminazione:', err);
+        showAlert('❌ Errore: ' + err.message, 'error');
+        showLoading(false);
+    }
+};
 
         window.openNoteModal = function(enteId, comune) {
             const ente = allEnti.find(e => e.ID == enteId);
