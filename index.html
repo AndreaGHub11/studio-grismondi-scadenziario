@@ -460,7 +460,6 @@
     <script>
         console.log('🚀 Scadenziario V17 - VERSIONE DEFINITIVA');
 
-        // MSAL Configuration
         const msalConfig = {
             auth: {
                 clientId: '931c14fe-e538-4ae3-a336-0d3a9fd75c49',
@@ -473,7 +472,6 @@
         const loginRequest = { scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'] };
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-        // SharePoint Config
         const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
         const SITE_PATH = '/';
         const LISTS = {
@@ -483,12 +481,10 @@
         };
         const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
 
-        // Global variables
         let currentUser, userRole, accessToken, siteId;
         let allComuni = [], allAdempimenti = [], allEnti = [];
         let meseCorrente = null;
 
-        // Authentication Functions
         async function login() {
             console.log('Login initiated');
             try {
@@ -538,7 +534,6 @@
             location.reload();
         }
 
-        // Graph API Functions
         async function callGraph(endpoint, method = 'GET', body = null) {
             const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
             const options = {
@@ -586,7 +581,6 @@
             return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
         }
 
-        // Data Loading
         async function loadData() {
             try {
                 showLoading(true);
@@ -677,7 +671,6 @@
             
             container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
             
-            // Attach toggle listeners
             document.querySelectorAll('.adempimento-toggle').forEach(el => {
                 el.addEventListener('click', function() {
                     const card = this.closest('.adempimento-card');
@@ -768,7 +761,6 @@
             `;
         }
 
-        // Cambia Stato
         window.cambiaStato = async function(enteId) {
             try {
                 const ente = allEnti.find(e => e.ID == enteId);
@@ -802,7 +794,6 @@
             }
         };
 
-        // Open Note Modal
         window.openNoteModal = function(enteId, comune) {
             const ente = allEnti.find(e => e.ID == enteId);
             if (!ente) return;
@@ -813,7 +804,6 @@
             document.getElementById('noteModal').classList.add('open');
         };
 
-        // Form Handlers
         document.getElementById('noteForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -834,7 +824,6 @@
             }
         });
 
-        // UI Functions
         function showLoading(show) {
             document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
             document.getElementById('adempimentiContainer').style.display = show ? 'none' : 'block';
@@ -858,7 +847,6 @@
             return `${mesi[parseInt(month) - 1]} ${year}`;
         }
 
-        // Event Listeners
         window.addEventListener('load', async function() {
             console.log('📄 Page loaded');
             
