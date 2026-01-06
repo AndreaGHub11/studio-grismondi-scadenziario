@@ -1604,17 +1604,49 @@ window.applicaNuovoStato = async function(nuovoStato) {
                 let adempimentoId;
                 
                 if (editId) {
-                    await updateItem(LISTS.ADEMPIMENTI, editId, {
-                        Title: titolo,
-                        Descrizione: descrizione,
-                        Tipologia: tipologia,
-                        Responsabile: responsabile,
-                        AnnoMese: annoMese,
-                        DataScadenza: dataScadenza,
-                        StatoMese: 'Aperto'
-                    });
-                    adempimentoId = editId;
-                    showAlert('✅ Adempimento aggiornato!', 'success');
+    await updateItem(LISTS.ADEMPIMENTI, editId, {
+        Title: titolo,
+        Descrizione: descrizione,
+        Tipologia: tipologia,
+        Responsabile: responsabile,
+        AnnoMese: annoMese,
+        DataScadenza: dataScadenza,
+        StatoMese: 'Aperto'
+    });
+    adempimentoId = editId;
+    
+    // Gestione comuni: trova quelli attuali
+    const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
+    const comuniEsistenti = entiEsistenti.map(e => e.Comune);
+    
+    // Trova comuni da RIMUOVERE (erano selezionati, ora non lo sono più)
+    const comuniDaRimuovere = comuniEsistenti.filter(c => !comuniSelezionati.includes(c));
+    
+    // Trova comuni da AGGIUNGERE (non erano selezionati, ora lo sono)
+    const comuniDaAggiungere = comuniSelezionati.filter(c => !comuniEsistenti.includes(c));
+    
+    // RIMUOVI comuni deselezionati
+    for (const comune of comuniDaRimuovere) {
+        const enteRecord = entiEsistenti.find(e => e.Comune === comune);
+        if (enteRecord) {
+            await deleteItem(LISTS.ENTI, enteRecord.ID);
+        }
+    }
+    
+    // AGGIUNGI nuovi comuni
+    for (const comune of comuniDaAggiungere) {
+        await createItem(LISTS.ENTI, {
+            Title: `${titolo} - ${comune}`,
+            AdempimentoID: parseInt(adempimentoId),
+            Comune: comune,
+            StatoEnte: 'Da Fare',
+            ProgressEnte: 0,
+            NoteEnte: ''
+        });
+    }
+    
+    showAlert('✅ Adempimento aggiornato!', 'success');
+}
                 } else {
                     const result = await createItem(LISTS.ADEMPIMENTI, {
                         Title: titolo,
