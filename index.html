@@ -1563,6 +1563,7 @@ window.applicaNuovoStato = async function(nuovoStato) {
                 div.className = 'checkbox-item';
                 div.innerHTML = `
                     <input type="checkbox" 
+                    name="comuni"
                            id="comune_${comune.ID}" 
                            value="${comuneNome}"
                            ${isChecked ? 'checked' : ''}>
