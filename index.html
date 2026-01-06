@@ -1230,7 +1230,9 @@
         }
 
         function createAdempimentoCard(adempimento) {
-            const enti = allEnti.filter(e => e.AdempimentoID == adempimento.ID);
+            const enti = allEnti
+    .filter(e => e.AdempimentoID == adempimento.ID)
+    .sort((a, b) => a.Comune.localeCompare(b.Comune));
             
             const totali = enti.length;
             const daFare = enti.filter(e => e.StatoEnte === 'Da Fare').length;
@@ -1627,15 +1629,15 @@ window.applicaNuovoStato = async function(nuovoStato) {
                     adempimentoId = result.id;
                     
                     for (const comune of comuniSelezionati) {
-                        await createItem(LISTS.ENTI, {
-                            Title: `${titolo} - ${comune}`,
-                            AdempimentoID: parseInt(adempimentoId),
-                            Comune: comune,
-                            StatoEnte: 'Non Gestito',
-                            ProgressEnte: 0,
-                            NoteEnte: ''
-                        });
-                    }
+    await createItem(LISTS.ENTI, {
+        Title: `${titolo} - ${comune}`,
+        AdempimentoID: parseInt(adempimentoId),
+        Comune: comune,
+        StatoEnte: 'Da Fare',
+        ProgressEnte: 0,
+        NoteEnte: ''
+    });
+}
                     
                     showAlert('✅ Adempimento creato con successo!', 'success');
                 }
