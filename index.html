@@ -1363,8 +1363,9 @@ ${adempimento.Descrizione && adempimento.Descrizione.trim() !== '' ? `
             <span style="font-size: 16px;">📋</span>
             <strong style="color: #92400e;">Istruzioni Operative:</strong>
         </div>
-        <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; color: #78350f; line-height: 1.6;">${escapeHtml(adempimento.Descrizione)}</div>
-    </div>
+        <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; color: #78350f; line-height: 1.6;">
+    ${escapeHtml(adempimento.Descrizione)}
+</div>
 ` : ''}
 
                         <div class="comuni-controls">
