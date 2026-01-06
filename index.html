@@ -1068,7 +1068,7 @@
                 });
                 accessToken = tokenResp.accessToken;
                 
-                userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
+                userRole = ADMIN_EMAILS.some(email => email.toLowerCase() === currentUser.username.toLowerCase()) ? 'Admin' : 'User';
                 
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
