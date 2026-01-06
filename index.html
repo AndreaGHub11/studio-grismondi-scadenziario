@@ -1068,7 +1068,7 @@
                 });
                 accessToken = tokenResp.accessToken;
                 
-                userRole = ADMIN_EMAILS.some(email => email.toLowerCase() === currentUser.username.toLowerCase()) ? 'Admin' : 'User';
+                userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
                 
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
@@ -1403,30 +1403,32 @@ function createComuneCard(ente) {
 });
         };
 
-       window.sortComuni = function(adempId, sortBy) {
+  window.sortComuni = function(adempId, sortBy) {
     const container = document.getElementById(`comuni-grid-${adempId}`);
     const cards = Array.from(container.querySelectorAll('.comune-card'));
             
-            rows.sort((a, b) => {
-                if (sortBy === 'nome') {
-                    return a.getAttribute('data-comune').localeCompare(b.getAttribute('data-comune'));
-                } else if (sortBy === 'stato') {
-                    const statusOrder = { 'Da Fare': 0, 'In Corso': 1, 'Completato': 2 };
-                    const statusA = a.querySelector('.status-flag').textContent.includes('Da Fare') ? 0 : 
-                                   a.querySelector('.status-flag').textContent.includes('In Corso') ? 1 : 2;
-                    const statusB = b.querySelector('.status-flag').textContent.includes('Da Fare') ? 0 : 
-                                   b.querySelector('.status-flag').textContent.includes('In Corso') ? 1 : 2;
-                    return statusA - statusB;
-                } else if (sortBy === 'progress') {
-                    const progressA = parseInt(a.querySelector('.progress-text').textContent);
-                    const progressB = parseInt(b.querySelector('.progress-text').textContent);
-                    return progressB - progressA;
-                }
-                return 0;
-            });
-            
-            cards.forEach(card => container.appendChild(card));
-        };
+    cards.sort((a, b) => {
+        if (sortBy === 'nome') {
+            return a.getAttribute('data-comune').localeCompare(b.getAttribute('data-comune'));
+        } else if (sortBy === 'stato') {
+            const statusOrder = { 'Da Fare': 0, 'In Corso': 1, 'Completato': 2 };
+            const statusA = a.querySelector('.status-btn-single').textContent.includes('Da Fare') ? 0 : 
+                           a.querySelector('.status-btn-single').textContent.includes('In Corso') ? 1 : 
+                           a.querySelector('.status-btn-single').textContent.includes('Completato') ? 2 : 3;
+            const statusB = b.querySelector('.status-btn-single').textContent.includes('Da Fare') ? 0 : 
+                           b.querySelector('.status-btn-single').textContent.includes('In Corso') ? 1 : 
+                           b.querySelector('.status-btn-single').textContent.includes('Completato') ? 2 : 3;
+            return statusA - statusB;
+        } else if (sortBy === 'progress') {
+            const progressA = parseInt(a.querySelector('.progress-text-small').textContent);
+            const progressB = parseInt(b.querySelector('.progress-text-small').textContent);
+            return progressB - progressA;
+        }
+        return 0;
+    });
+    
+    cards.forEach(card => container.appendChild(card));
+};
 
 window.openCambiaStatoModal = function(enteId, comune, statoAttuale) {
     document.getElementById('statoRecordId').value = enteId;
@@ -1684,20 +1686,7 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     }
 });
                     
-                    showAlert('✅ Adempimento creato con successo!', 'success');
-                }
-                
-                document.getElementById('adempimentoModal').classList.remove('open');
-                await loadData();
-                
-            } catch (err) {
-                console.error('Errore salvataggio:', err);
-                showAlert('❌ Errore: ' + err.message, 'error');
-                showLoading(false);
-            }
-        });
-
-        document.getElementById('comuneForm').addEventListener('submit', async function(e) {
+                     document.getElementById('comuneForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const nome = document.getElementById('formNomeComune').value;
