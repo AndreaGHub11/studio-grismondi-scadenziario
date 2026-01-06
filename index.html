@@ -667,6 +667,126 @@
         .empty-state-icon { font-size: 80px; margin-bottom: 20px; opacity: 0.5; }
         .empty-state h3 { color: #6b7280; margin-bottom: 10px; font-size: 20px; }
         .empty-state p { color: #9ca3af; }
+        /* LEGENDA FISSA */
+.comuni-legenda {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px;
+    background: linear-gradient(to right, #f0f9ff 0%, #f0fdf4 100%);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 2px solid #e0f2fe;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.legenda-icon {
+    font-size: 16px;
+}
+
+/* BOTTONE STATO SINGOLO */
+.comune-status-display {
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.status-btn-single {
+    width: 100%;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.status-btn-single:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.status-btn-single.status-btn-dafare {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.status-btn-single.status-btn-incorso {
+    border-color: #fde68a;
+    background: #fefce8;
+    color: #92400e;
+}
+
+.status-btn-single.status-btn-completato {
+    border-color: #86efac;
+    background: #f0fdf4;
+    color: #065f46;
+}
+
+.status-btn-single.status-btn-nongestito {
+    border-color: #d1d5db;
+    background: #f9fafb;
+    color: #6b7280;
+}
+
+/* BOTTONI MODAL CAMBIO STATO */
+.btn-stato {
+    width: 100%;
+    padding: 15px;
+    border: 3px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.btn-stato:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-stato.active {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.btn-stato-dafare:hover {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.btn-stato-incorso:hover {
+    border-color: #f59e0b;
+    background: #fffbeb;
+}
+
+.btn-stato-completato:hover {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.btn-stato-nongestito:hover {
+    border-color: #6b7280;
+    background: #f9fafb;
+}
     </style>
 </head>
 <body>
@@ -774,7 +894,35 @@
             </form>
         </div>
     </div>
-
+    
+<!-- Modal Cambio Stato -->
+    <div id="cambiaStatoModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2>📊 Cambia Stato - <span id="statoComune"></span></h2>
+        </div>
+        <input type="hidden" id="statoRecordId">
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn-stato btn-stato-dafare" onclick="applicaNuovoStato('Da Fare')">
+                🔴 Da Fare
+            </button>
+            <button class="btn-stato btn-stato-incorso" onclick="applicaNuovoStato('In Corso')">
+                🟡 In Corso
+            </button>
+            <button class="btn-stato btn-stato-completato" onclick="applicaNuovoStato('Completato')">
+                🟢 Completato
+            </button>
+            <button class="btn-stato btn-stato-nongestito" onclick="applicaNuovoStato('Non Gestito')">
+                ⚫ Non Gestito
+            </button>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn" id="btnCloseCambiaStatoModal">❌ Annulla</button>
+        </div>
+    </div>
+</div>
     <!-- Modal Adempimento -->
     <div id="adempimentoModal" class="modal">
         <div class="modal-content">
@@ -1144,6 +1292,24 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
                     </div>
                     
                     <div class="comuni-list" id="comuni-list-${adempimento.ID}">
+                    <div class="comuni-legenda">
+    <div class="legenda-item">
+        <span class="legenda-icon">🔴</span>
+        <span class="legenda-text">Da Fare</span>
+    </div>
+    <div class="legenda-item">
+        <span class="legenda-icon">🟡</span>
+        <span class="legenda-text">In Corso</span>
+    </div>
+    <div class="legenda-item">
+        <span class="legenda-icon">🟢</span>
+        <span class="legenda-text">Completato</span>
+    </div>
+    <div class="legenda-item">
+        <span class="legenda-icon">⚫</span>
+        <span class="legenda-text">Non Gestito</span>
+    </div>
+</div>
                         <div class="comuni-controls">
                             <input type="text" 
                                    class="search-box" 
@@ -1162,34 +1328,36 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
         }
 
 function createComuneCard(ente) {
-    const stato = ente.StatoEnte || 'Non Gestito';
+    const stato = ente.StatoEnte || 'Da Fare';
     const progress = ente.ProgressEnte || 0;
     const note = ente.NoteEnte || '';
+    
+    // Determina icona e testo in base allo stato
+    let statoIcon = '🔴';
+    let statoText = 'Da Fare';
+    let statoClass = 'status-btn-dafare';
+    
+    if (stato === 'In Corso') {
+        statoIcon = '🟡';
+        statoText = 'In Corso';
+        statoClass = 'status-btn-incorso';
+    } else if (stato === 'Completato') {
+        statoIcon = '🟢';
+        statoText = 'Completato';
+        statoClass = 'status-btn-completato';
+    } else if (stato === 'Non Gestito') {
+        statoIcon = '⚫';
+        statoText = 'Non Gestito';
+        statoClass = 'status-btn-nongestito';
+    }
     
     return `
         <div class="comune-card" data-comune="${ente.Comune}">
             <div class="comune-nome">${ente.Comune}</div>
             
-            <div class="comune-status-buttons">
-                <button class="status-btn status-btn-dafare ${stato === 'Da Fare' ? 'active' : ''}" 
-                        onclick="cambiaStatoVeloce(${ente.ID}, 'Da Fare')" 
-                        title="Da Fare">
-                    🔴
-                </button>
-                <button class="status-btn status-btn-incorso ${stato === 'In Corso' ? 'active' : ''}" 
-                        onclick="cambiaStatoVeloce(${ente.ID}, 'In Corso')" 
-                        title="In Corso">
-                    🟡
-                </button>
-                <button class="status-btn status-btn-completato ${stato === 'Completato' ? 'active' : ''}" 
-                        onclick="cambiaStatoVeloce(${ente.ID}, 'Completato')" 
-                        title="Completato">
-                    🟢
-                </button>
-                <button class="status-btn status-btn-nongestito ${stato === 'Non Gestito' ? 'active' : ''}" 
-                        onclick="cambiaStatoVeloce(${ente.ID}, 'Non Gestito')" 
-                        title="Non Gestito">
-                    ⚫
+            <div class="comune-status-display" onclick="openCambiaStatoModal(${ente.ID}, '${ente.Comune}', '${stato}')">
+                <button class="status-btn-single ${statoClass}">
+                    ${statoIcon} ${statoText}
                 </button>
             </div>
             
@@ -1199,7 +1367,7 @@ function createComuneCard(ente) {
             
             <div class="comune-actions-small">
                 <span class="progress-text-small">${progress}%</span>
-                <button class="icon-btn-small" onclick="openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
+                <button class="icon-btn-small" onclick="event.stopPropagation(); openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
                     ${note ? '📝✅' : '📝'}
                 </button>
             </div>
@@ -1258,17 +1426,35 @@ function createComuneCard(ente) {
             cards.forEach(card => container.appendChild(card));
         };
 
-window.cambiaStatoVeloce = async function(enteId, nuovoStato) {
+window.openCambiaStatoModal = function(enteId, comune, statoAttuale) {
+    document.getElementById('statoRecordId').value = enteId;
+    document.getElementById('statoComune').textContent = comune;
+    
+    // Evidenzia il bottone dello stato attuale
+    document.querySelectorAll('.btn-stato').forEach(btn => btn.classList.remove('active'));
+    if (statoAttuale === 'Da Fare') {
+        document.querySelector('.btn-stato-dafare').classList.add('active');
+    } else if (statoAttuale === 'In Corso') {
+        document.querySelector('.btn-stato-incorso').classList.add('active');
+    } else if (statoAttuale === 'Completato') {
+        document.querySelector('.btn-stato-completato').classList.add('active');
+    } else if (statoAttuale === 'Non Gestito') {
+        document.querySelector('.btn-stato-nongestito').classList.add('active');
+    }
+    
+    document.getElementById('cambiaStatoModal').classList.add('open');
+};
+
+window.applicaNuovoStato = async function(nuovoStato) {
+    const enteId = document.getElementById('statoRecordId').value;
+    
     try {
-        const ente = allEnti.find(e => e.ID == enteId);
-        if (!ente) return;
-        
         // Calcola progress in base allo stato
         let nuovoProgress = 0;
+        if (nuovoStato === 'Da Fare') nuovoProgress = 0;
         if (nuovoStato === 'In Corso') nuovoProgress = 50;
         if (nuovoStato === 'Completato') nuovoProgress = 100;
         if (nuovoStato === 'Non Gestito') nuovoProgress = 0;
-        if (nuovoStato === 'Da Fare') nuovoProgress = 0;
         
         showLoading(true);
         await updateItem(LISTS.ENTI, enteId, {
@@ -1276,6 +1462,7 @@ window.cambiaStatoVeloce = async function(enteId, nuovoStato) {
             ProgressEnte: nuovoProgress
         });
         
+        document.getElementById('cambiaStatoModal').classList.remove('open');
         await loadData();
     } catch (err) {
         console.error('Errore cambio stato:', err);
@@ -1556,6 +1743,9 @@ window.cambiaStatoVeloce = async function(enteId, nuovoStato) {
             document.getElementById('btnCloseComuneModal')?.addEventListener('click', () => {
                 document.getElementById('comuneModal').classList.remove('open');
             });
+            document.getElementById('btnCloseCambiaStatoModal')?.addEventListener('click', () => {
+    document.getElementById('cambiaStatoModal').classList.remove('open');
+});
             document.getElementById('btnSync')?.addEventListener('click', loadData);
             document.getElementById('btnAddAdempimento')?.addEventListener('click', openAdempimentoModal);
             document.getElementById('btnAddComune')?.addEventListener('click', () => {
