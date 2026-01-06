@@ -238,6 +238,7 @@
         .stat-badge.non-gestiti { background: #fee2e2; color: #991b1b; }
         .stat-badge.in-corso { background: #fef3c7; color: #92400e; }
         .stat-badge.completati { background: #d1fae5; color: #065f46; }
+        .stat-badge.non-gestiti-grigio { background: #f3f4f6; color: #6b7280; }
         
         .progress-mini {
             width: 120px;
@@ -333,12 +334,55 @@
     font-size: 13px;
 }
 
-.comune-status-row {
+.comune-status-buttons {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 3px;
     margin-bottom: 4px;
+    justify-content: center;
 }
+
+.status-btn {
+    background: #f3f4f6;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.status-btn:hover {
+    transform: scale(1.1);
+    border-color: #9ca3af;
+}
+
+.status-btn.active {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    transform: scale(1.05);
+}
+
+.status-btn-dafare.active {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.status-btn-incorso.active {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.status-btn-completato.active {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.status-btn-nongestito.active {
+    border-color: #6b7280;
+    box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.2);
+}
+
 
 .progress-bar-small {
     height: 4px;
@@ -1028,7 +1072,11 @@
                 `;
                 return;
             }
-            
+            filtered.sort((a, b) => {
+    const dataA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31');
+    const dataB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31');
+    return dataA - dataB;
+});
             container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
             attachEventListeners();
         }
@@ -1037,9 +1085,10 @@
             const enti = allEnti.filter(e => e.AdempimentoID == adempimento.ID);
             
             const totali = enti.length;
-            const daFare = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
-            const inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
-            const completati = enti.filter(e => e.StatoEnte === 'Completato').length;
+            const daFare = enti.filter(e => e.StatoEnte === 'Da Fare').length;
+const inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
+const completati = enti.filter(e => e.StatoEnte === 'Completato').length;
+const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
             
             const percentualeCompletamento = totali > 0 ? Math.round((completati / totali) * 100) : 0;
             
@@ -1078,6 +1127,7 @@
                             ${daFare > 0 ? `<span class="stat-badge non-gestiti">🔴 ${daFare}</span>` : ''}
                             ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
                             ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
+                            ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti-grigio">⚫ ${nonGestiti}</span>` : ''}
                             <div class="progress-mini" title="${percentualeCompletamento}% completato">
                                 <div class="progress-mini-fill" style="width: ${percentualeCompletamento}%"></div>
                             </div>
@@ -1116,31 +1166,37 @@ function createComuneCard(ente) {
     const progress = ente.ProgressEnte || 0;
     const note = ente.NoteEnte || '';
     
-    let statusClass = 'status-da-fare';
-    let statusIcon = '🔴';
-    let statusText = 'Da Fare';
-    
-    if (stato === 'In Corso') {
-        statusClass = 'status-in-corso';
-        statusIcon = '🟡';
-        statusText = 'In Corso';
-    } else if (stato === 'Completato') {
-        statusClass = 'status-completato';
-        statusIcon = '🟢';
-        statusText = 'OK';
-    }
-    
     return `
         <div class="comune-card" data-comune="${ente.Comune}">
             <div class="comune-nome">${ente.Comune}</div>
-            <div class="comune-status-row">
-                <div class="status-flag ${statusClass}" onclick="cambiaStato(${ente.ID})" title="Click per cambiare stato">
-                    ${statusIcon} ${statusText}
-                </div>
+            
+            <div class="comune-status-buttons">
+                <button class="status-btn status-btn-dafare ${stato === 'Da Fare' ? 'active' : ''}" 
+                        onclick="cambiaStatoVeloce(${ente.ID}, 'Da Fare')" 
+                        title="Da Fare">
+                    🔴
+                </button>
+                <button class="status-btn status-btn-incorso ${stato === 'In Corso' ? 'active' : ''}" 
+                        onclick="cambiaStatoVeloce(${ente.ID}, 'In Corso')" 
+                        title="In Corso">
+                    🟡
+                </button>
+                <button class="status-btn status-btn-completato ${stato === 'Completato' ? 'active' : ''}" 
+                        onclick="cambiaStatoVeloce(${ente.ID}, 'Completato')" 
+                        title="Completato">
+                    🟢
+                </button>
+                <button class="status-btn status-btn-nongestito ${stato === 'Non Gestito' ? 'active' : ''}" 
+                        onclick="cambiaStatoVeloce(${ente.ID}, 'Non Gestito')" 
+                        title="Non Gestito">
+                    ⚫
+                </button>
             </div>
+            
             <div class="progress-bar-small">
                 <div class="progress-fill" style="width: ${progress}%"></div>
             </div>
+            
             <div class="comune-actions-small">
                 <span class="progress-text-small">${progress}%</span>
                 <button class="icon-btn-small" onclick="openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
@@ -1202,38 +1258,32 @@ function createComuneCard(ente) {
             cards.forEach(card => container.appendChild(card));
         };
 
-        window.cambiaStato = async function(enteId) {
-            try {
-                const ente = allEnti.find(e => e.ID == enteId);
-                if (!ente) return;
-                
-                let nuovoStato, nuovoProgress;
-                
-                if (!ente.StatoEnte || ente.StatoEnte === 'Non Gestito') {
-                    nuovoStato = 'In Corso';
-                    nuovoProgress = 50;
-                } else if (ente.StatoEnte === 'In Corso') {
-                    nuovoStato = 'Completato';
-                    nuovoProgress = 100;
-                } else {
-                    nuovoStato = 'Non Gestito';
-                    nuovoProgress = 0;
-                }
-                
-                showLoading(true);
-                await updateItem(LISTS.ENTI, enteId, {
-                    StatoEnte: nuovoStato,
-                    ProgressEnte: nuovoProgress
-                });
-                
-                showAlert('✅ Stato aggiornato!', 'success');
-                await loadData();
-            } catch (err) {
-                console.error('Errore cambio stato:', err);
-                showAlert('Errore: ' + err.message, 'error');
-                showLoading(false);
-            }
-        };
+window.cambiaStatoVeloce = async function(enteId, nuovoStato) {
+    try {
+        const ente = allEnti.find(e => e.ID == enteId);
+        if (!ente) return;
+        
+        // Calcola progress in base allo stato
+        let nuovoProgress = 0;
+        if (nuovoStato === 'In Corso') nuovoProgress = 50;
+        if (nuovoStato === 'Completato') nuovoProgress = 100;
+        if (nuovoStato === 'Non Gestito') nuovoProgress = 0;
+        if (nuovoStato === 'Da Fare') nuovoProgress = 0;
+        
+        showLoading(true);
+        await updateItem(LISTS.ENTI, enteId, {
+            StatoEnte: nuovoStato,
+            ProgressEnte: nuovoProgress
+        });
+        
+        await loadData();
+    } catch (err) {
+        console.error('Errore cambio stato:', err);
+        showAlert('Errore: ' + err.message, 'error');
+        showLoading(false);
+    }
+};
+          
 
         window.deleteAdempimento = async function(adempimentoId) {
     const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
