@@ -1645,9 +1645,10 @@ window.applicaNuovoStato = async function(nuovoStato) {
         });
     }
     
-    showAlert('✅ Adempimento aggiornato!', 'success');
-}
-                } else {
+   showAlert('✅ Adempimento aggiornato!', 'success');
+            }  // ← AGGIUNGI QUESTA RIGA!
+            
+        } else {
                     const result = await createItem(LISTS.ADEMPIMENTI, {
                         Title: titolo,
                         Descrizione: descrizione,
