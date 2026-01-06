@@ -1578,99 +1578,111 @@ window.applicaNuovoStato = async function(nuovoStato) {
             document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
         };
 
-        document.getElementById('adempimentoForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const titolo = document.getElementById('formTitolo').value;
+    const descrizione = document.getElementById('formDescrizione').value;
+    const tipologia = document.getElementById('formTipologia').value;
+    const responsabile = document.getElementById('formResponsabile').value;
+    const annoMese = document.getElementById('formAnnoMese').value;
+    const dataScadenza = document.getElementById('formDataScadenza').value;
+    const editId = document.getElementById('editAdempimentoId').value;
+    
+    const checkboxes = document.querySelectorAll('input[name="comuni"]:checked');
+    const comuniSelezionati = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (comuniSelezionati.length === 0) {
+        showAlert('❌ Seleziona almeno un comune!', 'error');
+        return;
+    }
+    
+    try {
+        showLoading(true);
+        let adempimentoId;
+        
+        if (editId) {
+            // MODIFICA adempimento esistente
+            await updateItem(LISTS.ADEMPIMENTI, editId, {
+                Title: titolo,
+                Descrizione: descrizione,
+                Tipologia: tipologia,
+                Responsabile: responsabile,
+                AnnoMese: annoMese,
+                DataScadenza: dataScadenza,
+                StatoMese: 'Aperto'
+            });
+            adempimentoId = editId;
             
-            const editId = document.getElementById('editAdempimentoId').value;
-            const titolo = document.getElementById('formTitolo').value;
-            const descrizione = document.getElementById('formDescrizione').value;
-            const tipologia = document.getElementById('formTipologia').value;
-            const responsabile = document.getElementById('formResponsabile').value;
-            const annoMese = document.getElementById('formAnnoMese').value;
-            const dataScadenza = document.getElementById('formDataScadenza').value;
+            // Gestione comuni: trova quelli attuali
+            const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
+            const comuniEsistenti = entiEsistenti.map(e => e.Comune);
             
-            const comuniSelezionati = Array.from(
-                document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]:checked')
-            ).map(cb => cb.value);
+            // Trova comuni da RIMUOVERE (erano selezionati, ora non lo sono più)
+            const comuniDaRimuovere = comuniEsistenti.filter(c => !comuniSelezionati.includes(c));
             
-            if (comuniSelezionati.length === 0) {
-                showAlert('⚠️ Seleziona almeno un comune!', 'error');
-                return;
+            // Trova comuni da AGGIUNGERE (non erano selezionati, ora lo sono)
+            const comuniDaAggiungere = comuniSelezionati.filter(c => !comuniEsistenti.includes(c));
+            
+            // RIMUOVI comuni deselezionati
+            for (const comune of comuniDaRimuovere) {
+                const enteRecord = entiEsistenti.find(e => e.Comune === comune);
+                if (enteRecord) {
+                    await deleteItem(LISTS.ENTI, enteRecord.ID);
+                }
             }
             
-            try {
-                showLoading(true);
-                
-                let adempimentoId;
-                
-                if (editId) {
-    await updateItem(LISTS.ADEMPIMENTI, editId, {
-        Title: titolo,
-        Descrizione: descrizione,
-        Tipologia: tipologia,
-        Responsabile: responsabile,
-        AnnoMese: annoMese,
-        DataScadenza: dataScadenza,
-        StatoMese: 'Aperto'
-    });
-    adempimentoId = editId;
-    
-    // Gestione comuni: trova quelli attuali
-    const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
-    const comuniEsistenti = entiEsistenti.map(e => e.Comune);
-    
-    // Trova comuni da RIMUOVERE (erano selezionati, ora non lo sono più)
-    const comuniDaRimuovere = comuniEsistenti.filter(c => !comuniSelezionati.includes(c));
-    
-    // Trova comuni da AGGIUNGERE (non erano selezionati, ora lo sono)
-    const comuniDaAggiungere = comuniSelezionati.filter(c => !comuniEsistenti.includes(c));
-    
-    // RIMUOVI comuni deselezionati
-    for (const comune of comuniDaRimuovere) {
-        const enteRecord = entiEsistenti.find(e => e.Comune === comune);
-        if (enteRecord) {
-            await deleteItem(LISTS.ENTI, enteRecord.ID);
-        }
-    }
-    
-    // AGGIUNGI nuovi comuni
-    for (const comune of comuniDaAggiungere) {
-        await createItem(LISTS.ENTI, {
-            Title: `${titolo} - ${comune}`,
-            AdempimentoID: parseInt(adempimentoId),
-            Comune: comune,
-            StatoEnte: 'Da Fare',
-            ProgressEnte: 0,
-            NoteEnte: ''
-        });
-    }
-    
-   showAlert('✅ Adempimento aggiornato!', 'success');
-            }  // ← AGGIUNGI QUESTA RIGA!
+            // AGGIUNGI nuovi comuni
+            for (const comune of comuniDaAggiungere) {
+                await createItem(LISTS.ENTI, {
+                    Title: `${titolo} - ${comune}`,
+                    AdempimentoID: parseInt(adempimentoId),
+                    Comune: comune,
+                    StatoEnte: 'Da Fare',
+                    ProgressEnte: 0,
+                    NoteEnte: ''
+                });
+            }
+            
+            showAlert('✅ Adempimento aggiornato!', 'success');
             
         } else {
-                    const result = await createItem(LISTS.ADEMPIMENTI, {
-                        Title: titolo,
-                        Descrizione: descrizione,
-                        Tipologia: tipologia,
-                        Responsabile: responsabile,
-                        AnnoMese: annoMese,
-                        DataScadenza: dataScadenza,
-                        StatoMese: 'Aperto'
-                    });
-                    
-                    adempimentoId = result.id;
-                    
-                    for (const comune of comuniSelezionati) {
-    await createItem(LISTS.ENTI, {
-        Title: `${titolo} - ${comune}`,
-        AdempimentoID: parseInt(adempimentoId),
-        Comune: comune,
-        StatoEnte: 'Da Fare',
-        ProgressEnte: 0,
-        NoteEnte: ''
-    });
-}
+            // CREA nuovo adempimento
+            const result = await createItem(LISTS.ADEMPIMENTI, {
+                Title: titolo,
+                Descrizione: descrizione,
+                Tipologia: tipologia,
+                Responsabile: responsabile,
+                AnnoMese: annoMese,
+                DataScadenza: dataScadenza,
+                StatoMese: 'Aperto'
+            });
+            adempimentoId = result.id;
+            
+            // Crea record per ogni comune selezionato
+            for (const comune of comuniSelezionati) {
+                await createItem(LISTS.ENTI, {
+                    Title: `${titolo} - ${comune}`,
+                    AdempimentoID: parseInt(adempimentoId),
+                    Comune: comune,
+                    StatoEnte: 'Da Fare',
+                    ProgressEnte: 0,
+                    NoteEnte: ''
+                });
+            }
+            
+            showAlert('✅ Adempimento creato con successo!', 'success');
+        }
+        
+        document.getElementById('adempimentoModal').classList.remove('open');
+        await loadData();
+        
+    } catch (err) {
+        console.error('Errore salvataggio:', err);
+        showAlert('❌ Errore: ' + err.message, 'error');
+        showLoading(false);
+    }
+});
                     
                     showAlert('✅ Adempimento creato con successo!', 'success');
                 }
