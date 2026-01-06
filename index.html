@@ -883,9 +883,31 @@
                 <input type="hidden" id="noteRecordId">
                 
                 <div class="form-group">
-                    <label>Note</label>
-                    <textarea id="formNote" rows="6" placeholder="Aggiungi note per questo comune..."></textarea>
-                </div>
+    <label>📋 Istruzioni Operative / Note Procedurali</label>
+    <small style="display: block; margin-bottom: 8px; color: #6b7280; font-style: italic;">
+        Inserisci qui le istruzioni dettagliate per l'esecuzione di questo adempimento (procedure, riferimenti normativi, link utili, checklist, ecc.)
+    </small>
+    <textarea id="formDescrizione" 
+              rows="8" 
+              style="font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5;"
+              placeholder="Esempio:
+
+1. PROCEDURA:
+   - Accedere al portale...
+   - Compilare modello F24...
+   - Verificare scadenze...
+
+2. RIFERIMENTI NORMATIVI:
+   - Art. 123 Dlgs...
+   - Circolare Agenzia Entrate...
+
+3. LINK UTILI:
+   - https://...
+
+4. NOTE:
+   - Attenzione a...
+   - Controllare sempre..."></textarea>
+</div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success">💾 Salva Note</button>
@@ -1182,10 +1204,19 @@
                 select.appendChild(option);
             });
             
-            if (sortedMesi.length > 0) {
-                meseCorrente = sortedMesi[0];
-                select.value = meseCorrente;
-            }
+           // Imposta mese corrente come default
+const oggi = new Date();
+const meseOggi = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).padStart(2, '0')}`;
+
+if (sortedMesi.includes(meseOggi)) {
+    // Se esiste il mese corrente, selezionalo
+    select.value = meseOggi;
+    meseCorrente = meseOggi;
+} else if (sortedMesi.length > 0) {
+    // Altrimenti seleziona il più recente
+    select.value = sortedMesi[0];
+    meseCorrente = sortedMesi[0];
+}
         }
 
         function renderAdempimenti() {
@@ -1294,7 +1325,11 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
                     </div>
                     
                     <div class="comuni-list" id="comuni-list-${adempimento.ID}">
-                    <div class="comuni-legenda">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #f0f9ff; border-radius: 8px; margin-bottom: 10px;">
+        <span style="font-size: 13px; font-weight: 600; color: #1e40af;">📍 Stai lavorando su: ${adempimento.Title}</span>
+        <button class="btn btn-sm" onclick="tornaInAlto()" style="background: #3b82f6;">⬆️ Torna Su</button>
+    </div>
+    <div class="comuni-legenda">
     <div class="legenda-item">
         <span class="legenda-icon">🔴</span>
         <span class="legenda-text">Da Fare</span>
@@ -1312,6 +1347,18 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
         <span class="legenda-text">Non Gestito</span>
     </div>
 </div>
+
+${adempimento.Descrizione ? `
+    <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 16px;">📋</span>
+            <strong style="color: #92400e;">Istruzioni Operative:</strong>
+        </div>
+        <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; color: #78350f; line-height: 1.6;">
+            ${adempimento.Descrizione}
+        </div>
+    </div>
+` : ''}
                         <div class="comuni-controls">
                             <input type="text" 
                                    class="search-box" 
@@ -1466,8 +1513,29 @@ window.applicaNuovoStato = async function(nuovoStato) {
             ProgressEnte: nuovoProgress
         });
         
-        document.getElementById('cambiaStatoModal').classList.remove('open');
-        await loadData();
+      const ente = allEnti.find(e => e.ID == enteId);
+const adempimentoId = ente.AdempimentoID;
+
+document.getElementById('cambiaStatoModal').classList.remove('open');
+
+// Ricarica dati ma mantieni aperto l'adempimento
+await loadData();
+
+// Riapri automaticamente l'adempimento
+setTimeout(() => {
+    const list = document.getElementById(`comuni-list-${adempimentoId}`);
+    const header = document.querySelector(`.adempimento-toggle[data-id="${adempimentoId}"]`);
+    const icon = header?.querySelector('.expand-icon');
+    
+    if (list && header && icon) {
+        list.classList.add('open');
+        icon.classList.add('open');
+        
+        // Scroll all'adempimento
+        header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}, 300);
+        
     } catch (err) {
         console.error('Errore cambio stato:', err);
         showAlert('Errore: ' + err.message, 'error');
@@ -1756,6 +1824,9 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             return `${mesi[parseInt(month) - 1]} ${year}`;
         }
 
+        window.tornaInAlto = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
         window.addEventListener('load', async function() {
             try {
                 await msalInstance.initialize();
