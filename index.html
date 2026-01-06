@@ -1066,6 +1066,15 @@
         let allComuni = [], allAdempimenti = [], allEnti = [];
         let meseCorrente = null;
 
+        // Funzione per escape HTML e prevenire problemi con caratteri speciali
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+        
         async function login() {
             try {
                 await msalInstance.initialize();
@@ -1348,17 +1357,16 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
     </div>
 </div>
 
-${adempimento.Descrizione ? `
+${adempimento.Descrizione && adempimento.Descrizione.trim() !== '' ? `
     <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
             <span style="font-size: 16px;">📋</span>
             <strong style="color: #92400e;">Istruzioni Operative:</strong>
         </div>
-        <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; color: #78350f; line-height: 1.6;">
-            ${adempimento.Descrizione}
-        </div>
+        <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; color: #78350f; line-height: 1.6;">${escapeHtml(adempimento.Descrizione)}</div>
     </div>
 ` : ''}
+
                         <div class="comuni-controls">
                             <input type="text" 
                                    class="search-box" 
