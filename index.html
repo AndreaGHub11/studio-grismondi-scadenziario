@@ -1416,7 +1416,12 @@ ${adempimento.Descrizione && adempimento.Descrizione.trim() !== '' ? `
 function createComuneCard(ente) {
     const stato = ente.StatoEnte || 'Da Fare';
     const progress = ente.ProgressEnte || 0;
-    const note = ente.NoteEnte || '';
+   // Leggi nota da NoteEnte O dal Title dopo "|||"
+let note = ente.NoteEnte || '';
+if (!note && ente.Title && ente.Title.includes(' ||| NOTA: ')) {
+    const parts = ente.Title.split(' ||| NOTA: ');
+    note = parts[1] || '';
+}
     
     // Determina icona e testo in base allo stato
     let statoIcon = '🔴';
@@ -1902,21 +1907,46 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     try {
         showLoading(true);
         
-        // Salva tutti i dati dell'ente
-        const enteData = {
-            Title: ente.Title,
-            AdempimentoID: ente.AdempimentoID,
-            Comune: ente.Comune,
-            StatoEnte: ente.StatoEnte,
-            ProgressEnte: ente.ProgressEnte || 0,
-            NoteEnte: note
-        };
+        // WORKAROUND: Salviamo la nota nel campo Title dopo "|||"
+        // Formato: "Titolo Originale ||| NOTA: testo nota"
+        const titleParts = ente.Title.split(' ||| ');
+        const titleBase = titleParts[0]; // Parte prima di |||
         
-        console.log('🗑️ Elimino vecchio record ID:', enteId);
-        await deleteItem(LISTS.ENTI, enteId);
+        const newTitle = note && note.trim() !== '' 
+            ? `${titleBase} ||| NOTA: ${note}`
+            : titleBase;
         
-        console.log('➕ Creo nuovo record con nota');
-        await createItem(LISTS.ENTI, enteData);
+        console.log('📝 Nuovo Title:', newTitle);
+        
+        // Usa Microsoft Graph PATCH con if-match header
+        const site = await getSiteId();
+        
+        // Prima leggi il record per ottenere eTag
+        const currentItem = await callGraph(
+            `sites/${site}/lists/${LISTS.ENTI}/items/${enteId}?expand=fields`
+        );
+        
+        console.log('📖 Record corrente letto, eTag:', currentItem.eTag);
+        
+        // Ora aggiorna con eTag corretto
+        const url = `sites/${site}/lists/${LISTS.ENTI}/items/${enteId}/fields`;
+        const response = await fetch(`https://graph.microsoft.com/v1.0/${url}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+                'If-Match': currentItem.eTag
+            },
+            body: JSON.stringify({
+                Title: newTitle,
+                NoteEnte: note
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(JSON.stringify(error));
+        }
         
         console.log('✅ Nota salvata con successo!');
         
