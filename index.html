@@ -1038,6 +1038,34 @@
         </div>
     </div>
 
+        <!-- Modal Note -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Note - <span id="noteComune"></span></h2>
+            </div>
+            <form id="noteForm">
+                <input type="hidden" id="noteRecordId">
+                
+                <div class="form-group">
+                    <label>📝 Note Operative</label>
+                    <textarea id="formNote" rows="8" placeholder="Aggiungi note operative per questo comune...
+
+Esempi:
+- Contattato responsabile il 05/01
+- In attesa documenti
+- Verificare entro fine mese
+- Note per prossimo follow-up"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💾 Salva Note</button>
+                    <button type="button" class="btn" id="btnCloseNoteModal">❌ Chiudi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <script>
         console.log('🚀 Scadenziario V19 - VERSIONE COMPLETA');
 
@@ -1850,6 +1878,34 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
         window.tornaInAlto = function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+
+                // Event listener Form Note
+        document.getElementById('noteForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const enteId = document.getElementById('noteRecordId').value;
+            const note = document.getElementById('formNote').value;
+            
+            try {
+                showLoading(true);
+                await updateItem(LISTS.ENTI, enteId, { NoteEnte: note });
+                
+                showAlert('✅ Note salvate con successo!', 'success');
+                document.getElementById('noteModal').classList.remove('open');
+                await loadData();
+            } catch (err) {
+                console.error('Errore salvataggio note:', err);
+                showAlert('❌ Errore salvataggio: ' + err.message, 'error');
+                showLoading(false);
+            }
+        });
+
+        // Event listener chiusura modal note
+        document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => {
+            document.getElementById('noteModal').classList.remove('open');
+        });
+        
         window.addEventListener('load', async function() {
             try {
                 await msalInstance.initialize();
