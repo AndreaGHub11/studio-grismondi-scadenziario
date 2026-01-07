@@ -1583,15 +1583,29 @@ setTimeout(() => {
     }
 };
 
-        window.openNoteModal = function(enteId, comune) {
-            const ente = allEnti.find(e => e.ID == enteId);
-            if (!ente) return;
-            
-            document.getElementById('noteRecordId').value = enteId;
-            document.getElementById('noteComune').textContent = comune;
-            document.getElementById('formNote').value = ente.NoteEnte || '';
-            document.getElementById('noteModal').classList.add('open');
-        };
+ window.openNoteModal = function(enteId, comune) {
+    const ente = allEnti.find(e => e.ID == enteId);
+    if (!ente) {
+        console.error('Ente non trovato:', enteId);
+        return;
+    }
+    
+    const noteRecordIdElement = document.getElementById('noteRecordId');
+    const noteComuneElement = document.getElementById('noteComune');
+    const formNoteElement = document.getElementById('formNote');
+    const noteModalElement = document.getElementById('noteModal');
+    
+    if (!noteRecordIdElement || !noteComuneElement || !formNoteElement || !noteModalElement) {
+        console.error('Modal Note non trovato! Verifica che il modal HTML esista.');
+        showAlert('❌ Errore: Modal Note non disponibile. Contatta il supporto.', 'error');
+        return;
+    }
+    
+    noteRecordIdElement.value = enteId;
+    noteComuneElement.textContent = comune;
+    formNoteElement.value = ente.NoteEnte || '';
+    noteModalElement.classList.add('open');
+};
 
         window.openAdempimentoModal = function() {
             document.getElementById('adempimentoModalTitle').textContent = '➕ Nuovo Adempimento';
