@@ -1885,32 +1885,53 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
 
 
                 // Event listener Form Note
-        document.getElementById('noteForm')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const enteId = document.getElementById('noteRecordId').value;
-            const note = document.getElementById('formNote').value;
-          
-            console.log('🔍 DEBUG SAVE NOTE:');
-    console.log('EnteId:', enteId);
-    console.log('Nota da salvare:', note);
-    console.log('Ente trovato:', allEnti.find(e => e.ID == enteId));
-            
-            try {
-                showLoading(true);
-                await updateItem(LISTS.ENTI, enteId, { NoteEnte: note });
-
-                console.log('✅ Nota salvata per enteId:', enteId);
-                
-                showAlert('✅ Note salvate con successo!', 'success');
-                document.getElementById('noteModal').classList.remove('open');
-                await loadData();
-            } catch (err) {
-                console.error('Errore salvataggio note:', err);
-                showAlert('❌ Errore salvataggio: ' + err.message, 'error');
-                showLoading(false);
-            }
-        });
+       document.getElementById('noteForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const enteId = document.getElementById('noteRecordId').value;
+    const note = document.getElementById('formNote').value;
+    
+    console.log('🔍 SAVE NOTE - EnteId:', enteId, '- Nota:', note);
+    
+    const ente = allEnti.find(e => e.ID == enteId);
+    if (!ente) {
+        showAlert('❌ Errore: Ente non trovato', 'error');
+        return;
+    }
+    
+    try {
+        showLoading(true);
+        
+        // Salva tutti i dati dell'ente
+        const enteData = {
+            Title: ente.Title,
+            AdempimentoID: ente.AdempimentoID,
+            Comune: ente.Comune,
+            StatoEnte: ente.StatoEnte,
+            ProgressEnte: ente.ProgressEnte || 0,
+            NoteEnte: note
+        };
+        
+        console.log('🗑️ Elimino vecchio record ID:', enteId);
+        await deleteItem(LISTS.ENTI, enteId);
+        
+        console.log('➕ Creo nuovo record con nota');
+        await createItem(LISTS.ENTI, enteData);
+        
+        console.log('✅ Nota salvata con successo!');
+        
+        showAlert('✅ Nota salvata!', 'success');
+        document.getElementById('noteModal').classList.remove('open');
+        
+        // Ricarica dati
+        await loadData();
+        
+    } catch (err) {
+        console.error('❌ Errore salvataggio nota:', err);
+        showAlert('❌ Errore: ' + err.message, 'error');
+        showLoading(false);
+    }
+});
 
         // Event listener chiusura modal note
         document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => {
