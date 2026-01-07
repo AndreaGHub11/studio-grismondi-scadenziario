@@ -1453,9 +1453,13 @@ function createComuneCard(ente) {
             
             <div class="comune-actions-small">
                 <span class="progress-text-small">${progress}%</span>
-                <button class="icon-btn-small" onclick="event.stopPropagation(); openNoteModal(${ente.ID}, '${ente.Comune}')" title="Note">
-                    ${note ? '📝✅' : '📝'}
-                </button>
+                <button class="icon-btn-small" 
+        data-ente-id="${ente.ID}" 
+        data-comune="${ente.Comune}"
+        onclick="event.stopPropagation(); openNoteModal(${ente.ID}, \`${ente.Comune.replace(/\`/g, '').replace(/'/g, "\\'")}\`)" 
+        title="Note ${ente.NoteEnte && ente.NoteEnte.trim() ? '(già inserita)' : ''}">
+    ${ente.NoteEnte && ente.NoteEnte.trim() !== '' ? '📝✅' : '📝'}
+</button>
             </div>
         </div>
     `;
@@ -1886,10 +1890,17 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             
             const enteId = document.getElementById('noteRecordId').value;
             const note = document.getElementById('formNote').value;
+          
+            console.log('🔍 DEBUG SAVE NOTE:');
+    console.log('EnteId:', enteId);
+    console.log('Nota da salvare:', note);
+    console.log('Ente trovato:', allEnti.find(e => e.ID == enteId));
             
             try {
                 showLoading(true);
                 await updateItem(LISTS.ENTI, enteId, { NoteEnte: note });
+
+                console.log('✅ Nota salvata per enteId:', enteId);
                 
                 showAlert('✅ Note salvate con successo!', 'success');
                 document.getElementById('noteModal').classList.remove('open');
