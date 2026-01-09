@@ -186,7 +186,21 @@
         .adempimento-header:hover {
             background: linear-gradient(to right, #eef0ff 0%, #e0ffe0 100%);
         }
-        
+
+        .adempimento-header.adempimento-completato {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    border: 3px solid #10b981 !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+}
+
+.adempimento-header.adempimento-completato:hover {
+    background: linear-gradient(135deg, #a7f3d0 0%, #86efac 100%) !important;
+}
+
+.adempimento-completato .adempimento-titolo {
+    color: #065f46;
+    font-weight: 800;
+}
         .adempimento-titolo {
             font-size: 17px;
             font-weight: 700;
@@ -1002,6 +1016,66 @@
         </div>
     </div>
 
+<!-- Modal Duplica Adempimento -->
+<div id="duplicaModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2>📋 Duplica Adempimento Mensile</h2>
+        </div>
+        
+        <div style="background: #dbeafe; border: 2px solid #93c5fd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="font-size: 18px;">ℹ️</span>
+                <strong style="color: #1e40af;">Stai per duplicare:</strong>
+            </div>
+            <div id="duplicaAdempimentoInfo" style="font-size: 14px; color: #1e40af; margin-left: 26px;"></div>
+        </div>
+        
+        <form id="duplicaForm">
+            <input type="hidden" id="duplicaAdempimentoId">
+            
+            <div class="form-group">
+                <label>📅 Nuovo Mese di Riferimento *</label>
+                <input type="month" id="duplicaNuovoMese" required>
+            </div>
+
+            <div class="form-group">
+                <label>📅 Nuova Data Scadenza *</label>
+                <input type="date" id="duplicaNuovaScadenza" required>
+            </div>
+
+            <div class="form-group">
+                <label>👤 Responsabile (opzionale - lascia vuoto per mantenere)</label>
+                <select id="duplicaNuovoResponsabile">
+                    <option value="">Mantieni responsabile originale</option>
+                    <option value="Andrea">Andrea</option>
+                    <option value="Roberta">Roberta</option>
+                    <option value="Nicoletta">Nicoletta</option>
+                    <option value="Miriana">Miriana</option>
+                </select>
+            </div>
+
+            <div style="background: #fef3c7; border: 2px solid #fde68a; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+                <div style="font-size: 13px; color: #92400e;">
+                    <strong>📌 Cosa verrà copiato:</strong>
+                    <ul style="margin: 8px 0 0 20px; line-height: 1.8;">
+                        <li>✅ Titolo adempimento</li>
+                        <li>✅ Descrizione/Istruzioni complete</li>
+                        <li>✅ Tipologia</li>
+                        <li>✅ Tutti i comuni assegnati</li>
+                    </ul>
+                    <strong style="display: block; margin-top: 8px;">⚠️ Tutti i comuni partiranno con stato "Da Fare" (0%)</strong>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">✅ Duplica Adempimento</button>
+                <button type="button" class="btn" id="btnCloseDuplicaModal">❌ Annulla</button>
+            </div>
+        </form>
+    </div>
+</div>
+    
         <!-- Modal Note -->
     <div id="noteModal" class="modal">
         <div class="modal-content">
@@ -1058,6 +1132,33 @@ Esempi:
         let allComuni = [], allAdempimenti = [], allEnti = [];
         let meseCorrente = null;
 
+        // Funzione controllo scadenza sessione (15 giorni)
+function checkSessionExpiry() {
+    const lastLogin = localStorage.getItem('lastLogin');
+    const now = Date.now();
+    const fifteenDays = 15 * 24 * 60 * 60 * 1000; // 15 giorni
+    
+    if (lastLogin) {
+        const elapsed = now - parseInt(lastLogin);
+        
+        if (elapsed > fifteenDays) {
+            // Sessione scaduta
+            localStorage.removeItem('lastLogin');
+            alert('⏰ Sessione scaduta dopo 15 giorni.\n\nPer motivi di sicurezza, effettua nuovamente l\'accesso.');
+            logout();
+            return false;
+        }
+        
+        // Calcola giorni rimanenti
+        const daysRemaining = Math.ceil((fifteenDays - elapsed) / (24 * 60 * 60 * 1000));
+        return daysRemaining;
+    }
+    
+    // Prima volta, salva timestamp
+    localStorage.setItem('lastLogin', now.toString());
+    return 15;
+}
+
         // Funzione per escape HTML e prevenire problemi con caratteri speciali
 function escapeHtml(text) {
     if (!text) return '';
@@ -1084,6 +1185,10 @@ function escapeHtml(text) {
                 const account = msalInstance.getAllAccounts()[0];
                 if (!account) return;
 
+                // Controlla scadenza sessione
+const daysRemaining = checkSessionExpiry();
+if (daysRemaining === false) return; // Sessione scaduta
+
                 currentUser = account;
                 const tokenResp = await msalInstance.acquireTokenSilent({ 
                     ...loginRequest, 
@@ -1098,6 +1203,14 @@ function escapeHtml(text) {
                 document.getElementById('userName').textContent = currentUser.name || currentUser.username;
                 document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
 
+// Display giorni rimanenti sessione
+const daysRemaining = checkSessionExpiry();
+const roleText = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
+document.getElementById('userRole').innerHTML = `
+    ${roleText}<br>
+    <span style="font-size: 11px; opacity: 0.8;">🔒 Sessione: ${daysRemaining} giorni</span>
+`;
+                
                 await loadData();
             } catch (err) {
                 console.error('Auth error:', err);
@@ -1273,6 +1386,9 @@ const completati = enti.filter(e => e.StatoEnte === 'Completato').length;
 const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
             
             const percentualeCompletamento = totali > 0 ? Math.round((completati / totali) * 100) : 0;
+
+            // Verifica se adempimento è completato
+const isCompletato = totali > 0 && (completati + nonGestiti) === totali;
             
             const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
             const oggi = new Date();
@@ -1294,9 +1410,11 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
             
             return `
                 <div class="adempimento-card">
-                    <div class="adempimento-header adempimento-toggle" data-id="${adempimento.ID}">
+                    <div class="adempimento-header adempimento-toggle ${isCompletato ? 'adempimento-completato' : ''}" data-id="${adempimento.ID}">
                         <div style="flex: 1;">
-                            <div class="adempimento-titolo">${adempimento.Title || 'Senza titolo'}</div>
+                            <div class="adempimento-titolo">
+    ${isCompletato ? '✅ ' : ''}${adempimento.Title || 'Senza titolo'}${isCompletato ? ' - COMPLETATO' : ''}
+</div>
                             <div class="adempimento-meta">
                                 📅 ${formatMese(adempimento.AnnoMese)} | 
                                 📂 ${adempimento.Tipologia} | 
@@ -1306,6 +1424,7 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
                         </div>
                         <div class="adempimento-stats">
                             <span class="stat-badge totali">${totali} totali</span>
+                            ${isCompletato ? '<span class="stat-badge" style="background: #10b981; color: white; font-size: 12px; padding: 5px 12px;">✅ COMPLETATO</span>' : ''}
                             ${daFare > 0 ? `<span class="stat-badge non-gestiti">🔴 ${daFare}</span>` : ''}
                             ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
                             ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
@@ -1321,6 +1440,17 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
     🗑️
 </button>
                             </div>
+                            <div class="adempimento-actions">
+    <button class="icon-btn" onclick="event.stopPropagation(); editAdempimento(${adempimento.ID})" title="Modifica">
+        ✏️
+    </button>
+    <button class="icon-btn" onclick="event.stopPropagation(); openDuplicaModal(${adempimento.ID})" title="Duplica in altro mese" style="color: #3b82f6;">
+        📋
+    </button>
+    <button class="icon-btn icon-btn-danger" onclick="event.stopPropagation(); deleteAdempimento(${adempimento.ID})" title="Elimina">
+        🗑️
+    </button>
+</div>
                             <span class="expand-icon">▼</span>
                         </div>
                     </div>
@@ -1577,6 +1707,44 @@ setTimeout(() => {
         showAlert('❌ Errore: ' + err.message, 'error');
         showLoading(false);
     }
+};
+
+        window.openDuplicaModal = function(adempimentoId) {
+    const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+    if (!adempimento) return;
+    
+    const entiCollegati = allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
+    
+    document.getElementById('duplicaAdempimentoId').value = adempimentoId;
+    document.getElementById('duplicaAdempimentoInfo').innerHTML = `
+        <strong style="font-size: 15px;">"${adempimento.Title}"</strong><br>
+        <span style="font-size: 13px;">
+            📂 ${adempimento.Tipologia} | 
+            👤 ${adempimento.Responsabile || 'Nessuno'} | 
+            🏛️ ${entiCollegati} comuni
+        </span>
+    `;
+    
+    // Pre-compila con mese successivo
+    if (adempimento.AnnoMese) {
+        const [year, month] = adempimento.AnnoMese.split('-');
+        const meseOriginale = new Date(parseInt(year), parseInt(month) - 1);
+        const meseSuccessivo = new Date(meseOriginale);
+        meseSuccessivo.setMonth(meseSuccessivo.getMonth() + 1);
+        
+        const meseSuccessivoStr = `${meseSuccessivo.getFullYear()}-${String(meseSuccessivo.getMonth() + 1).padStart(2, '0')}`;
+        document.getElementById('duplicaNuovoMese').value = meseSuccessivoStr;
+        
+        // Pre-compila scadenza con stesso giorno del mese successivo
+        if (adempimento.DataScadenza) {
+            const scadenzaOriginale = new Date(adempimento.DataScadenza);
+            const nuovaScadenza = new Date(meseSuccessivo.getFullYear(), meseSuccessivo.getMonth(), scadenzaOriginale.getDate());
+            document.getElementById('duplicaNuovaScadenza').value = nuovaScadenza.toISOString().split('T')[0];
+        }
+    }
+    
+    document.getElementById('duplicaNuovoResponsabile').value = '';
+    document.getElementById('duplicaModal').classList.add('open');
 };
 
  window.openNoteModal = function(enteId, comune) {
@@ -1879,6 +2047,86 @@ document.getElementById('noteForm')?.addEventListener('submit', async function(e
     }
 });
 
+        // Event listener Form Duplica Adempimento
+document.getElementById('duplicaForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const adempimentoId = document.getElementById('duplicaAdempimentoId').value;
+    const nuovoMese = document.getElementById('duplicaNuovoMese').value;
+    const nuovaScadenza = document.getElementById('duplicaNuovaScadenza').value;
+    const nuovoResponsabile = document.getElementById('duplicaNuovoResponsabile').value;
+    
+    const adempimentoOriginale = allAdempimenti.find(a => a.ID == adempimentoId);
+    if (!adempimentoOriginale) {
+        showAlert('❌ Adempimento non trovato!', 'error');
+        return;
+    }
+    
+    const entiOriginali = allEnti.filter(e => e.AdempimentoID == adempimentoId);
+    
+    if (entiOriginali.length === 0) {
+        showAlert('❌ Nessun comune da duplicare!', 'error');
+        return;
+    }
+    
+    const conferma = confirm(
+        `Stai per duplicare:\n\n` +
+        `"${adempimentoOriginale.Title}"\n\n` +
+        `Nel mese: ${formatMese(nuovoMese)}\n` +
+        `Con ${entiOriginali.length} comuni\n\n` +
+        `Confermi?`
+    );
+    
+    if (!conferma) return;
+    
+    try {
+        showLoading(true);
+        
+        // 1. Crea nuovo adempimento
+        const nuovoAdempimento = await createItem(LISTS.ADEMPIMENTI, {
+            Title: adempimentoOriginale.Title,
+            Descrizione: adempimentoOriginale.Descrizione || '',
+            Tipologia: adempimentoOriginale.Tipologia,
+            Responsabile: nuovoResponsabile || adempimentoOriginale.Responsabile,
+            AnnoMese: nuovoMese,
+            DataScadenza: nuovaScadenza,
+            StatoMese: 'Aperto'
+        });
+        
+        const nuovoAdempimentoId = nuovoAdempimento.id;
+        
+        // 2. Copia tutti gli enti con stato "Da Fare"
+        for (const ente of entiOriginali) {
+            await createItem(LISTS.ENTI, {
+                Title: `${adempimentoOriginale.Title} - ${ente.Comune}`,
+                AdempimentoID: parseInt(nuovoAdempimentoId),
+                Comune: ente.Comune,
+                StatoEnte: 'Da Fare',
+                ProgressEnte: 0,
+                NoteEnte: ''
+            });
+        }
+        
+        showAlert(
+            `✅ Adempimento duplicato con successo!\n\n` +
+            `"${adempimentoOriginale.Title}" copiato nel mese ${formatMese(nuovoMese)} con ${entiOriginali.length} comuni.`,
+            'success'
+        );
+        
+        document.getElementById('duplicaModal').classList.remove('open');
+        
+        // Cambia filtro mese al nuovo mese
+        document.getElementById('filterMese').value = nuovoMese;
+        
+        await loadData();
+        
+    } catch (err) {
+        console.error('Errore duplicazione:', err);
+        showAlert('❌ Errore durante la duplicazione: ' + err.message, 'error');
+        showLoading(false);
+    }
+});
+        
         // Event listener chiusura modal note
         document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => {
             document.getElementById('noteModal').classList.remove('open');
@@ -1921,6 +2169,8 @@ document.getElementById('noteForm')?.addEventListener('submit', async function(e
             document.getElementById('filterTipologia')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterStato')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterResponsabile')?.addEventListener('change', renderAdempimenti);
+            document.getElementById('btnCloseDuplicaModal')?.addEventListener('click', () => {
+    document.getElementById('duplicaModal').classList.remove('open');
         });
     </script>
 </body>
