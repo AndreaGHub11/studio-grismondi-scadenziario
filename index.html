@@ -1031,13 +1031,23 @@
             <div id="duplicaAdempimentoInfo" style="font-size: 14px; color: #1e40af; margin-left: 26px;"></div>
         </div>
         
-        <form id="duplicaForm">
-            <input type="hidden" id="duplicaAdempimentoId">
-            
-            <div class="form-group">
-                <label>📅 Nuovo Mese di Riferimento *</label>
-                <input type="month" id="duplicaNuovoMese" required>
-            </div>
+       <form id="duplicaForm">
+    <input type="hidden" id="duplicaAdempimentoId">
+    
+    <div class="form-group">
+        <label>📝 Titolo (puoi modificarlo)</label>
+        <input type="text" id="duplicaNuovoTitolo" required placeholder="es. Versamento IMU">
+    </div>
+
+    <div class="form-group">
+        <label>📋 Descrizione (puoi modificarla)</label>
+        <textarea id="duplicaNuovaDescrizione" rows="4" placeholder="Istruzioni operative..."></textarea>
+    </div>
+    
+    <div class="form-group">
+        <label>📅 Nuovo Mese di Riferimento *</label>
+        <input type="month" id="duplicaNuovoMese" required>
+    </div>
 
             <div class="form-group">
                 <label>📅 Nuova Data Scadenza *</label>
@@ -1432,14 +1442,7 @@ const isCompletato = totali > 0 && (completati + nonGestiti) === totali;
                             <div class="progress-mini" title="${percentualeCompletamento}% completato">
                                 <div class="progress-mini-fill" style="width: ${percentualeCompletamento}%"></div>
                             </div>
-                            <div class="adempimento-actions">
-                                <button class="icon-btn" onclick="event.stopPropagation(); editAdempimento(${adempimento.ID})" title="Modifica">
-                                    ✏️
-                                </button>
-                                <button class="icon-btn icon-btn-danger" onclick="event.stopPropagation(); deleteAdempimento(${adempimento.ID})" title="Elimina">
-    🗑️
-</button>
-                            </div>
+                            
                             <div class="adempimento-actions">
     <button class="icon-btn" onclick="event.stopPropagation(); editAdempimento(${adempimento.ID})" title="Modifica">
         ✏️
@@ -1743,8 +1746,12 @@ setTimeout(() => {
         }
     }
     
-    document.getElementById('duplicaNuovoResponsabile').value = '';
-    document.getElementById('duplicaModal').classList.add('open');
+    // Pre-compila titolo e descrizione (modificabili)
+document.getElementById('duplicaNuovoTitolo').value = adempimento.Title || '';
+document.getElementById('duplicaNuovaDescrizione').value = adempimento.Descrizione || '';
+
+document.getElementById('duplicaNuovoResponsabile').value = '';
+document.getElementById('duplicaModal').classList.add('open');
 };
 
  window.openNoteModal = function(enteId, comune) {
@@ -2055,6 +2062,8 @@ document.getElementById('duplicaForm')?.addEventListener('submit', async functio
     const nuovoMese = document.getElementById('duplicaNuovoMese').value;
     const nuovaScadenza = document.getElementById('duplicaNuovaScadenza').value;
     const nuovoResponsabile = document.getElementById('duplicaNuovoResponsabile').value;
+const nuovoTitolo = document.getElementById('duplicaNuovoTitolo').value;
+const nuovaDescrizione = document.getElementById('duplicaNuovaDescrizione').value;
     
     const adempimentoOriginale = allAdempimenti.find(a => a.ID == adempimentoId);
     if (!adempimentoOriginale) {
@@ -2084,8 +2093,8 @@ document.getElementById('duplicaForm')?.addEventListener('submit', async functio
         
         // 1. Crea nuovo adempimento
         const nuovoAdempimento = await createItem(LISTS.ADEMPIMENTI, {
-            Title: adempimentoOriginale.Title,
-            Descrizione: adempimentoOriginale.Descrizione || '',
+    Title: nuovoTitolo,
+    Descrizione: nuovaDescrizione,
             Tipologia: adempimentoOriginale.Tipologia,
             Responsabile: nuovoResponsabile || adempimentoOriginale.Responsabile,
             AnnoMese: nuovoMese,
@@ -2098,7 +2107,7 @@ document.getElementById('duplicaForm')?.addEventListener('submit', async functio
         // 2. Copia tutti gli enti con stato "Da Fare"
         for (const ente of entiOriginali) {
             await createItem(LISTS.ENTI, {
-                Title: `${adempimentoOriginale.Title} - ${ente.Comune}`,
+    Title: `${nuovoTitolo} - ${ente.Comune}`,
                 AdempimentoID: parseInt(nuovoAdempimentoId),
                 Comune: ente.Comune,
                 StatoEnte: 'Da Fare',
@@ -2108,10 +2117,10 @@ document.getElementById('duplicaForm')?.addEventListener('submit', async functio
         }
         
         showAlert(
-            `✅ Adempimento duplicato con successo!\n\n` +
-            `"${adempimentoOriginale.Title}" copiato nel mese ${formatMese(nuovoMese)} con ${entiOriginali.length} comuni.`,
-            'success'
-        );
+    `✅ Adempimento duplicato con successo!\n\n` +
+    `"${nuovoTitolo}" creato nel mese ${formatMese(nuovoMese)} con ${entiOriginali.length} comuni.`,
+    'success'
+);
         
         document.getElementById('duplicaModal').classList.remove('open');
         
