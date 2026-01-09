@@ -1654,23 +1654,24 @@ const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito
             // Verifica se adempimento è completato
 const isCompletato = totali > 0 && (completati + nonGestiti) === totali;
             
-            const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
-            const oggi = new Date();
-            oggi.setHours(0, 0, 0, 0);
-            
-            let scadenzaClass = 'scadenza-ok';
-            let scadenzaText = scadenza ? scadenza.toLocaleDateString('it-IT') : '-';
-            
-            if (scadenza) {
-                const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-                if (diff < 0) {
-                    scadenzaClass = 'scadenza-danger';
-                    scadenzaText += ' ⚠️ SCADUTO';
-                } else if (diff <= 7) {
-                    scadenzaClass = 'scadenza-warning';
-                    scadenzaText += ` (${diff}gg)`;
-                }
-            }
+           const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
+const oggi = new Date();
+oggi.setHours(0, 0, 0, 0);
+
+let scadenzaClass = 'scadenza-ok';
+let scadenzaText = scadenza ? scadenza.toLocaleDateString('it-IT') : '-';
+
+// Se adempimento completato, NON evidenziare scadenza
+if (scadenza && !isCompletato) {
+    const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
+    if (diff < 0) {
+        scadenzaClass = 'scadenza-danger';
+        scadenzaText += ' ⚠️ SCADUTO';
+    } else if (diff <= 7) {
+        scadenzaClass = 'scadenza-warning';
+        scadenzaText += ` (${diff}gg)`;
+    }
+}
             
             return `
                 <div class="adempimento-card">
