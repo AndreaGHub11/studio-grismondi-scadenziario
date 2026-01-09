@@ -1159,22 +1159,22 @@
         <button type="button" class="btn btn-sm" onclick="deselectAllResponsabili()">❌ Nessuno</button>
     </div>
     <div class="checkbox-grid" id="responsabiliCheckboxes" style="max-height: 200px;">
-        <div class="checkbox-item">
-            <input type="checkbox" name="responsabili" id="resp_andrea" value="Andrea">
-            <label for="resp_andrea">👑 Andrea</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="responsabili" id="resp_roberta" value="Roberta">
-            <label for="resp_roberta">👑 Roberta</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="responsabili" id="resp_nicoletta" value="Nicoletta">
-            <label for="resp_nicoletta">👤 Nicoletta</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="responsabili" id="resp_miriana" value="Miriana">
-            <label for="resp_miriana">👤 Miriana</label>
-        </div>
+       <div class="checkbox-item">
+    <input type="checkbox" name="responsabili" id="resp_andrea" value="Andrea">
+    <label for="resp_andrea">👤 Andrea</label>
+</div>
+<div class="checkbox-item">
+    <input type="checkbox" name="responsabili" id="resp_roberta" value="Roberta">
+    <label for="resp_roberta">👤 Roberta</label>
+</div>
+<div class="checkbox-item">
+    <input type="checkbox" name="responsabili" id="resp_nicoletta" value="Nicoletta">
+    <label for="resp_nicoletta">👤 Nicoletta</label>
+</div>
+<div class="checkbox-item">
+    <input type="checkbox" name="responsabili" id="resp_miriana" value="Miriana">
+    <label for="resp_miriana">👤 Miriana</label>
+</div>
     </div>
 </div>
 
@@ -1561,6 +1561,15 @@ document.getElementById('userRole').innerHTML = `
                 
                 allComuni = (await getListItems(LISTS.COMUNI)).filter(c => c.StatoEnte === 'Attivo');
                 allAdempimenti = await getListItems(LISTS.ADEMPIMENTI);
+
+// Converti Responsabile da stringa SharePoint a array
+allAdempimenti = allAdempimenti.map(a => {
+    if (a.Responsabile && typeof a.Responsabile === 'string') {
+        // SharePoint salva come "Nome1;#Nome2;#Nome3"
+        a.Responsabile = a.Responsabile.split(';#').filter(r => r.trim());
+    }
+    return a;
+});
                 allEnti = await getListItems(LISTS.ENTI);
                 
                 populateFilterMesi();
@@ -2123,17 +2132,24 @@ document.getElementById('duplicaModal').classList.add('open');
         cb.disabled = false;
     });
     
-    // Seleziona responsabili esistenti
-    if (adempimento.Responsabile) {
-        // Può essere stringa singola o array
-        const responsabili = Array.isArray(adempimento.Responsabile) ? 
-            adempimento.Responsabile : [adempimento.Responsabile];
-        
-        responsabili.forEach(resp => {
-            const checkbox = document.getElementById(`resp_${resp.toLowerCase()}`);
-            if (checkbox) checkbox.checked = true;
-        });
+    / Seleziona responsabili esistenti
+if (adempimento.Responsabile) {
+    let responsabili = [];
+    
+    if (Array.isArray(adempimento.Responsabile)) {
+        responsabili = adempimento.Responsabile;
+    } else if (typeof adempimento.Responsabile === 'string') {
+        // Può essere separato da ;# o singolo
+        responsabili = adempimento.Responsabile.includes(';#') ? 
+            adempimento.Responsabile.split(';#').filter(r => r.trim()) : 
+            [adempimento.Responsabile];
     }
+    
+    responsabili.forEach(resp => {
+        const checkbox = document.getElementById(`resp_${resp.trim().toLowerCase()}`);
+        if (checkbox) checkbox.checked = true;
+    });
+}
     
     // Se Operatore, blocca sé stesso
     if (userRole === 'Operatore' && window.currentUserName) {
@@ -2238,11 +2254,11 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
         
         if (editId) {
             // MODIFICA adempimento esistente
-            await updateItem(LISTS.ADEMPIMENTI, editId, {
+           await updateItem(LISTS.ADEMPIMENTI, editId, {
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati,
+    Responsabile: responsabiliSelezionati.join(';#'),
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
@@ -2283,11 +2299,11 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             
         } else {
             // CREA nuovo adempimento
-            const result = await createItem(LISTS.ADEMPIMENTI, {
+           const result = await createItem(LISTS.ADEMPIMENTI, {
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati,
+    Responsabile: responsabiliSelezionati.join(';#'),
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
