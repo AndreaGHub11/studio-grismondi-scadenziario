@@ -131,7 +131,29 @@
             padding: 6px 12px;
             font-size: 12px;
         }
-        
+
+        .filtro-rapido {
+    transition: all 0.2s;
+    opacity: 0.7;
+}
+
+.filtro-rapido:hover {
+    opacity: 1;
+}
+
+.filtro-rapido.active {
+    opacity: 1;
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.3);
+    transform: scale(1.05);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
         select, input { 
             padding: 8px 12px; 
             border: 2px solid #ddd; 
@@ -225,9 +247,39 @@
             font-weight: 600;
         }
         
-        .scadenza-ok { color: #059669; }
-        .scadenza-warning { color: #d97706; font-weight: 600; }
-        .scadenza-danger { color: #dc2626; font-weight: 700; }
+        .scadenza-ok { 
+    color: #059669; 
+}
+
+.scadenza-warning { 
+    color: #ea580c; 
+    font-weight: 700;
+    background: #fed7aa;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 2px solid #f97316;
+}
+
+.scadenza-danger { 
+    color: #dc2626; 
+    font-weight: 900;
+    background: #fee2e2;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 2px solid #ef4444;
+    animation: pulse-scadenza 2s infinite;
+}
+
+@keyframes pulse-scadenza {
+    0%, 100% { 
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.85;
+        transform: scale(1.02);
+    }
+}
         
         .adempimento-stats {
             display: flex;
@@ -681,6 +733,89 @@
         .empty-state-icon { font-size: 80px; margin-bottom: 20px; opacity: 0.5; }
         .empty-state h3 { color: #6b7280; margin-bottom: 10px; font-size: 20px; }
         .empty-state p { color: #9ca3af; }
+
+.hidden {
+    display: none !important;
+}
+
+/* Dashboard Summary */
+.dashboard-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: linear-gradient(to right, #f0f9ff 0%, #f0fdf4 100%);
+    border-radius: 12px;
+    border: 2px solid #e0f2fe;
+}
+
+.summary-card {
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s;
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.summary-icon {
+    font-size: 28px;
+}
+
+.summary-content {
+    flex: 1;
+}
+
+.summary-number {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1f2937;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.summary-label {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-scaduti {
+    border-color: #fca5a5;
+}
+
+.summary-scaduti .summary-number {
+    color: #dc2626;
+}
+
+.summary-urgenti {
+    border-color: #fdba74;
+}
+
+.summary-urgenti .summary-number {
+    color: #ea580c;
+}
+
+.summary-completati {
+    border-color: #86efac;
+}
+
+.summary-completati .summary-number {
+    color: #16a34a;
+}
+        .hidden {
+    display: none !important;
+}
         /* LEGENDA FISSA */
 .comuni-legenda {
     display: flex;
@@ -874,9 +1009,73 @@
             <button class="btn" id="btnSync">
                 🔄 Sincronizza
             </button>
+            <div style="margin-left: auto; display: flex; gap: 8px;">
+    <button class="btn btn-sm filtro-rapido active" onclick="filtroRapido('tutti')" id="filtro-tutti">
+        📋 Tutti
+    </button>
+    <button class="btn btn-sm btn-danger filtro-rapido" onclick="filtroRapido('scaduti')" id="filtro-scaduti">
+        ⚠️ Scaduti
+    </button>
+    <button class="btn btn-sm btn-warning filtro-rapido" onclick="filtroRapido('urgenti')" id="filtro-urgenti">
+        🔥 Urgenti
+    </button>
+    <button class="btn btn-sm btn-success filtro-rapido" onclick="filtroRapido('completati')" id="filtro-completati">
+        ✅ Completati
+    </button>
+</div>
         </div>
 
         <div class="content">
+              <!-- Dashboard Summary - SOLO Admin -->
+    <div class="dashboard-summary" id="dashboardSummary" style="display: none;">
+        <div class="summary-card summary-totali">
+            <div class="summary-icon">📋</div>
+            <div class="summary-content">
+                <div class="summary-number" id="summary-totali">0</div>
+                <div class="summary-label">Adempimenti Attivi</div>
+            </div>
+        </div>
+        
+        <div class="summary-card summary-scaduti">
+            <div class="summary-icon">⚠️</div>
+            <div class="summary-content">
+                <div class="summary-number" id="summary-scaduti">0</div>
+                <div class="summary-label">Scaduti</div>
+            </div>
+        </div>
+        
+        <div class="summary-card summary-urgenti">
+            <div class="summary-icon">🔥</div>
+            <div class="summary-content">
+                <div class="summary-number" id="summary-urgenti">0</div>
+                <div class="summary-label">Prossimi 7gg</div>
+            </div>
+        </div>
+        
+        <div class="summary-card summary-completati">
+            <div class="summary-icon">✅</div>
+            <div class="summary-content">
+                <div class="summary-number" id="summary-completati">0</div>
+                <div class="summary-label">Completati</div>
+            </div>
+        </div>
+        
+        <div class="summary-card summary-comuni">
+            <div class="summary-icon">🏛️</div>
+            <div class="summary-content">
+                <div class="summary-number" id="summary-comuni">0</div>
+                <div class="summary-label">Comuni Totali</div>
+            </div>
+        </div>
+        
+        <div class="summary-card summary-progress">
+            <div class="summary-icon">📊</div>
+            <div class="summary-content">
+                <div class="summary-number" id="summary-progress">0%</div>
+                <div class="summary-label">Completamento</div>
+            </div>
+        </div>
+    </div>
             <div id="loadingIndicator" class="loading">
                 <div class="spinner"></div>
                 <p>Caricamento dati da SharePoint...</p>
@@ -1289,6 +1488,58 @@ document.getElementById('userRole').innerHTML = `
     const site = await getSiteId();
     return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
 }
+       function updateDashboardSummary() {
+    if (userRole !== 'Admin') return;
+    
+    const oggi = new Date();
+    oggi.setHours(0, 0, 0, 0);
+    
+    const totali = allAdempimenti.length;
+    
+    const scaduti = allAdempimenti.filter(a => {
+        if (!a.DataScadenza) return false;
+        const scadenza = new Date(a.DataScadenza);
+        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+        const completato = enti.length > 0 && 
+                          (enti.filter(e => e.StatoEnte === 'Completato').length + 
+                           enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
+        return scadenza < oggi && !completato;
+    }).length;
+    
+    const urgenti = allAdempimenti.filter(a => {
+        if (!a.DataScadenza) return false;
+        const scadenza = new Date(a.DataScadenza);
+        const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
+        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+        const completato = enti.length > 0 && 
+                          (enti.filter(e => e.StatoEnte === 'Completato').length + 
+                           enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
+        return diff >= 0 && diff <= 7 && !completato;
+    }).length;
+    
+    const completati = allAdempimenti.filter(a => {
+        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+        return enti.length > 0 && 
+               (enti.filter(e => e.StatoEnte === 'Completato').length + 
+                enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
+    }).length;
+    
+    const comuniTotali = allEnti.length;
+    const comuniCompletati = allEnti.filter(e => 
+        e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito'
+    ).length;
+    const progressPercentuale = comuniTotali > 0 ? 
+        Math.round((comuniCompletati / comuniTotali) * 100) : 0;
+    
+    document.getElementById('summary-totali').textContent = totali;
+    document.getElementById('summary-scaduti').textContent = scaduti;
+    document.getElementById('summary-urgenti').textContent = urgenti;
+    document.getElementById('summary-completati').textContent = completati;
+    document.getElementById('summary-comuni').textContent = comuniTotali;
+    document.getElementById('summary-progress').textContent = progressPercentuale + '%';
+    
+    document.getElementById('dashboardSummary').style.display = 'grid';
+}
         async function loadData() {
             try {
                 showLoading(true);
@@ -1299,7 +1550,10 @@ document.getElementById('userRole').innerHTML = `
                 
                 populateFilterMesi();
                 renderAdempimenti();
-                
+
+                if (userRole === 'Admin') {
+    updateDashboardSummary();
+}
                 showLoading(false);
                 showAlert('✅ Dati caricati con successo!', 'success');
             } catch (err) {
@@ -2010,6 +2264,78 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             setTimeout(() => alert.remove(), 5000);
         }
 
+        window.filtroRapido = function(tipo) {
+    const oggi = new Date();
+    oggi.setHours(0, 0, 0, 0);
+    
+    const container = document.getElementById('adempimentiContainer');
+    if (!container) return;
+    
+    let filtered = [...allAdempimenti];
+    
+    if (userRole === 'Operatore') {
+        const userName = window.currentUserName;
+        filtered = filtered.filter(a => {
+            if (!a.Responsabile) return false;
+            return a.Responsabile === userName;
+        });
+    }
+    
+    if (tipo === 'scaduti') {
+        filtered = filtered.filter(a => {
+            if (!a.DataScadenza) return false;
+            const scadenza = new Date(a.DataScadenza);
+            const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+            const completato = enti.length > 0 && 
+                              (enti.filter(e => e.StatoEnte === 'Completato').length + 
+                               enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
+            return scadenza < oggi && !completato;
+        });
+        
+    } else if (tipo === 'urgenti') {
+        filtered = filtered.filter(a => {
+            if (!a.DataScadenza) return false;
+            const scadenza = new Date(a.DataScadenza);
+            const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
+            const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+            const completato = enti.length > 0 && 
+                              (enti.filter(e => e.StatoEnte === 'Completato').length + 
+                               enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
+            return diff >= 0 && diff <= 7 && !completato;
+        });
+        
+    } else if (tipo === 'completati') {
+        filtered = filtered.filter(a => {
+            const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+            return enti.length > 0 && 
+                   (enti.filter(e => e.StatoEnte === 'Completato').length + 
+                    enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
+        });
+    }
+    
+    document.querySelectorAll('.filtro-rapido').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`filtro-${tipo}`).classList.add('active');
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <h3>Nessun adempimento trovato</h3>
+                <p>Nessun adempimento per questo filtro.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    filtered.sort((a, b) => {
+        const dataA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31');
+        const dataB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31');
+        return dataA - dataB;
+    });
+    
+    container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
+    attachEventListeners();
+};
         function formatMese(yearMonth) {
             if (!yearMonth) return '';
             const [year, month] = yearMonth.split('-');
