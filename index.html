@@ -2169,9 +2169,11 @@ document.getElementById('duplicaForm')?.addEventListener('submit', async functio
             document.getElementById('filterTipologia')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterStato')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterResponsabile')?.addEventListener('change', renderAdempimenti);
-            document.getElementById('btnCloseDuplicaModal')?.addEventListener('click', () => {
-    document.getElementById('duplicaModal').classList.remove('open');
+           document.getElementById('btnCloseDuplicaModal')?.addEventListener('click', () => {
+            document.getElementById('duplicaModal').classList.remove('open');
         });
+        
+    }); 
     </script>
 </body>
 </html>
