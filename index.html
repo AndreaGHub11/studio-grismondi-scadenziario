@@ -1562,11 +1562,16 @@ document.getElementById('userRole').innerHTML = `
                 allComuni = (await getListItems(LISTS.COMUNI)).filter(c => c.StatoEnte === 'Attivo');
                 allAdempimenti = await getListItems(LISTS.ADEMPIMENTI);
 
-// Converti Responsabile da stringa SharePoint a array
-allAdempimenti = allAdempimenti.map(a => {
-    if (a.Responsabile && typeof a.Responsabile === 'string') {
-        // SharePoint salva come "Nome1;#Nome2;#Nome3"
-        a.Responsabile = a.Responsabile.split(';#').filter(r => r.trim());
+// SharePoint restituisce già un array per campi multi-scelta
+// Ma potrebbe restituire anche stringa singola per retrocompatibilità
+allAdempimenti = allAdempimenti.map(function(a) {
+    if (a.Responsabile) {
+        // Se non è già un array, convertilo
+        if (!Array.isArray(a.Responsabile)) {
+            a.Responsabile = [a.Responsabile];
+        }
+    } else {
+        a.Responsabile = [];
     }
     return a;
 });
@@ -1634,19 +1639,8 @@ if (sortedMesi.includes(meseOggi)) {
        // FILTRO PRIVACY per Operatori
 if (userRole === 'Operatore' && window.currentUserName) {
     filtered = filtered.filter(function(a) {
-        if (!a.Responsabile) return false;
-        
-        if (Array.isArray(a.Responsabile)) {
-            return a.Responsabile.indexOf(window.currentUserName) !== -1;
-        } else if (typeof a.Responsabile === 'string') {
-            if (a.Responsabile.indexOf(';#') !== -1) {
-                const responsabili = a.Responsabile.split(';#');
-                return responsabili.indexOf(window.currentUserName) !== -1;
-            } else {
-                return a.Responsabile === window.currentUserName;
-            }
-        }
-        return false;
+        if (!a.Responsabile || !Array.isArray(a.Responsabile)) return false;
+        return a.Responsabile.indexOf(window.currentUserName) !== -1;
     });
         
         if (filtered.length === 0) {
@@ -2137,28 +2131,15 @@ document.getElementById('duplicaModal').classList.add('open');
         cb.disabled = false;
     });
     
-   // Seleziona responsabili esistenti
-if (adempimento.Responsabile) {
-    let responsabili = [];
-    
-    if (Array.isArray(adempimento.Responsabile)) {
-        responsabili = adempimento.Responsabile;
-    } else if (typeof adempimento.Responsabile === 'string') {
-        const respStr = adempimento.Responsabile;
-        if (respStr.indexOf(';#') !== -1) {
-            responsabili = respStr.split(';#').filter(function(r) { 
-                return r && r.trim(); 
-            });
-        } else {
-            responsabili = [respStr];
-        }
-    }
-    
-    responsabili.forEach(function(resp) {
-        const respClean = resp.trim().toLowerCase();
-        const checkbox = document.getElementById('resp_' + respClean);
-        if (checkbox) {
-            checkbox.checked = true;
+// Seleziona responsabili esistenti
+if (adempimento.Responsabile && Array.isArray(adempimento.Responsabile)) {
+    adempimento.Responsabile.forEach(function(resp) {
+        if (resp) {
+            const respClean = resp.trim().toLowerCase();
+            const checkbox = document.getElementById('resp_' + respClean);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
         }
     });
 }
@@ -2270,7 +2251,7 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati.join(';#'),
+    Responsabile: responsabiliSelezionati,
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
@@ -2311,11 +2292,11 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             
         } else {
             // CREA nuovo adempimento
-           const result = await createItem(LISTS.ADEMPIMENTI, {
+          const result = await createItem(LISTS.ADEMPIMENTI, {
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati.join(';#'),
+    Responsabile: responsabiliSelezionati,
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
@@ -2417,21 +2398,10 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     
     let filtered = [...allAdempimenti];
     
-  if (userRole === 'Operatore' && window.currentUserName) {
+ if (userRole === 'Operatore' && window.currentUserName) {
     filtered = filtered.filter(function(a) {
-        if (!a.Responsabile) return false;
-        
-        if (Array.isArray(a.Responsabile)) {
-            return a.Responsabile.indexOf(window.currentUserName) !== -1;
-        } else if (typeof a.Responsabile === 'string') {
-            if (a.Responsabile.indexOf(';#') !== -1) {
-                const responsabili = a.Responsabile.split(';#');
-                return responsabili.indexOf(window.currentUserName) !== -1;
-            } else {
-                return a.Responsabile === window.currentUserName;
-            }
-        }
-        return false;
+        if (!a.Responsabile || !Array.isArray(a.Responsabile)) return false;
+        return a.Responsabile.indexOf(window.currentUserName) !== -1;
     });
 }
     
