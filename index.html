@@ -1152,16 +1152,31 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label>Responsabile *</label>
-                    <select id="formResponsabile" required>
-                        <option value="">Seleziona...</option>
-                        <option value="Andrea">Andrea</option>
-                        <option value="Roberta">Roberta</option>
-                        <option value="Nicoletta">Nicoletta</option>
-                        <option value="Miriana">Miriana</option>
-                    </select>
-                </div>
+              <div class="form-group">
+    <label>👥 Responsabili * (uno o più)</label>
+    <div class="select-all-btns">
+        <button type="button" class="btn btn-sm" onclick="selectAllResponsabili()">✅ Tutti</button>
+        <button type="button" class="btn btn-sm" onclick="deselectAllResponsabili()">❌ Nessuno</button>
+    </div>
+    <div class="checkbox-grid" id="responsabiliCheckboxes" style="max-height: 200px;">
+        <div class="checkbox-item">
+            <input type="checkbox" name="responsabili" id="resp_andrea" value="Andrea">
+            <label for="resp_andrea">👑 Andrea</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" name="responsabili" id="resp_roberta" value="Roberta">
+            <label for="resp_roberta">👑 Roberta</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" name="responsabili" id="resp_nicoletta" value="Nicoletta">
+            <label for="resp_nicoletta">👤 Nicoletta</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" name="responsabili" id="resp_miriana" value="Miriana">
+            <label for="resp_miriana">👤 Miriana</label>
+        </div>
+    </div>
+</div>
 
                 <div class="form-group">
                     <label>Mese di Riferimento *</label>
@@ -1607,6 +1622,31 @@ if (sortedMesi.includes(meseOggi)) {
             const filterResponsabile = document.getElementById('filterResponsabile')?.value || '';
             
             let filtered = [...allAdempimenti];
+            // FILTRO PRIVACY per Operatori
+    if (userRole === 'Operatore' && window.currentUserName) {
+        filtered = filtered.filter(a => {
+            if (!a.Responsabile) return false;
+            
+            // Supporta sia array che stringa singola
+            if (Array.isArray(a.Responsabile)) {
+                return a.Responsabile.includes(window.currentUserName);
+            } else {
+                return a.Responsabile === window.currentUserName;
+            }
+        });
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <h3>Nessun adempimento assegnato</h3>
+                    <p>Al momento non hai adempimenti assegnati.<br>
+                    Contatta Andrea o Roberta per maggiori informazioni.</p>
+                </div>
+            `;
+            return;
+        }
+    }
             
             if (filterMese) filtered = filtered.filter(a => a.AnnoMese === filterMese);
             if (filterTipologia) filtered = filtered.filter(a => a.Tipologia === filterTipologia);
@@ -1684,7 +1724,11 @@ if (scadenza && !isCompletato) {
                                 📅 ${formatMese(adempimento.AnnoMese)} | 
                                 📂 ${adempimento.Tipologia} | 
                                 <span class="${scadenzaClass}">⏰ ${scadenzaText}</span>
-                                ${adempimento.Responsabile ? `| <span class="responsabile-badge">👤 ${adempimento.Responsabile}</span>` : ''}
+                                ${adempimento.Responsabile && Array.isArray(adempimento.Responsabile) && adempimento.Responsabile.length > 0 ? `
+    | ${adempimento.Responsabile.map(r => `<span class="responsabile-badge">👤 ${r}</span>`).join(' ')}
+` : adempimento.Responsabile ? `
+    | <span class="responsabile-badge">👤 ${adempimento.Responsabile}</span>
+` : ''}
                             </div>
                         </div>
                         <div class="adempimento-stats">
@@ -1974,14 +2018,17 @@ setTimeout(() => {
     const entiCollegati = allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
     
     document.getElementById('duplicaAdempimentoId').value = adempimentoId;
-    document.getElementById('duplicaAdempimentoInfo').innerHTML = `
-        <strong style="font-size: 15px;">"${adempimento.Title}"</strong><br>
-        <span style="font-size: 13px;">
-            📂 ${adempimento.Tipologia} | 
-            👤 ${adempimento.Responsabile || 'Nessuno'} | 
-            🏛️ ${entiCollegati} comuni
-        </span>
-    `;
+    const responsabiliText = Array.isArray(adempimento.Responsabile) ? 
+    adempimento.Responsabile.join(', ') : (adempimento.Responsabile || 'Nessuno');
+
+document.getElementById('duplicaAdempimentoInfo').innerHTML = `
+    <strong style="font-size: 15px;">"${adempimento.Title}"</strong><br>
+    <span style="font-size: 13px;">
+        📂 ${adempimento.Tipologia} | 
+        👤 ${responsabiliText} | 
+        🏛️ ${entiCollegati} comuni
+    </span>
+`;
     
     // Pre-compila con mese successivo
     if (adempimento.AnnoMese) {
@@ -2033,27 +2080,69 @@ document.getElementById('duplicaModal').classList.add('open');
     noteModalElement.classList.add('open');
 };
 
-        window.openAdempimentoModal = function() {
-            document.getElementById('adempimentoModalTitle').textContent = '➕ Nuovo Adempimento';
-            document.getElementById('adempimentoForm').reset();
-            document.getElementById('editAdempimentoId').value = '';
-            
-            populateComuniCheckboxes();
-            
-            document.getElementById('adempimentoModal').classList.add('open');
-        };
+       window.openAdempimentoModal = function() {
+    document.getElementById('adempimentoModalTitle').textContent = '➕ Nuovo Adempimento';
+    document.getElementById('adempimentoForm').reset();
+    document.getElementById('editAdempimentoId').value = '';
+    
+    // Reset responsabili
+    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+        cb.disabled = false;
+    });
+    
+    // Se Operatore, pre-seleziona e blocca sé stesso
+    if (userRole === 'Operatore' && window.currentUserName) {
+        const respId = `resp_${window.currentUserName.toLowerCase()}`;
+        const checkbox = document.getElementById(respId);
+        if (checkbox) {
+            checkbox.checked = true;
+            checkbox.disabled = true;
+        }
+    }
+    
+    populateComuniCheckboxes();
+    
+    document.getElementById('adempimentoModal').classList.add('open');
+};
 
         window.editAdempimento = async function(adempimentoId) {
-            const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
-            if (!adempimento) return;
-            
-            document.getElementById('adempimentoModalTitle').textContent = '✏️ Modifica Adempimento';
-            document.getElementById('editAdempimentoId').value = adempimentoId;
-            document.getElementById('formTitolo').value = adempimento.Title || '';
-            document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
-            document.getElementById('formTipologia').value = adempimento.Tipologia || '';
-            document.getElementById('formResponsabile').value = adempimento.Responsabile || '';
-            document.getElementById('formAnnoMese').value = adempimento.AnnoMese || '';
+    const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+    if (!adempimento) return;
+    
+    document.getElementById('adempimentoModalTitle').textContent = '✏️ Modifica Adempimento';
+    document.getElementById('editAdempimentoId').value = adempimentoId;
+    document.getElementById('formTitolo').value = adempimento.Title || '';
+    document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
+    document.getElementById('formTipologia').value = adempimento.Tipologia || '';
+    document.getElementById('formAnnoMese').value = adempimento.AnnoMese || '';
+    
+    // Gestione responsabili multipli
+    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+        cb.disabled = false;
+    });
+    
+    // Seleziona responsabili esistenti
+    if (adempimento.Responsabile) {
+        // Può essere stringa singola o array
+        const responsabili = Array.isArray(adempimento.Responsabile) ? 
+            adempimento.Responsabile : [adempimento.Responsabile];
+        
+        responsabili.forEach(resp => {
+            const checkbox = document.getElementById(`resp_${resp.toLowerCase()}`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+    
+    // Se Operatore, blocca sé stesso
+    if (userRole === 'Operatore' && window.currentUserName) {
+        const respId = `resp_${window.currentUserName.toLowerCase()}`;
+        const checkbox = document.getElementById(respId);
+        if (checkbox && checkbox.checked) {
+            checkbox.disabled = true;
+        }
+    }
             
             if (adempimento.DataScadenza) {
                 const date = new Date(adempimento.DataScadenza);
@@ -2098,16 +2187,42 @@ document.getElementById('duplicaModal').classList.add('open');
             document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
         };
 
+        window.selectAllResponsabili = function() {
+    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
+        if (!cb.disabled) cb.checked = true;
+    });
+};
+
+window.deselectAllResponsabili = function() {
+    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
+        if (!cb.disabled) cb.checked = false;
+    });
+};
 document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const titolo = document.getElementById('formTitolo').value;
     const descrizione = document.getElementById('formDescrizione').value;
     const tipologia = document.getElementById('formTipologia').value;
-    const responsabile = document.getElementById('formResponsabile').value;
     const annoMese = document.getElementById('formAnnoMese').value;
     const dataScadenza = document.getElementById('formDataScadenza').value;
     const editId = document.getElementById('editAdempimentoId').value;
+    
+    // Raccogli responsabili selezionati
+    const checkboxesResp = document.querySelectorAll('input[name="responsabili"]:checked');
+    const responsabiliSelezionati = Array.from(checkboxesResp).map(cb => cb.value);
+    
+    if (responsabiliSelezionati.length === 0) {
+        showAlert('❌ Seleziona almeno un responsabile!', 'error');
+        return;
+    }
+    
+    // Se Operatore, verifica che sé stesso sia incluso
+    if (userRole === 'Operatore' && window.currentUserName && 
+        !responsabiliSelezionati.includes(window.currentUserName)) {
+        showAlert('❌ Devi includerti come responsabile!', 'error');
+        return;
+    }
     
     const checkboxes = document.querySelectorAll('input[name="comuni"]:checked');
     const comuniSelezionati = Array.from(checkboxes).map(cb => cb.value);
@@ -2124,14 +2239,14 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
         if (editId) {
             // MODIFICA adempimento esistente
             await updateItem(LISTS.ADEMPIMENTI, editId, {
-                Title: titolo,
-                Descrizione: descrizione,
-                Tipologia: tipologia,
-                Responsabile: responsabile,
-                AnnoMese: annoMese,
-                DataScadenza: dataScadenza,
-                StatoMese: 'Aperto'
-            });
+    Title: titolo,
+    Descrizione: descrizione,
+    Tipologia: tipologia,
+    Responsabile: responsabiliSelezionati,
+    AnnoMese: annoMese,
+    DataScadenza: dataScadenza,
+    StatoMese: 'Aperto'
+});
             adempimentoId = editId;
             
             // Gestione comuni: trova quelli attuali
@@ -2169,14 +2284,14 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
         } else {
             // CREA nuovo adempimento
             const result = await createItem(LISTS.ADEMPIMENTI, {
-                Title: titolo,
-                Descrizione: descrizione,
-                Tipologia: tipologia,
-                Responsabile: responsabile,
-                AnnoMese: annoMese,
-                DataScadenza: dataScadenza,
-                StatoMese: 'Aperto'
-            });
+    Title: titolo,
+    Descrizione: descrizione,
+    Tipologia: tipologia,
+    Responsabile: responsabiliSelezionati,
+    AnnoMese: annoMese,
+    DataScadenza: dataScadenza,
+    StatoMese: 'Aperto'
+});
             adempimentoId = result.id;
             
             // Crea record per ogni comune selezionato
@@ -2274,13 +2389,17 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     
     let filtered = [...allAdempimenti];
     
-    if (userRole === 'Operatore') {
-        const userName = window.currentUserName;
-        filtered = filtered.filter(a => {
-            if (!a.Responsabile) return false;
-            return a.Responsabile === userName;
-        });
-    }
+   if (userRole === 'Operatore' && window.currentUserName) {
+    filtered = filtered.filter(a => {
+        if (!a.Responsabile) return false;
+        
+        if (Array.isArray(a.Responsabile)) {
+            return a.Responsabile.includes(window.currentUserName);
+        } else {
+            return a.Responsabile === window.currentUserName;
+        }
+    });
+}
     
     if (tipo === 'scaduti') {
         filtered = filtered.filter(a => {
