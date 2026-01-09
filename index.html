@@ -1204,11 +1204,11 @@ if (daysRemaining === false) return; // Sessione scaduta
                 document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
 
 // Display giorni rimanenti sessione
-const daysRemaining = checkSessionExpiry();
+const sessionDays = checkSessionExpiry();
 const roleText = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
 document.getElementById('userRole').innerHTML = `
     ${roleText}<br>
-    <span style="font-size: 11px; opacity: 0.8;">🔒 Sessione: ${daysRemaining} giorni</span>
+    <span style="font-size: 11px; opacity: 0.8;">🔒 Sessione: ${sessionDays} giorni</span>
 `;
                 
                 await loadData();
