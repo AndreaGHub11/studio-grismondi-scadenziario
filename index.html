@@ -27,7 +27,19 @@
             text-align: center;
         }
         
-        .logo { font-size: 60px; margin-bottom: 20px; }
+        .logo {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
         .login-container h1 { color: #4facfe; margin-bottom: 10px; font-size: 28px; }
         .login-container p { color: #666; margin-bottom: 35px; font-size: 16px; }
         
@@ -341,9 +353,10 @@
         margin: 50px auto;
     }
     
-    .logo {
-        font-size: 48px;
-    }
+    .logo-img {
+    width: 90px;
+    height: 90px;
+}
     
     .login-container h1 {
         font-size: 22px;
@@ -1132,9 +1145,11 @@
 </head>
 <body>
     <div id="loginContainer" class="login-container">
-        <div class="logo">🏢</div>
-        <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario Integrato</p>
+    <div class="logo">
+        <img src="1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
+    </div>
+    <h1>Studio Grismondi</h1>
+    <p>Sistema Scadenziario Integrato</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
