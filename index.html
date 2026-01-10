@@ -1489,15 +1489,24 @@ document.getElementById('userRole').innerHTML = `
         }
 
         async function createItem(listName, data) {
-            const site = await getSiteId();
-            const result = await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
-            return result;
-        }
+    const site = await getSiteId();
+    
+    // DEBUG: Vedi cosa inviamo
+    console.log('📤 createItem - Lista:', listName);
+    console.log('📤 createItem - Data:', JSON.stringify(data, null, 2));
+    
+    return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
+}
 
         async function updateItem(listName, itemId, data) {
-            const site = await getSiteId();
-            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
-        }
+    const site = await getSiteId();
+    
+    // DEBUG: Vedi cosa inviamo
+    console.log('📤 updateItem - Lista:', listName, '- ID:', itemId);
+    console.log('📤 updateItem - Data:', JSON.stringify(data, null, 2));
+    
+    return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
+}
 
         async function deleteItem(listName, itemId) {
     const site = await getSiteId();
