@@ -1146,7 +1146,7 @@
 <body>
     <div id="loginContainer" class="login-container">
     <div class="logo">
-   <img src="1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
+   <img src="https://raw.githubusercontent.com/AndreaGHub11/studio-grismondi-scadenziario/main/1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
 </div>
     <h1>Studio Grismondi</h1>
     <p>Sistema Scadenziario Integrato</p>
@@ -1547,7 +1547,10 @@ Esempi:
             cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: true }
         };
 
-        const loginRequest = { scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'] };
+        const loginRequest = {
+    scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'],
+    prompt: 'select_account'  // Forza selezione account ogni volta
+};
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
         const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
@@ -2819,18 +2822,32 @@ const nuovaDescrizione = document.getElementById('duplicaNuovaDescrizione').valu
             document.getElementById('noteModal').classList.remove('open');
         });
         
-        window.addEventListener('load', async function() {
-            try {
-                await msalInstance.initialize();
-                const accounts = msalInstance.getAllAccounts();
-                
-                if (accounts.length > 0) {
-                    currentUser = accounts[0];
-                    await handleAuth();
-                }
-            } catch (err) {
-                console.error('Init error:', err);
-            }
+       window.addEventListener('load', async function() {
+    console.log('🚀 Applicazione caricata');
+    
+    try {
+        await msalInstance.initialize();
+        console.log('✅ MSAL inizializzato');
+        
+        // FORZA SEMPRE SCHERMATA LOGIN (no auto-login)
+        const accounts = msalInstance.getAllAccounts();
+        console.log('👥 Account trovati:', accounts.length);
+        
+        // Se ci sono account salvati, rimuovili per forzare nuovo login
+        if (accounts.length > 0) {
+            console.log('🔄 Rimozione account salvati per forzare nuovo login');
+            accounts.forEach(function(account) {
+                msalInstance.setActiveAccount(null);
+            });
+        }
+        
+        console.log('📝 Schermata login obbligatoria');
+        // Non chiamare handleAuth automaticamente
+        
+    } catch (error) {
+        console.error('❌ Errore inizializzazione MSAL:', error);
+        alert('Errore inizializzazione: ' + error.message);
+    }
 
             document.getElementById('loginBtn')?.addEventListener('click', login);
             document.getElementById('logoutBtn')?.addEventListener('click', logout);
