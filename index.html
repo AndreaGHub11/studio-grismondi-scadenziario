@@ -307,18 +307,28 @@
         .stat-badge.non-gestiti-grigio { background: #f3f4f6; color: #6b7280; }
         
         .progress-mini {
-            width: 120px;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-mini-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4facfe 0%, #90ee90 100%);
-            transition: width 0.3s;
-        }
+    width: 150px;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progress-mini-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 50%, #90ee90 100%);
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+    position: relative;
+    animation: shine 2s infinite;
+}
+
+@keyframes shine {
+    0% { opacity: 1; }
+    50% { opacity: 0.9; }
+    100% { opacity: 1; }
+}
         
         .expand-icon {
             font-size: 16px;
@@ -1739,9 +1749,9 @@ if (scadenza && !isCompletato) {
     ${isCompletato ? '✅ ' : ''}${adempimento.Title || 'Senza titolo'}${isCompletato ? ' - COMPLETATO' : ''}
 </div>
                             <div class="adempimento-meta">
-                                📅 ${formatMese(adempimento.AnnoMese)} | 
-                                📂 ${adempimento.Tipologia} | 
-                                <span class="${scadenzaClass}">⏰ ${scadenzaText}</span>
+                               📅 ${formatMese(adempimento.AnnoMese)} | 
+${getIconaTipologia(adempimento.Tipologia)} ${adempimento.Tipologia} | 
+<span class="${scadenzaClass}">⏰ ${scadenzaText}</span>
                                 ${adempimento.Responsabile && Array.isArray(adempimento.Responsabile) && adempimento.Responsabile.length > 0 ? `
     | ${adempimento.Responsabile.map(r => `<span class="responsabile-badge">👤 ${r}</span>`).join(' ')}
 ` : adempimento.Responsabile ? `
@@ -2478,6 +2488,16 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             return `${mesi[parseInt(month) - 1]} ${year}`;
         }
 
+        function getIconaTipologia(tipologia) {
+    const icone = {
+        'Contabilità': '💰',
+        'Tributi': '⚖️',
+        'Personale': '👥',
+        'Altro': '📋'
+    };
+    return icone[tipologia] || '📋';
+}
+        
         window.tornaInAlto = function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
