@@ -1146,8 +1146,8 @@
 <body>
     <div id="loginContainer" class="login-container">
     <div class="logo">
-       <img src="1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
-    </div>
+    <img src="https://andreaghub11.github.io/studio-grismondi-scadenziario/1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
+</div>
     <h1>Studio Grismondi</h1>
     <p>Sistema Scadenziario Integrato</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
@@ -1964,8 +1964,8 @@ ${getIconaTipologia(adempimento.Tipologia)} ${adempimento.Tipologia} |
                             ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
                             ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
                             ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti-grigio">⚫ ${nonGestiti}</span>` : ''}
-                            <div class="progress-mini" title="${percentualeCompletamento}% completato">
-                                <div class="progress-mini-fill" style="width: ${percentualeCompletamento}%"></div>
+                            <div class="progress-mini" title="${progressPercentuale}% completato">
+                                <div class="progress-mini-fill" style="width: ${progressPercentuale}%"></div>
                             </div>
                             
                             <div class="adempimento-actions">
