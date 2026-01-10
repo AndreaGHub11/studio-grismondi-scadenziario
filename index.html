@@ -1575,8 +1575,9 @@ document.getElementById('userRole').innerHTML = `
 // Ma potrebbe restituire anche stringa singola per retrocompatibilità
 allAdempimenti = allAdempimenti.map(function(a) {
     if (a.Responsabile) {
-        // Se non è già un array, convertilo
-        if (!Array.isArray(a.Responsabile)) {
+        if (typeof a.Responsabile === 'string' && a.Responsabile.indexOf('; ') !== -1) {
+            a.Responsabile = a.Responsabile.split('; ').filter(function(r) { return r.trim(); });
+        } else if (!Array.isArray(a.Responsabile)) {
             a.Responsabile = [a.Responsabile];
         }
     } else {
@@ -2260,7 +2261,7 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati,
+    Responsabile: responsabiliSelezionati.join('; '),
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
