@@ -329,7 +329,189 @@
     50% { opacity: 0.9; }
     100% { opacity: 1; }
 }
-        
+
+        /* ===================================
+   RESPONSIVE MOBILE
+   =================================== */
+
+@media (max-width: 768px) {
+    /* Login più compatto */
+    .login-container {
+        padding: 30px 20px;
+        margin: 50px auto;
+    }
+    
+    .logo {
+        font-size: 48px;
+    }
+    
+    .login-container h1 {
+        font-size: 22px;
+    }
+    
+    /* Header compatto */
+    .header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .header h1 {
+        font-size: 18px;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* Controls su più righe */
+    .controls {
+        padding: 15px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    /* Dashboard Summary a colonna singola */
+    .dashboard-summary {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    /* Adempimenti card stack */
+    .adempimento-card {
+        padding: 15px;
+    }
+    
+    .adempimento-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .adempimento-title {
+        font-size: 16px;
+    }
+    
+    .adempimento-meta {
+        font-size: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .adempimento-stats {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .adempimento-actions {
+        gap: 10px;
+    }
+    
+    /* Comuni list più compatta */
+    .comuni-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .comune-item {
+        padding: 12px;
+    }
+    
+    .comune-header-mobile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    /* Progress bar più stretta */
+    .progress-mini {
+        width: 100px;
+    }
+    
+    /* Checkbox grid a colonna */
+    .checkbox-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Modal full screen su mobile */
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        padding: 20px;
+    }
+    
+    .form-group label {
+        font-size: 13px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+    }
+    
+    /* Bottoni quick filter */
+    .filtro-rapido {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    
+    /* Content padding */
+    .content {
+        padding: 15px;
+    }
+}
+
+/* Extra small devices (phones in portrait, less than 576px) */
+@media (max-width: 576px) {
+    .header h1 {
+        font-size: 16px;
+    }
+    
+    .summary-card {
+        padding: 12px;
+    }
+    
+    .summary-icon {
+        font-size: 24px;
+    }
+    
+    .summary-number {
+        font-size: 20px;
+    }
+    
+    .adempimento-title {
+        font-size: 14px;
+    }
+    
+    .adempimento-meta {
+        font-size: 11px;
+    }
+    
+    .badge-count {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+    
+    .icon-btn {
+        font-size: 16px;
+    }
+}
         .expand-icon {
             font-size: 16px;
             transition: transform 0.3s;
@@ -952,7 +1134,7 @@
     <div id="loginContainer" class="login-container">
         <div class="logo">🏢</div>
         <h1>Studio Grismondi</h1>
-        <p>Sistema Scadenziario V19</p>
+        <p>Sistema Scadenziario Integrato</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
@@ -1717,7 +1899,8 @@ const inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
 const completati = enti.filter(e => e.StatoEnte === 'Completato').length;
 const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
             
-            const percentualeCompletamento = totali > 0 ? Math.round((completati / totali) * 100) : 0;
+            const progressPercentuale = totaleEnti > 0 ? 
+    Math.round(((completati + nonGestiti) / totaleEnti) * 100) : 0;
 
             // Verifica se adempimento è completato
 const isCompletato = totali > 0 && (completati + nonGestiti) === totali;
