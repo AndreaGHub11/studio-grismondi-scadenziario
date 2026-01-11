@@ -8,22 +8,14 @@
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
     <style>
-       * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    height: 100%;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #90ee90 100%);
-    min-height: 100vh;
-    padding: 20px;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #90ee90 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
         
         .login-container {
             max-width: 500px;
@@ -355,18 +347,6 @@ body {
    =================================== */
 
 @media (max-width: 768px) {
-    /* Fix overflow SOLO mobile */
-    html {
-        overflow-x: hidden;
-        width: 100%;
-    }
-    
-    body {
-        overflow-x: hidden;
-        width: 100%;
-        padding: 10px;
-    }
-    
     /* Login più compatto */
     .login-container {
         padding: 30px 20px;
@@ -426,19 +406,11 @@ body {
         padding: 15px;
         gap: 10px;
     }
-   
+    
     /* Adempimenti card stack */
-.adempimento-card {
-    padding: 15px;
-    min-width: 100%;
-    width: 100% !important;
-    max-width: 100%;
-}
-
-.adempimenti-container {
-    width: 100%;
-    overflow-x: hidden;
-}
+    .adempimento-card {
+        padding: 15px;
+    }
     
     .adempimento-header {
         flex-direction: column;
@@ -468,31 +440,7 @@ body {
     .comuni-grid {
         grid-template-columns: 1fr;
     }
-
-    /* Tabella comuni - dimensioni fisse mobile */
-.comune-item {
-    min-width: 280px;
-    width: 100%;
-}
-
-.comune-nome {
-    font-size: 14px !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.comune-buttons {
-    flex-wrap: nowrap;
-    min-width: 180px;
-}
-
-.comune-buttons button {
-    min-width: 42px !important;
-    min-height: 42px !important;
-    font-size: 16px !important;
-    flex-shrink: 0;
-}
+    
     .comune-item {
         padding: 12px;
     }
@@ -536,59 +484,12 @@ body {
         padding: 8px 12px;
     }
     
-/* Content padding */
-.content {
-    padding: 15px;
-    width: 100%;
-    overflow-x: hidden;
-    box-sizing: border-box;
+    /* Content padding */
+    .content {
+        padding: 15px;
+    }
 }
 
-.app-container {
-    width: 100% !important;
-    max-width: 100vw;
-    overflow-x: hidden;
-}
-
-/* Scadenza più leggibile */
-.scadenza-warning,
-.scadenza-danger {
-    font-size: 11px;
-    padding: 3px 6px;
-    white-space: nowrap;
-}
-
-/* Badge responsabili mobile */
-.responsabile-badge {
-    font-size: 11px;
-    padding: 3px 6px;
-    margin: 2px;
-}
-
- /* Badge responsabili mobile */
-.responsabile-badge {
-    font-size: 11px;
-    padding: 3px 6px;
-    margin: 2px;
-}
-
-/* Badge contatori mobile */
-.badge-count {
-    min-width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.adempimento-stats {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 5px;
-    padding-bottom: 5px;
-}   
 /* Extra small devices (phones in portrait, less than 576px) */
 @media (max-width: 576px) {
     .header h1 {
