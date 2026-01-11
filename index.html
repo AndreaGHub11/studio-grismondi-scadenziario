@@ -1141,6 +1141,144 @@
     border-color: #6b7280;
     background: #f9fafb;
 }
+         /* ===================================
+           RESPONSIVE MOBILE - ISOLATO
+           =================================== */
+
+        @media only screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .login-container {
+                padding: 30px 20px;
+                margin: 50px auto;
+            }
+            
+            .logo-img {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .login-container h1 {
+                font-size: 22px;
+            }
+            
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls {
+                padding: 15px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .controls > div {
+                width: 100%;
+            }
+            
+            .controls select,
+            .controls input {
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 12px;
+            }
+            
+            .dashboard-summary {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 10px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .adempimento-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 12px;
+            }
+            
+            .adempimento-stats {
+                flex-wrap: wrap;
+                width: 100%;
+            }
+            
+            .progress-mini {
+                width: 100%;
+            }
+            
+            .comuni-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .comune-card {
+                padding: 12px;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media only screen and (max-width: 576px) {
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .summary-card {
+                padding: 12px;
+            }
+            
+            .summary-icon {
+                font-size: 24px;
+            }
+            
+            .summary-number {
+                font-size: 20px;
+            }
+            
+            .adempimento-titolo {
+                font-size: 14px;
+            }
+            
+            .filtro-rapido {
+                font-size: 11px;
+                padding: 8px 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1662,7 +1800,53 @@ document.getElementById('userRole').innerHTML = `
         }
 
         async function callGraph(endpoint, method = 'GET', body = null) {
-            const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
+    // FIX 401: Auto-refresh token prima di ogni chiamata
+    try {
+        const tokenResponse = await msalInstance.acquireTokenSilent({
+            scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'],
+            account: currentUser
+        });
+        accessToken = tokenResponse.accessToken;
+    } catch (error) {
+        console.error('❌ Token refresh failed:', error);
+        if (error.name === 'InteractionRequiredAuthError') {
+            alert('⚠️ Sessione scaduta. Effettua nuovamente il login.');
+            await logout();
+            return;
+        }
+    }
+    
+    const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
+    const options = {
+        method,
+        headers: { 
+            'Authorization': `Bearer ${accessToken}`, 
+            'Content-Type': 'application/json' 
+        }
+    };
+
+    if (body && (method === 'POST' || method === 'PATCH')) {
+        options.body = JSON.stringify(body);
+    }
+
+    const resp = await fetch(url, options);
+    
+    // FIX 401: Controlla se token è scaduto
+    if (resp.status === 401) {
+        alert('⚠️ Sessione scaduta. Effettua nuovamente il login.');
+        await logout();
+        return;
+    }
+    
+    if (!resp.ok) {
+        const errorText = await resp.text();
+        console.error('API Error:', resp.status, errorText);
+        throw new Error(`API Error: ${resp.status}`);
+    }
+    
+    if (method === 'DELETE' || resp.status === 204) return { success: true };
+    return await resp.json();
+}
             const options = {
                 method,
                 headers: { 
@@ -2468,11 +2652,11 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
         
         if (editId) {
             // MODIFICA adempimento esistente
-           await updateItem(LISTS.ADEMPIMENTI, editId, {
+          await updateItem(LISTS.ADEMPIMENTI, editId, {
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati.join('; '),
+    Responsabile: responsabiliSelezionati,  // ✅ CORRETTO - array nativo
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
@@ -2513,11 +2697,11 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             
         } else {
             // CREA nuovo adempimento
-          const result = await createItem(LISTS.ADEMPIMENTI, {
+       const result = await createItem(LISTS.ADEMPIMENTI, {
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati,
+    Responsabile: responsabiliSelezionati,  // ✅ CORRETTO - array nativo
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
