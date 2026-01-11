@@ -2635,7 +2635,7 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati,  // ✅ CORRETTO - array nativo
+    Responsabile: responsabiliSelezionati.join('; '),
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
@@ -2680,7 +2680,7 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
     Title: titolo,
     Descrizione: descrizione,
     Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati,  // ✅ CORRETTO - array nativo
+    Responsabile: responsabiliSelezionati.join('; '),
     AnnoMese: annoMese,
     DataScadenza: dataScadenza,
     StatoMese: 'Aperto'
