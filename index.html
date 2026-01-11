@@ -1847,28 +1847,7 @@ document.getElementById('userRole').innerHTML = `
     if (method === 'DELETE' || resp.status === 204) return { success: true };
     return await resp.json();
 }
-            const options = {
-                method,
-                headers: { 
-                    'Authorization': `Bearer ${accessToken}`, 
-                    'Content-Type': 'application/json' 
-                }
-            };
-
-            if (body && (method === 'POST' || method === 'PATCH')) {
-                options.body = JSON.stringify(body);
-            }
-
-            const resp = await fetch(url, options);
-            if (!resp.ok) {
-                const errorText = await resp.text();
-                console.error('API Error:', resp.status, errorText);
-                throw new Error(`API Error: ${resp.status}`);
-            }
-            if (method === 'DELETE' || resp.status === 204) return { success: true };
-            return await resp.json();
-        }
-
+            
         async function getSiteId() {
             if (siteId) return siteId;
             const result = await callGraph(`sites/${SHAREPOINT_HOSTNAME}:${SITE_PATH}`);
