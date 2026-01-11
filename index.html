@@ -2936,11 +2936,22 @@ const nuovaDescrizione = document.getElementById('duplicaNuovaDescrizione').valu
         showLoading(true);
         
         // 1. Crea nuovo adempimento
+        // FIX: Converti array responsabili in stringa
+let responsabileDuplicato;
+if (nuovoResponsabile) {
+    responsabileDuplicato = nuovoResponsabile;
+} else {
+    if (Array.isArray(adempimentoOriginale.Responsabile)) {
+        responsabileDuplicato = adempimentoOriginale.Responsabile.join('; ');
+    } else {
+        responsabileDuplicato = adempimentoOriginale.Responsabile;
+    }
+}
         const nuovoAdempimento = await createItem(LISTS.ADEMPIMENTI, {
     Title: nuovoTitolo,
     Descrizione: nuovaDescrizione,
             Tipologia: adempimentoOriginale.Tipologia,
-            Responsabile: nuovoResponsabile || adempimentoOriginale.Responsabile,
+           Responsabile: responsabileDuplicato,
             AnnoMese: nuovoMese,
             DataScadenza: nuovaScadenza,
             StatoMese: 'Aperto'
