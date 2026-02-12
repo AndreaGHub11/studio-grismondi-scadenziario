@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V20</title>
+    <title>Scadenziario Studio Grismondi V21</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -330,6 +330,19 @@
         .fase-input-row input:focus { outline: none; border-color: #9b59b6; }
         .remove-fase-btn { background: #fee2e2; border: none; color: #dc2626; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 16px; transition: all 0.2s; }
         .remove-fase-btn:hover { background: #fecaca; transform: scale(1.1); }
+        
+        /* Responsabile fase - toggle badges */
+        .fase-resp-row { grid-column: 1 / -1; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+        .fase-resp-label { font-size: 11px; font-weight: 600; color: #7c3aed; white-space: nowrap; }
+        .fase-resp-toggle {
+            display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px;
+            border-radius: 15px; border: 2px solid #e5e7eb; background: #f9fafb;
+            font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: #6b7280;
+            user-select: none;
+        }
+        .fase-resp-toggle:hover { border-color: #9b59b6; background: #faf5ff; }
+        .fase-resp-toggle.selected { border-color: #9b59b6; background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%); color: #7c3aed; }
+        .fase-resp-badge { background: #ede9fe; color: #7c3aed; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; white-space: nowrap; }
         
         #btnAggiungi-fase {
             background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
@@ -750,7 +763,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V20 - Sistema Fasi');
+        console.log('🚀 Scadenziario V21 - Sistema Fasi + Responsabile Fase');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -789,6 +802,9 @@
         let allComuni = [], allAdempimenti = [], allEnti = [];
         let allFasi = [], allComuniFasi = [];       // NUOVO - dati fasi
         let fasiInputCounter = 0;                   // contatore righe fasi nel form
+
+        // Team dello Studio - AGGIUNGI QUI NUOVE PERSONE
+        const TEAM_MEMBERS = ['Andrea', 'Roberta', 'Nicoletta', 'Miriana'];
 
         // ============================================================
         // SESSIONE
@@ -1260,6 +1276,11 @@
 
             const statoIcon = fasCompletata ? '✅' : (inCorso > 0 ? '🟡' : (daFare === totali ? '⚫' : '🔴'));
 
+            // Responsabile fase
+            const respFaseHtml = fase.ResponsabileFase 
+                ? fase.ResponsabileFase.split('; ').filter(r => r.trim()).map(r => `<span class="fase-resp-badge">👤 ${r}</span>`).join(' ')
+                : '';
+
             return `
             <div class="fase-card">
                 <div class="fase-header" onclick="toggleFaseComuni('fase-comuni-${fase.ID}', this)">
@@ -1268,6 +1289,7 @@
                         <div class="fase-title"><span>${statoIcon}</span> ${escapeHtml(fase.Title)}</div>
                         <div class="fase-meta">
                             <span class="${scadenzaFaseClass}">📅 ${scadenzaFaseText}</span>
+                            ${respFaseHtml ? respFaseHtml : ''}
                             <span>${totali} comuni</span>
                             <span>${progressFase}%</span>
                             ${daFare > 0 ? `<span style="color:#991b1b;">🔴 ${daFare}</span>` : ''}
@@ -1502,6 +1524,10 @@
             const righe = list.querySelectorAll('.fase-input-row');
             const numFase = righe.length + 1;
 
+            const respToggles = TEAM_MEMBERS.map(name => 
+                `<span class="fase-resp-toggle" data-resp="${name}" onclick="this.classList.toggle('selected')">${name}</span>`
+            ).join('');
+
             const row = document.createElement('div');
             row.className = 'fase-input-row';
             row.setAttribute('data-fase-n', n);
@@ -1510,6 +1536,10 @@
                 <input type="text" placeholder="Nome fase (es: Raccolta dati)" data-tipo="nome" required>
                 <input type="date" data-tipo="scadenza">
                 <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
+                <div class="fase-resp-row">
+                    <span class="fase-resp-label">👤 Resp:</span>
+                    ${respToggles}
+                </div>
             `;
             list.appendChild(row);
             rinumeraFasi();
@@ -1533,7 +1563,8 @@
             rows.forEach((row, idx) => {
                 const nome = row.querySelector('[data-tipo="nome"]')?.value?.trim();
                 const scadenza = row.querySelector('[data-tipo="scadenza"]')?.value;
-                if (nome) fasi.push({ ordine: idx + 1, nome, scadenza: scadenza || null });
+                const respSelezionati = Array.from(row.querySelectorAll('.fase-resp-toggle.selected')).map(el => el.getAttribute('data-resp'));
+                if (nome) fasi.push({ ordine: idx + 1, nome, scadenza: scadenza || null, responsabile: respSelezionati.join('; ') });
             });
             return fasi;
         }
@@ -1605,7 +1636,8 @@
                                 Title: fase.nome,
                                 AdempimentoID: parseInt(adempimentoId),
                                 OrdineFase: fase.ordine,
-                                DataScadenzaFase: fase.scadenza
+                                DataScadenzaFase: fase.scadenza,
+                                ResponsabileFase: fase.responsabile || ''
                             });
                             const faseId = faseResult.id;
                             for (const comune of comuniSelezionati) {
@@ -1682,6 +1714,10 @@
                 fasi.forEach(fase => {
                     fasiInputCounter++;
                     const list = document.getElementById('fasiInputList');
+                    const respToggles = TEAM_MEMBERS.map(name => {
+                        const isSelected = fase.ResponsabileFase && fase.ResponsabileFase.split('; ').map(r => r.trim()).includes(name);
+                        return `<span class="fase-resp-toggle${isSelected ? ' selected' : ''}" data-resp="${name}" onclick="this.classList.toggle('selected')">${name}</span>`;
+                    }).join('');
                     const row = document.createElement('div');
                     row.className = 'fase-input-row';
                     row.setAttribute('data-fase-n', fasiInputCounter);
@@ -1691,6 +1727,10 @@
                         <input type="text" placeholder="Nome fase" data-tipo="nome" value="${escapeHtml(fase.Title)}" required>
                         <input type="date" data-tipo="scadenza" value="${fase.DataScadenzaFase ? new Date(fase.DataScadenzaFase).toISOString().split('T')[0] : ''}">
                         <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
+                        <div class="fase-resp-row">
+                            <span class="fase-resp-label">👤 Resp:</span>
+                            ${respToggles}
+                        </div>
                     `;
                     list.appendChild(row);
                 });
@@ -1821,7 +1861,8 @@
                             Title: fase.Title,
                             AdempimentoID: parseInt(nuovoAdempimentoId),
                             OrdineFase: fase.OrdineFase,
-                            DataScadenzaFase: null // scadenze fasi resettate, da aggiornare manualmente
+                            DataScadenzaFase: null, // scadenze fasi resettate, da aggiornare manualmente
+                            ResponsabileFase: fase.ResponsabileFase || ''
                         });
                         const nuovaFaseId = nuovaFaseResult.id;
                         const cfOrig = allComuniFasi.filter(c => c.FaseID == fase.ID && c.Attivo !== false);
@@ -1939,7 +1980,7 @@
         // INIT
         // ============================================================
         window.addEventListener('load', async function() {
-            console.log('🚀 V20 Caricata');
+            console.log('🚀 V21 Caricata');
             try {
                 await msalInstance.initialize();
                 const accounts = msalInstance.getAllAccounts();
