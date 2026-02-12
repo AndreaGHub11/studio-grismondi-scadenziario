@@ -27,1270 +27,401 @@
             text-align: center;
         }
         
-        .logo {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo-img {
-    width: 120px;
-    height: 120px;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-}
+        .logo { margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
+        .logo-img { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+        
         .login-container h1 { color: #4facfe; margin-bottom: 10px; font-size: 28px; }
         .login-container p { color: #666; margin-bottom: 35px; font-size: 16px; }
         
         .login-btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
-            width: 100%;
+            color: white; border: none; padding: 18px 50px; border-radius: 10px;
+            font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4); width: 100%;
         }
-        
-        .login-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(79, 172, 254, 0.6);
-        }
+        .login-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(79, 172, 254, 0.6); }
         
         .app-container {
-            display: none;
-            max-width: 1800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 70px rgba(79, 172, 254, 0.3);
-            overflow: hidden;
+            display: none; max-width: 1800px; margin: 0 auto; background: white;
+            border-radius: 20px; box-shadow: 0 25px 70px rgba(79, 172, 254, 0.3); overflow: hidden;
         }
         
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 25px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            color: white; padding: 25px 40px; display: flex;
+            justify-content: space-between; align-items: center;
         }
-        
         .header h1 { font-size: 24px; }
         .user-info { display: flex; align-items: center; gap: 20px; }
         .user-name { text-align: right; }
         
         .logout-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
+            background: rgba(255,255,255,0.2); color: white; border: 2px solid white;
+            padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            transition: all 0.3s; font-size: 14px;
         }
-        
         .logout-btn:hover { background: white; color: #4facfe; }
         
         .controls {
-            padding: 20px 40px;
-            background: #f8f9fa;
-            border-bottom: 2px solid #e5e7eb;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
+            padding: 20px 40px; background: #f8f9fa; border-bottom: 2px solid #e5e7eb;
+            display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
         }
         
         .btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
+            color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 14px;
             box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
         }
-        
-        .btn:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5); 
-        }
-        
-        .btn-success { 
-            background: linear-gradient(135deg, #90ee90 0%, #7bed9f 100%); 
-            box-shadow: 0 3px 10px rgba(144, 238, 144, 0.3);
-        }
-        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5); }
+        .btn-success { background: linear-gradient(135deg, #90ee90 0%, #7bed9f 100%); box-shadow: 0 3px 10px rgba(144, 238, 144, 0.3); color: #1a1a1a; }
         .btn-success:hover { box-shadow: 0 5px 15px rgba(144, 238, 144, 0.5); }
+        .btn-warning { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-fasi { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); box-shadow: 0 3px 10px rgba(155, 89, 182, 0.3); }
+        .btn-fasi:hover { box-shadow: 0 5px 15px rgba(155, 89, 182, 0.5); }
+
+        .filtro-rapido { transition: all 0.2s; opacity: 0.7; }
+        .filtro-rapido:hover { opacity: 1; }
+        .filtro-rapido.active { opacity: 1; box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.3); transform: scale(1.05); }
         
-        .btn-warning {
-            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
-            box-shadow: 0 3px 10px rgba(254, 202, 87, 0.3);
-        }
-        
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .filtro-rapido {
-    transition: all 0.2s;
-    opacity: 0.7;
-}
-
-.filtro-rapido:hover {
-    opacity: 1;
-}
-
-.filtro-rapido.active {
-    opacity: 1;
-    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.3);
-    transform: scale(1.05);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
-
-.btn-warning {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-}
-        select, input { 
-            padding: 8px 12px; 
-            border: 2px solid #ddd; 
-            border-radius: 6px; 
-            font-size: 14px; 
-        }
-        
+        select, input { padding: 8px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; }
         select:focus, input:focus { outline: none; border-color: #4facfe; }
         
         .content { padding: 40px; min-height: 400px; }
         .loading { text-align: center; padding: 60px; color: #666; }
         
         .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #4facfe;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 25px;
+            border: 5px solid #f3f3f3; border-top: 5px solid #4facfe;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite; margin: 0 auto 25px;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        
+        /* ===================== ADEMPIMENTO CARD ===================== */
         .adempimento-card {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            transition: all 0.3s;
+            background: white; border: 2px solid #e5e7eb; border-radius: 12px;
+            margin-bottom: 15px; overflow: hidden; transition: all 0.3s;
         }
-        
-        .adempimento-card:hover {
-            border-color: #4facfe;
-            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.15);
-        }
+        .adempimento-card:hover { border-color: #4facfe; box-shadow: 0 5px 20px rgba(79, 172, 254, 0.15); }
         
         .adempimento-header {
             padding: 15px 20px;
             background: linear-gradient(to right, #f8f9ff 0%, #f0fff4 100%);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
+            cursor: pointer; display: flex; justify-content: space-between;
+            align-items: center; transition: all 0.2s;
         }
+        .adempimento-header:hover { background: linear-gradient(to right, #eef0ff 0%, #e0ffe0 100%); }
         
-        .adempimento-header:hover {
-            background: linear-gradient(to right, #eef0ff 0%, #e0ffe0 100%);
-        }
-
         .adempimento-header.adempimento-completato {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
-    border: 3px solid #10b981 !important;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-}
-
-.adempimento-header.adempimento-completato:hover {
-    background: linear-gradient(135deg, #a7f3d0 0%, #86efac 100%) !important;
-}
-
-.adempimento-completato .adempimento-titolo {
-    color: #065f46;
-    font-weight: 800;
-}
-        .adempimento-titolo {
-            font-size: 17px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 4px;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+            border: 3px solid #10b981 !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         }
+        .adempimento-completato .adempimento-titolo { color: #065f46; font-weight: 800; }
         
-        .adempimento-meta {
-            font-size: 12px;
-            color: #6b7280;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+        .adempimento-titolo { font-size: 17px; font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+        .adempimento-meta { font-size: 12px; color: #6b7280; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         
-        .responsabile-badge {
-            background: #dbeafe;
-            color: #1e40af;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
+        .responsabile-badge { background: #dbeafe; color: #1e40af; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         
-        .scadenza-ok { 
-    color: #059669; 
-}
-
-.scadenza-warning { 
-    color: #ea580c; 
-    font-weight: 700;
-    background: #fed7aa;
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 2px solid #f97316;
-}
-
-.scadenza-danger { 
-    color: #dc2626; 
-    font-weight: 900;
-    background: #fee2e2;
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 2px solid #ef4444;
-    animation: pulse-scadenza 2s infinite;
-}
-
-@keyframes pulse-scadenza {
-    0%, 100% { 
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% { 
-        opacity: 0.85;
-        transform: scale(1.02);
-    }
-}
+        .scadenza-ok { color: #059669; }
+        .scadenza-warning { color: #ea580c; font-weight: 700; background: #fed7aa; padding: 4px 10px; border-radius: 6px; border: 2px solid #f97316; }
+        .scadenza-danger { color: #dc2626; font-weight: 900; background: #fee2e2; padding: 4px 10px; border-radius: 6px; border: 2px solid #ef4444; animation: pulse-scadenza 2s infinite; }
+        @keyframes pulse-scadenza { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.02); } }
         
-        .adempimento-stats {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        .adempimento-stats { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .adempimento-actions { display: flex; gap: 8px; margin-left: 15px; }
         
-        .adempimento-actions {
-            display: flex;
-            gap: 8px;
-            margin-left: 15px;
-        }
-        
-        .stat-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        
+        .stat-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .stat-badge.totali { background: #dbeafe; color: #1e40af; }
         .stat-badge.non-gestiti { background: #fee2e2; color: #991b1b; }
         .stat-badge.in-corso { background: #fef3c7; color: #92400e; }
         .stat-badge.completati { background: #d1fae5; color: #065f46; }
         .stat-badge.non-gestiti-grigio { background: #f3f4f6; color: #6b7280; }
         
-        .progress-mini {
-    width: 150px;
-    height: 8px;
-    background: #e5e7eb;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.progress-mini-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 50%, #90ee90 100%);
-    transition: width 0.5s ease;
-    box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
-    position: relative;
-    animation: shine 2s infinite;
-}
-
-@keyframes shine {
-    0% { opacity: 1; }
-    50% { opacity: 0.9; }
-    100% { opacity: 1; }
-}
-
-        /* ===================================
-   RESPONSIVE MOBILE
-   =================================== */
-
-@media (max-width: 768px) {
-    /* Login più compatto */
-    .login-container {
-        padding: 30px 20px;
-        margin: 50px auto;
-    }
-    
-    .logo-img {
-    width: 90px;
-    height: 90px;
-}
-    
-    .login-container h1 {
-        font-size: 22px;
-    }
-    
-    /* Header compatto */
-    .header {
-        padding: 20px;
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .header h1 {
-        font-size: 18px;
-    }
-    
-    .user-info {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    /* Controls su più righe */
-    .controls {
-        padding: 15px;
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .filter-group {
-        width: 100%;
-    }
-    
-    .filter-group select,
-    .filter-group input {
-        width: 100%;
-    }
-    
-    .btn {
-        width: 100%;
-        padding: 12px;
-    }
-    
-    /* Dashboard Summary a colonna singola */
-    .dashboard-summary {
-        grid-template-columns: 1fr;
-        padding: 15px;
-        gap: 10px;
-    }
-    
-    /* Adempimenti card stack */
-    .adempimento-card {
-        padding: 15px;
-    }
-    
-    .adempimento-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .adempimento-title {
-        font-size: 16px;
-    }
-    
-    .adempimento-meta {
-        font-size: 12px;
-        flex-wrap: wrap;
-    }
-    
-    .adempimento-stats {
-        flex-wrap: wrap;
-        gap: 5px;
-    }
-    
-    .adempimento-actions {
-        gap: 10px;
-    }
-    
-    /* Comuni list più compatta */
-    .comuni-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .comune-item {
-        padding: 12px;
-    }
-    
-    .comune-header-mobile {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    /* Progress bar più stretta */
-    .progress-mini {
-        width: 100px;
-    }
-    
-    /* Checkbox grid a colonna */
-    .checkbox-grid {
-        grid-template-columns: 1fr !important;
-    }
-    
-    /* Modal full screen su mobile */
-    .modal-content {
-        width: 95%;
-        max-height: 90vh;
-        padding: 20px;
-    }
-    
-    .form-group label {
-        font-size: 13px;
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        font-size: 14px;
-    }
-    
-    /* Bottoni quick filter */
-    .filtro-rapido {
-        font-size: 12px;
-        padding: 8px 12px;
-    }
-    
-    /* Content padding */
-    .content {
-        padding: 15px;
-    }
-}
-
-/* Extra small devices (phones in portrait, less than 576px) */
-@media (max-width: 576px) {
-    .header h1 {
-        font-size: 16px;
-    }
-    
-    .summary-card {
-        padding: 12px;
-    }
-    
-    .summary-icon {
-        font-size: 24px;
-    }
-    
-    .summary-number {
-        font-size: 20px;
-    }
-    
-    .adempimento-title {
-        font-size: 14px;
-    }
-    
-    .adempimento-meta {
-        font-size: 11px;
-    }
-    
-    .badge-count {
-        font-size: 11px;
-        padding: 3px 8px;
-    }
-    
-    .icon-btn {
-        font-size: 16px;
-    }
-}
-        .expand-icon {
-            font-size: 16px;
-            transition: transform 0.3s;
-            margin-left: 10px;
+        /* Badge FASI - viola */
+        .badge-fasi {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white; padding: 5px 14px; border-radius: 20px;
+            font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(155, 89, 182, 0.35);
+            white-space: nowrap; letter-spacing: 0.3px;
         }
         
+        .progress-mini {
+            width: 150px; height: 8px; background: #e5e7eb; border-radius: 5px;
+            overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .progress-mini-fill {
+            height: 100%; background: linear-gradient(90deg, #4facfe 0%, #00f2fe 50%, #90ee90 100%);
+            transition: width 0.5s ease; box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+        
+        .expand-icon { font-size: 16px; transition: transform 0.3s; margin-left: 10px; }
         .expand-icon.open { transform: rotate(180deg); }
         
-        .comuni-list {
-            display: none;
-            padding: 15px;
-            background: #fafbfc;
-        }
-        
+        /* ===================== COMUNI LIST (adempimento senza fasi) ===================== */
+        .comuni-list { display: none; padding: 15px; background: #fafbfc; }
         .comuni-list.open { display: block; }
         
         .comuni-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            flex-wrap: wrap;
-            align-items: center;
+            display: flex; gap: 10px; margin-bottom: 12px; padding: 10px;
+            background: white; border-radius: 8px; flex-wrap: wrap; align-items: center;
         }
         
         .search-box {
-            flex: 1;
-            min-width: 200px;
-            padding: 6px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 13px;
+            flex: 1; min-width: 200px; padding: 6px 12px;
+            border: 2px solid #e5e7eb; border-radius: 6px; font-size: 13px;
         }
+        .search-box:focus { outline: none; border-color: #4facfe; }
         
-        .search-box:focus {
-            outline: none;
-            border-color: #4facfe;
+        .comuni-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        
+        .comune-card {
+            background: white; border: 1px solid #e5e7eb; border-radius: 6px;
+            padding: 8px 10px; transition: all 0.2s; font-size: 12px;
         }
-
-        .comuni-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-}
-
-@media (max-width: 1200px) {
-    .comuni-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .comuni-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.comune-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 8px 10px;
-    transition: all 0.2s;
-    font-size: 12px;
-}
-
-.comune-card:hover {
-    border-color: #4facfe;
-    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.1);
-}
-
-.comune-nome { 
-    font-weight: 600; 
-    color: #1f2937; 
-    margin-bottom: 4px;
-    font-size: 13px;
-}
-
-.comune-status-buttons {
-    display: flex;
-    gap: 3px;
-    margin-bottom: 4px;
-    justify-content: center;
-}
-
-.status-btn {
-    background: #f3f4f6;
-    border: 2px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 4px 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
-    flex: 1;
-}
-
-.status-btn:hover {
-    transform: scale(1.1);
-    border-color: #9ca3af;
-}
-
-.status-btn.active {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-    transform: scale(1.05);
-}
-
-.status-btn-dafare.active {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-}
-
-.status-btn-incorso.active {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
-}
-
-.status-btn-completato.active {
-    border-color: #10b981;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
-.status-btn-nongestito.active {
-    border-color: #6b7280;
-    box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.2);
-}
-
-
-.progress-bar-small {
-    height: 4px;
-    background: #e5e7eb;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 3px;
-}
-
-.progress-bar-small .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4facfe 0%, #90ee90 100%);
-    transition: width 0.3s;
-}
-
-.comune-actions-small {
-    display: flex;
-    gap: 2px;
-    justify-content: space-between;
-    margin-top: 4px;
-}
-
-.progress-text-small {
-    font-size: 10px;
-    color: #6b7280;
-    font-weight: 600;
-}
-
-.icon-btn-small {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 2px 4px;
-    transition: transform 0.2s;
-    border-radius: 3px;
-}
-
-.icon-btn-small:hover {
-    transform: scale(1.2);
-    background: #f3f4f6;
-}
-
-.icon-btn-danger:hover {
-    background: #fee2e2;
-}
-        .comune-row {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 10px 12px;
-            margin-bottom: 6px;
-            display: grid;
-            grid-template-columns: 1fr auto auto auto auto;
-            gap: 12px;
-            align-items: center;
+        .comune-card:hover { border-color: #4facfe; box-shadow: 0 2px 8px rgba(79, 172, 254, 0.1); }
+        
+        .comune-nome { font-weight: 600; color: #1f2937; margin-bottom: 4px; font-size: 13px; }
+        
+        .comune-status-display { margin-bottom: 4px; cursor: pointer; }
+        
+        .status-btn-single {
+            width: 100%; background: white; border: 2px solid #e5e7eb;
+            border-radius: 8px; padding: 6px 8px; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; display: flex;
+            align-items: center; justify-content: center; gap: 4px;
+        }
+        .status-btn-single:hover { transform: scale(1.02); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .status-btn-single.status-btn-dafare { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+        .status-btn-single.status-btn-incorso { border-color: #fde68a; background: #fefce8; color: #92400e; }
+        .status-btn-single.status-btn-completato { border-color: #86efac; background: #f0fdf4; color: #065f46; }
+        .status-btn-single.status-btn-nongestito { border-color: #d1d5db; background: #f9fafb; color: #6b7280; }
+        
+        .progress-bar-small { height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
+        .progress-bar-small .progress-fill { height: 100%; background: linear-gradient(90deg, #4facfe 0%, #90ee90 100%); transition: width 0.3s; }
+        
+        .comune-actions-small { display: flex; gap: 2px; justify-content: space-between; margin-top: 4px; }
+        .progress-text-small { font-size: 10px; color: #6b7280; font-weight: 600; }
+        
+        .icon-btn-small { background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px 4px; transition: transform 0.2s; border-radius: 3px; }
+        .icon-btn-small:hover { transform: scale(1.2); background: #f3f4f6; }
+        
+        /* ===================== FASI SYSTEM ===================== */
+        .fasi-container { display: none; padding: 15px; background: #fafbfc; }
+        .fasi-container.open { display: block; }
+        
+        .fasi-header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; background: linear-gradient(to right, #f3e8ff 0%, #ede9fe 100%);
+            border-radius: 8px; margin-bottom: 12px; border: 2px solid #ddd6fe;
+        }
+        .fasi-header-bar span { font-weight: 700; color: #7c3aed; font-size: 14px; }
+        
+        .fase-card {
+            background: white; border: 2px solid #e5e7eb; border-radius: 10px;
+            margin-bottom: 10px; overflow: hidden; transition: all 0.3s;
+        }
+        .fase-card:hover { border-color: #9b59b6; box-shadow: 0 3px 12px rgba(155, 89, 182, 0.12); }
+        
+        .fase-header {
+            padding: 12px 18px; background: #f8f9fa; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
             transition: all 0.2s;
-            font-size: 13px;
+        }
+        .fase-header:hover { background: #f3e8ff; }
+        
+        .fase-ordine {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white; width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px; flex-shrink: 0; margin-right: 12px;
         }
         
-        .comune-row:hover {
-            border-color: #4facfe;
-            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.1);
+        .fase-info { flex: 1; }
+        .fase-title { font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 4px; }
+        .fase-meta { display: flex; gap: 15px; font-size: 12px; color: #6b7280; align-items: center; }
+        
+        .scadenza-fase-ok { color: #059669; font-weight: 600; }
+        .scadenza-fase-warning { 
+            color: #ea580c; font-weight: 700; background: #fed7aa;
+            padding: 2px 8px; border-radius: 5px; border: 1px solid #f97316;
+        }
+        .scadenza-fase-danger { 
+            color: #dc2626; font-weight: 900; background: #fee2e2;
+            padding: 2px 8px; border-radius: 5px; border: 1px solid #ef4444;
         }
         
-        .comune-info { 
-            min-width: 0;
-        }
+        .fase-progress-bar { width: 120px; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+        .fase-progress-fill { height: 100%; background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%); transition: width 0.4s; }
         
-        .comune-nome { 
-            font-weight: 600; 
-            color: #1f2937; 
-            margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .fase-actions { display: flex; gap: 8px; align-items: center; margin-left: 12px; }
         
-        .comune-note { 
-            font-size: 11px; 
-            color: #6b7280; 
-            font-style: italic;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .fase-expand-btn {
+            background: #9b59b6; color: white; border: none; padding: 6px 14px;
+            border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+            transition: all 0.2s; white-space: nowrap;
         }
+        .fase-expand-btn:hover { background: #8e44ad; transform: translateY(-1px); }
         
-        .status-flag {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
+        .fase-comuni-container { display: none; padding: 12px 15px; background: #fefeff; border-top: 1px solid #e5e7eb; }
+        .fase-comuni-container.open { display: block; }
         
-        .status-flag:hover {
-            transform: scale(1.05);
-        }
+        /* Icona stato fase */
+        .fase-stato-icon { font-size: 18px; margin-right: 8px; }
+
+        /* ===================== ICONE AZIONE ===================== */
+        .icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 6px; transition: transform 0.2s; border-radius: 4px; }
+        .icon-btn:hover { transform: scale(1.2); background: #f3f4f6; }
         
-        .status-da-fare {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .status-in-corso {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .status-completato {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        
-        .progress-mini-inline {
-            width: 80px;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-mini-inline .progress-mini-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4facfe 0%, #90ee90 100%);
-        }
-        
-        .progress-text {
-            font-size: 11px;
-            font-weight: 600;
-            color: #6b7280;
-            min-width: 35px;
-            text-align: right;
-        }
-        
-        .comune-actions {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 4px 6px;
-            transition: transform 0.2s;
-            border-radius: 4px;
-        }
-        
-        .icon-btn:hover {
-            transform: scale(1.2);
-            background: #f3f4f6;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            overflow-y: auto;
-        }
-        
+        /* ===================== MODAL ===================== */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto; }
         .modal.open { display: flex; }
         
         .modal-content {
-            background: white;
-            padding: 35px;
-            border-radius: 20px;
-            max-width: 750px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
-            margin: 20px;
+            background: white; padding: 35px; border-radius: 20px;
+            max-width: 750px; width: 90%; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.3); margin: 20px;
         }
-        
-        .modal-header { 
-            margin-bottom: 25px; 
-            padding-bottom: 20px; 
-            border-bottom: 2px solid #e0f2fe; 
-        }
-        
+        .modal-header { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid #e0f2fe; }
         .modal-header h2 { color: #4facfe; font-size: 24px; }
         
         .form-group { margin-bottom: 20px; }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
         .form-group textarea { min-height: 100px; resize: vertical; }
         .form-actions { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
         
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 2px solid #e5e7eb;
-        }
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #e5e7eb; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 6px; transition: all 0.2s; }
+        .checkbox-item:hover { background: #f0f9ff; }
+        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-item label { margin: 0; cursor: pointer; font-weight: 500; }
         
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            background: white;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
+        .select-all-btns { display: flex; gap: 10px; margin-bottom: 10px; }
         
-        .checkbox-item:hover {
-            background: #f0f9ff;
-            border-color: #4facfe;
+        /* ===================== TOGGLE FASI ===================== */
+        .usa-fasi-toggle {
+            display: flex; align-items: center; gap: 12px; padding: 15px;
+            background: linear-gradient(to right, #f3e8ff 0%, #ede9fe 100%);
+            border-radius: 10px; border: 2px solid #ddd6fe; margin-bottom: 5px;
         }
+        .usa-fasi-toggle input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #9b59b6; }
+        .usa-fasi-toggle label { font-weight: 700; color: #7c3aed; font-size: 15px; cursor: pointer; margin: 0; }
+        .usa-fasi-toggle small { color: #8b5cf6; font-size: 12px; }
         
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
+        /* SEZIONE FASI NEL FORM */
+        #fasiInputSection { display: none; }
+        #fasiInputSection.open { display: block; }
+        
+        .fasi-form-container {
+            background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 10px; padding: 15px; margin-top: 10px;
         }
+        .fasi-form-header { font-weight: 700; color: #7c3aed; margin-bottom: 12px; font-size: 14px; }
         
-        .checkbox-item label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 500;
+        .fase-input-row {
+            display: grid; grid-template-columns: 30px 1fr 160px auto; gap: 8px;
+            align-items: center; background: white; padding: 10px 12px;
+            border-radius: 8px; border: 1px solid #e9d5ff; margin-bottom: 8px;
         }
+        .fase-num { font-weight: 700; color: #9b59b6; font-size: 14px; text-align: center; }
+        .fase-input-row input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; width: 100%; }
+        .fase-input-row input:focus { outline: none; border-color: #9b59b6; }
+        .remove-fase-btn { background: #fee2e2; border: none; color: #dc2626; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 16px; transition: all 0.2s; }
+        .remove-fase-btn:hover { background: #fecaca; transform: scale(1.1); }
         
-        .select-all-btns {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+        #btnAggiungi-fase {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: 600; font-size: 13px; margin-top: 5px;
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
         }
+        #btnAggiungi-fase:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3); }
         
-        .alert {
-            padding: 18px 20px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 14px;
-        }
+        /* ===================== MODAL CAMBIO STATO ===================== */
+        .btn-stato { width: 100%; padding: 15px; border: 3px solid #e5e7eb; border-radius: 10px; background: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left; }
+        .btn-stato:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn-stato.active { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .btn-stato-dafare:hover { border-color: #ef4444; background: #fef2f2; }
+        .btn-stato-incorso:hover { border-color: #f59e0b; background: #fffbeb; }
+        .btn-stato-completato:hover { border-color: #10b981; background: #f0fdf4; }
+        .btn-stato-nongestito:hover { border-color: #6b7280; background: #f9fafb; }
         
+        /* ===================== DASHBOARD ===================== */
+        .dashboard-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 25px; padding: 20px; background: linear-gradient(to right, #f0f9ff 0%, #f0fdf4 100%); border-radius: 12px; border: 2px solid #e0f2fe; }
+        .summary-card { background: white; padding: 18px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border: 2px solid #e5e7eb; transition: all 0.3s; }
+        .summary-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .summary-icon { font-size: 28px; }
+        .summary-content { flex: 1; }
+        .summary-number { font-size: 24px; font-weight: 800; color: #1f2937; line-height: 1; margin-bottom: 4px; }
+        .summary-label { font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-scaduti { border-color: #fca5a5; }
+        .summary-scaduti .summary-number { color: #dc2626; }
+        .summary-urgenti { border-color: #fdba74; }
+        .summary-urgenti .summary-number { color: #ea580c; }
+        .summary-completati { border-color: #86efac; }
+        .summary-completati .summary-number { color: #16a34a; }
+        
+        /* ===================== LEGENDA ===================== */
+        .comuni-legenda { display: flex; justify-content: center; gap: 20px; padding: 12px; background: linear-gradient(to right, #f0f9ff 0%, #f0fdf4 100%); border-radius: 8px; margin-bottom: 15px; border: 2px solid #e0f2fe; flex-wrap: wrap; }
+        .legenda-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #374151; }
+        
+        /* ===================== ALERT ===================== */
+        .alert { padding: 18px 20px; margin-bottom: 25px; border-radius: 10px; font-weight: 500; font-size: 14px; }
         .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
         
-        .empty-state { 
-            text-align: center; 
-            padding: 80px 20px; 
-            color: #9ca3af; 
-        }
-        
+        .empty-state { text-align: center; padding: 80px 20px; color: #9ca3af; }
         .empty-state-icon { font-size: 80px; margin-bottom: 20px; opacity: 0.5; }
         .empty-state h3 { color: #6b7280; margin-bottom: 10px; font-size: 20px; }
-        .empty-state p { color: #9ca3af; }
-
-.hidden {
-    display: none !important;
-}
-
-/* Dashboard Summary */
-.dashboard-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 12px;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: linear-gradient(to right, #f0f9ff 0%, #f0fdf4 100%);
-    border-radius: 12px;
-    border: 2px solid #e0f2fe;
-}
-
-.summary-card {
-    background: white;
-    padding: 18px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 2px solid #e5e7eb;
-    transition: all 0.3s;
-}
-
-.summary-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.summary-icon {
-    font-size: 28px;
-}
-
-.summary-content {
-    flex: 1;
-}
-
-.summary-number {
-    font-size: 24px;
-    font-weight: 800;
-    color: #1f2937;
-    line-height: 1;
-    margin-bottom: 4px;
-}
-
-.summary-label {
-    font-size: 11px;
-    color: #6b7280;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.summary-scaduti {
-    border-color: #fca5a5;
-}
-
-.summary-scaduti .summary-number {
-    color: #dc2626;
-}
-
-.summary-urgenti {
-    border-color: #fdba74;
-}
-
-.summary-urgenti .summary-number {
-    color: #ea580c;
-}
-
-.summary-completati {
-    border-color: #86efac;
-}
-
-.summary-completati .summary-number {
-    color: #16a34a;
-}
-        .hidden {
-    display: none !important;
-}
-        /* LEGENDA FISSA */
-.comuni-legenda {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 12px;
-    background: linear-gradient(to right, #f0f9ff 0%, #f0fdf4 100%);
-    border-radius: 8px;
-    margin-bottom: 15px;
-    border: 2px solid #e0f2fe;
-}
-
-.legenda-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #374151;
-}
-
-.legenda-icon {
-    font-size: 16px;
-}
-
-/* BOTTONE STATO SINGOLO */
-.comune-status-display {
-    margin-bottom: 4px;
-    cursor: pointer;
-}
-
-.status-btn-single {
-    width: 100%;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 6px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
-
-.status-btn-single:hover {
-    transform: scale(1.02);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.status-btn-single.status-btn-dafare {
-    border-color: #fecaca;
-    background: #fef2f2;
-    color: #991b1b;
-}
-
-.status-btn-single.status-btn-incorso {
-    border-color: #fde68a;
-    background: #fefce8;
-    color: #92400e;
-}
-
-.status-btn-single.status-btn-completato {
-    border-color: #86efac;
-    background: #f0fdf4;
-    color: #065f46;
-}
-
-.status-btn-single.status-btn-nongestito {
-    border-color: #d1d5db;
-    background: #f9fafb;
-    color: #6b7280;
-}
-
-/* BOTTONI MODAL CAMBIO STATO */
-.btn-stato {
-    width: 100%;
-    padding: 15px;
-    border: 3px solid #e5e7eb;
-    border-radius: 10px;
-    background: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: left;
-}
-
-.btn-stato:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.btn-stato.active {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.btn-stato-dafare:hover {
-    border-color: #ef4444;
-    background: #fef2f2;
-}
-
-.btn-stato-incorso:hover {
-    border-color: #f59e0b;
-    background: #fffbeb;
-}
-
-.btn-stato-completato:hover {
-    border-color: #10b981;
-    background: #f0fdf4;
-}
-
-.btn-stato-nongestito:hover {
-    border-color: #6b7280;
-    background: #f9fafb;
-}
-         /* ===================================
-           RESPONSIVE MOBILE - ISOLATO
-           =================================== */
-
+        
+        .hidden { display: none !important; }
+        
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 1200px) { .comuni-grid { grid-template-columns: repeat(2, 1fr); } }
+        
         @media only screen and (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .login-container {
-                padding: 30px 20px;
-                margin: 50px auto;
-            }
-            
-            .logo-img {
-                width: 90px;
-                height: 90px;
-            }
-            
-            .login-container h1 {
-                font-size: 22px;
-            }
-            
-            .header {
-                padding: 20px;
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .header h1 {
-                font-size: 18px;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .controls {
-                padding: 15px;
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .controls > div {
-                width: 100%;
-            }
-            
-            .controls select,
-            .controls input {
-                width: 100%;
-            }
-            
-            .btn {
-                width: 100%;
-                padding: 12px;
-            }
-            
-            .dashboard-summary {
-                grid-template-columns: 1fr;
-                padding: 15px;
-                gap: 10px;
-            }
-            
-            .content {
-                padding: 15px;
-            }
-            
-            .adempimento-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-                padding: 12px;
-            }
-            
-            .adempimento-stats {
-                flex-wrap: wrap;
-                width: 100%;
-            }
-            
-            .progress-mini {
-                width: 100%;
-            }
-            
-            .comuni-grid {
-                grid-template-columns: 1fr !important;
-            }
-            
-            .comune-card {
-                padding: 12px;
-            }
-            
-            .checkbox-grid {
-                grid-template-columns: 1fr !important;
-            }
-            
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-                margin: 10px;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-            
-            .form-actions .btn {
-                width: 100%;
-            }
-        }
-
-        @media only screen and (max-width: 576px) {
-            .header h1 {
-                font-size: 16px;
-            }
-            
-            .summary-card {
-                padding: 12px;
-            }
-            
-            .summary-icon {
-                font-size: 24px;
-            }
-            
-            .summary-number {
-                font-size: 20px;
-            }
-            
-            .adempimento-titolo {
-                font-size: 14px;
-            }
-            
-            .filtro-rapido {
-                font-size: 11px;
-                padding: 8px 10px;
-            }
+            body { padding: 10px; }
+            .login-container { padding: 30px 20px; margin: 50px auto; }
+            .logo-img { width: 90px; height: 90px; }
+            .login-container h1 { font-size: 22px; }
+            .header { padding: 20px; flex-direction: column; gap: 15px; text-align: center; }
+            .header h1 { font-size: 18px; }
+            .user-info { flex-direction: column; gap: 10px; }
+            .controls { padding: 15px; flex-direction: column; align-items: stretch; }
+            .controls > div { width: 100%; }
+            .btn { width: 100%; padding: 12px; }
+            .dashboard-summary { grid-template-columns: 1fr; padding: 15px; gap: 10px; }
+            .content { padding: 15px; }
+            .adempimento-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+            .adempimento-stats { flex-wrap: wrap; width: 100%; }
+            .progress-mini { width: 100%; }
+            .comuni-grid { grid-template-columns: 1fr !important; }
+            .fase-input-row { grid-template-columns: 25px 1fr; grid-template-rows: auto auto; }
+            .fase-input-row input[type="date"] { grid-column: 1 / -1; }
+            .remove-fase-btn { justify-self: end; }
+            .checkbox-grid { grid-template-columns: 1fr !important; }
+            .modal-content { width: 95%; padding: 20px; margin: 10px; }
+            .form-actions { flex-direction: column; }
+            .form-actions .btn { width: 100%; }
         }
     </style>
 </head>
 <body>
+
+    <!-- LOGIN -->
     <div id="loginContainer" class="login-container">
-    <div class="logo">
-   <img src="https://raw.githubusercontent.com/AndreaGHub11/studio-grismondi-scadenziario/main/1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
-</div>
-    <h1>Studio Grismondi</h1>
-    <p>Sistema Scadenziario Integrato</p>
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/AndreaGHub11/studio-grismondi-scadenziario/main/1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
+        </div>
+        <h1>Studio Grismondi</h1>
+        <p>Sistema Scadenziario Integrato</p>
         <button class="login-btn" id="loginBtn">🔐 Accedi con Microsoft</button>
     </div>
 
+    <!-- APP -->
     <div id="appContainer" class="app-container">
         <div class="header">
             <h1>📅 Scadenziario Studio Grismondi</h1>
@@ -1304,15 +435,12 @@
         </div>
 
         <div class="controls">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label style="font-weight: 600;">📅 Mese:</label>
-                <select id="filterMese" style="min-width: 150px;">
-                    <option value="">Tutti i mesi</option>
-                </select>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:600;">📅 Mese:</label>
+                <select id="filterMese" style="min-width:150px;"><option value="">Tutti i mesi</option></select>
             </div>
-
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label style="font-weight: 600;">📂 Tipologia:</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:600;">📂 Tipologia:</label>
                 <select id="filterTipologia">
                     <option value="">Tutte</option>
                     <option value="Contabilità">Contabilità</option>
@@ -1321,9 +449,8 @@
                     <option value="Altro">Altro</option>
                 </select>
             </div>
-
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label style="font-weight: 600;">👤 Responsabile:</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:600;">👤 Responsabile:</label>
                 <select id="filterResponsabile">
                     <option value="">Tutti</option>
                     <option value="Andrea">Andrea</option>
@@ -1332,9 +459,8 @@
                     <option value="Miriana">Miriana</option>
                 </select>
             </div>
-
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label style="font-weight: 600;">⚠️ Stato:</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:600;">⚠️ Stato:</label>
                 <select id="filterStato">
                     <option value="">Tutti</option>
                     <option value="Non Gestito">Da Fare</option>
@@ -1342,132 +468,98 @@
                     <option value="Completato">Completato</option>
                 </select>
             </div>
-
-            <button class="btn btn-success" id="btnAddAdempimento">
-                ➕ Nuovo Adempimento
-            </button>
-
-            <button class="btn btn-warning" id="btnAddComune">
-                🏛️ Nuovo Comune
-            </button>
-
-            <button class="btn" id="btnSync">
-                🔄 Sincronizza
-            </button>
-            <div style="margin-left: auto; display: flex; gap: 8px;">
-    <button class="btn btn-sm filtro-rapido active" onclick="filtroRapido('tutti')" id="filtro-tutti">
-        📋 Tutti
-    </button>
-    <button class="btn btn-sm btn-danger filtro-rapido" onclick="filtroRapido('scaduti')" id="filtro-scaduti">
-        ⚠️ Scaduti
-    </button>
-    <button class="btn btn-sm btn-warning filtro-rapido" onclick="filtroRapido('urgenti')" id="filtro-urgenti">
-        🔥 Urgenti
-    </button>
-    <button class="btn btn-sm btn-success filtro-rapido" onclick="filtroRapido('completati')" id="filtro-completati">
-        ✅ Completati
-    </button>
-</div>
+            <button class="btn btn-success" id="btnAddAdempimento">➕ Nuovo Adempimento</button>
+            <button class="btn btn-warning" id="btnAddComune">🏛️ Nuovo Comune</button>
+            <button class="btn" id="btnSync">🔄 Sincronizza</button>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button class="btn btn-sm filtro-rapido active" onclick="filtroRapido('tutti')" id="filtro-tutti">📋 Tutti</button>
+                <button class="btn btn-sm btn-danger filtro-rapido" onclick="filtroRapido('scaduti')" id="filtro-scaduti">⚠️ Scaduti</button>
+                <button class="btn btn-sm btn-warning filtro-rapido" onclick="filtroRapido('urgenti')" id="filtro-urgenti">🔥 Urgenti</button>
+                <button class="btn btn-sm btn-success filtro-rapido" onclick="filtroRapido('completati')" id="filtro-completati">✅ Completati</button>
+            </div>
         </div>
 
         <div class="content">
-              <!-- Dashboard Summary - SOLO Admin -->
-    <div class="dashboard-summary" id="dashboardSummary" style="display: none;">
-        <div class="summary-card summary-totali">
-            <div class="summary-icon">📋</div>
-            <div class="summary-content">
-                <div class="summary-number" id="summary-totali">0</div>
-                <div class="summary-label">Adempimenti Attivi</div>
+            <!-- Dashboard - solo Admin -->
+            <div class="dashboard-summary" id="dashboardSummary" style="display:none;">
+                <div class="summary-card">
+                    <div class="summary-icon">📋</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-totali">0</div>
+                        <div class="summary-label">Adempimenti Attivi</div>
+                    </div>
+                </div>
+                <div class="summary-card summary-scaduti">
+                    <div class="summary-icon">⚠️</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-scaduti">0</div>
+                        <div class="summary-label">Scaduti</div>
+                    </div>
+                </div>
+                <div class="summary-card summary-urgenti">
+                    <div class="summary-icon">🔥</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-urgenti">0</div>
+                        <div class="summary-label">Prossimi 7gg</div>
+                    </div>
+                </div>
+                <div class="summary-card summary-completati">
+                    <div class="summary-icon">✅</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-completati">0</div>
+                        <div class="summary-label">Completati</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">🏛️</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-comuni">0</div>
+                        <div class="summary-label">Comuni Totali</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-progress">0%</div>
+                        <div class="summary-label">Completamento</div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="summary-card summary-scaduti">
-            <div class="summary-icon">⚠️</div>
-            <div class="summary-content">
-                <div class="summary-number" id="summary-scaduti">0</div>
-                <div class="summary-label">Scaduti</div>
-            </div>
-        </div>
-        
-        <div class="summary-card summary-urgenti">
-            <div class="summary-icon">🔥</div>
-            <div class="summary-content">
-                <div class="summary-number" id="summary-urgenti">0</div>
-                <div class="summary-label">Prossimi 7gg</div>
-            </div>
-        </div>
-        
-        <div class="summary-card summary-completati">
-            <div class="summary-icon">✅</div>
-            <div class="summary-content">
-                <div class="summary-number" id="summary-completati">0</div>
-                <div class="summary-label">Completati</div>
-            </div>
-        </div>
-        
-        <div class="summary-card summary-comuni">
-            <div class="summary-icon">🏛️</div>
-            <div class="summary-content">
-                <div class="summary-number" id="summary-comuni">0</div>
-                <div class="summary-label">Comuni Totali</div>
-            </div>
-        </div>
-        
-        <div class="summary-card summary-progress">
-            <div class="summary-icon">📊</div>
-            <div class="summary-content">
-                <div class="summary-number" id="summary-progress">0%</div>
-                <div class="summary-label">Completamento</div>
-            </div>
-        </div>
-    </div>
+
             <div id="loadingIndicator" class="loading">
                 <div class="spinner"></div>
                 <p>Caricamento dati da SharePoint...</p>
             </div>
-
             <div id="alertContainer"></div>
             <div id="adempimentiContainer"></div>
         </div>
     </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Salva Note</button>
-                    <button type="button" class="btn" id="btnCloseNoteModal">❌ Chiudi</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-<!-- Modal Cambio Stato -->
+    <!-- ============================================================
+         MODAL CAMBIO STATO
+         ============================================================ -->
     <div id="cambiaStatoModal" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <div class="modal-header">
-            <h2>📊 Cambia Stato - <span id="statoComune"></span></h2>
-        </div>
-        <input type="hidden" id="statoRecordId">
-        
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button class="btn-stato btn-stato-dafare" onclick="applicaNuovoStato('Da Fare')">
-                🔴 Da Fare
-            </button>
-            <button class="btn-stato btn-stato-incorso" onclick="applicaNuovoStato('In Corso')">
-                🟡 In Corso
-            </button>
-            <button class="btn-stato btn-stato-completato" onclick="applicaNuovoStato('Completato')">
-                🟢 Completato
-            </button>
-            <button class="btn-stato btn-stato-nongestito" onclick="applicaNuovoStato('Non Gestito')">
-                ⚫ Non Gestito
-            </button>
-        </div>
-        
-        <div style="margin-top: 20px;">
-            <button class="btn" id="btnCloseCambiaStatoModal">❌ Annulla</button>
+        <div class="modal-content" style="max-width:500px;">
+            <div class="modal-header">
+                <h2>📊 Cambia Stato - <span id="statoComune"></span></h2>
+            </div>
+            <input type="hidden" id="statoRecordId">
+            <input type="hidden" id="statoListaSource"> <!-- 'enti' o 'comuniFasi' -->
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <button class="btn-stato btn-stato-dafare" onclick="applicaNuovoStato('Da Fare')">🔴 Da Fare</button>
+                <button class="btn-stato btn-stato-incorso" onclick="applicaNuovoStato('In Corso')">🟡 In Corso</button>
+                <button class="btn-stato btn-stato-completato" onclick="applicaNuovoStato('Completato')">🟢 Completato</button>
+                <button class="btn-stato btn-stato-nongestito" onclick="applicaNuovoStato('Non Gestito')">⚫ Non Gestito</button>
+            </div>
+            <div style="margin-top:20px;">
+                <button class="btn" id="btnCloseCambiaStatoModal">❌ Annulla</button>
+            </div>
         </div>
     </div>
-</div>
-    <!-- Modal Adempimento -->
+
+    <!-- ============================================================
+         MODAL ADEMPIMENTO (crea / modifica) - CON FASI
+         ============================================================ -->
     <div id="adempimentoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1475,17 +567,15 @@
             </div>
             <form id="adempimentoForm">
                 <input type="hidden" id="editAdempimentoId">
-                
+
                 <div class="form-group">
                     <label>Titolo *</label>
                     <input type="text" id="formTitolo" required placeholder="es. Versamento IMU">
                 </div>
-
                 <div class="form-group">
-                    <label>Descrizione</label>
-                    <textarea id="formDescrizione" rows="3" placeholder="Descrizione dettagliata..."></textarea>
+                    <label>Descrizione / Istruzioni operative</label>
+                    <textarea id="formDescrizione" rows="3" placeholder="Istruzioni dettagliate..."></textarea>
                 </div>
-
                 <div class="form-group">
                     <label>Tipologia *</label>
                     <select id="formTipologia" required>
@@ -1496,42 +586,52 @@
                         <option value="Altro">Altro</option>
                     </select>
                 </div>
-
-              <div class="form-group">
-    <label>👥 Responsabili * (uno o più)</label>
-    <div class="select-all-btns">
-        <button type="button" class="btn btn-sm" onclick="selectAllResponsabili()">✅ Tutti</button>
-        <button type="button" class="btn btn-sm" onclick="deselectAllResponsabili()">❌ Nessuno</button>
-    </div>
-    <div class="checkbox-grid" id="responsabiliCheckboxes" style="max-height: 200px;">
-       <div class="checkbox-item">
-    <input type="checkbox" name="responsabili" id="resp_andrea" value="Andrea">
-    <label for="resp_andrea">👤 Andrea</label>
-</div>
-<div class="checkbox-item">
-    <input type="checkbox" name="responsabili" id="resp_roberta" value="Roberta">
-    <label for="resp_roberta">👤 Roberta</label>
-</div>
-<div class="checkbox-item">
-    <input type="checkbox" name="responsabili" id="resp_nicoletta" value="Nicoletta">
-    <label for="resp_nicoletta">👤 Nicoletta</label>
-</div>
-<div class="checkbox-item">
-    <input type="checkbox" name="responsabili" id="resp_miriana" value="Miriana">
-    <label for="resp_miriana">👤 Miriana</label>
-</div>
-    </div>
-</div>
-
+                <div class="form-group">
+                    <label>👥 Responsabili * (uno o più)</label>
+                    <div class="select-all-btns">
+                        <button type="button" class="btn btn-sm" onclick="selectAllResponsabili()">✅ Tutti</button>
+                        <button type="button" class="btn btn-sm" onclick="deselectAllResponsabili()">❌ Nessuno</button>
+                    </div>
+                    <div class="checkbox-grid" id="responsabiliCheckboxes" style="max-height:200px;">
+                        <div class="checkbox-item"><input type="checkbox" name="responsabili" id="resp_andrea" value="Andrea"><label for="resp_andrea">👤 Andrea</label></div>
+                        <div class="checkbox-item"><input type="checkbox" name="responsabili" id="resp_roberta" value="Roberta"><label for="resp_roberta">👤 Roberta</label></div>
+                        <div class="checkbox-item"><input type="checkbox" name="responsabili" id="resp_nicoletta" value="Nicoletta"><label for="resp_nicoletta">👤 Nicoletta</label></div>
+                        <div class="checkbox-item"><input type="checkbox" name="responsabili" id="resp_miriana" value="Miriana"><label for="resp_miriana">👤 Miriana</label></div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label>Mese di Riferimento *</label>
                     <input type="month" id="formAnnoMese" required>
                 </div>
-
                 <div class="form-group">
-                    <label>Data Scadenza *</label>
+                    <label>Data Scadenza Principale *</label>
                     <input type="date" id="formDataScadenza" required>
                 </div>
+
+                <!-- ========== TOGGLE USA FASI ========== -->
+                <div class="form-group">
+                    <div class="usa-fasi-toggle">
+                        <input type="checkbox" id="chkUsaFasi" onchange="toggleFasiSection(this.checked)">
+                        <div>
+                            <label for="chkUsaFasi">🔷 Usa sistema Fasi</label><br>
+                            <small>Attiva per suddividere l'adempimento in più fasi con scadenze specifiche</small>
+                        </div>
+                    </div>
+
+                    <!-- Sezione fasi dinamica -->
+                    <div id="fasiInputSection">
+                        <div class="fasi-form-container">
+                            <div class="fasi-form-header">📋 Fasi dell'adempimento (ognuna con scadenza specifica)</div>
+                            <div id="fasiInputList">
+                                <!-- Le righe fasi vengono aggiunte dinamicamente -->
+                            </div>
+                            <button type="button" id="btnAggiungi-fase" onclick="aggiungiFaseInput()">
+                                ➕ Aggiungi Fase
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- ========== END FASI ========== -->
 
                 <div class="form-group">
                     <label>Comuni da Associare *</label>
@@ -1550,23 +650,21 @@
         </div>
     </div>
 
-    <!-- Modal Nuovo Comune -->
+    <!-- ============================================================
+         MODAL NUOVO COMUNE
+         ============================================================ -->
     <div id="comuneModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h2>🏛️ Nuovo Comune</h2>
-            </div>
+        <div class="modal-content" style="max-width:500px;">
+            <div class="modal-header"><h2>🏛️ Nuovo Comune</h2></div>
             <form id="comuneForm">
                 <div class="form-group">
                     <label>Nome Comune *</label>
                     <input type="text" id="formNomeComune" required placeholder="es. Milano, Bergamo...">
                 </div>
-
                 <div class="form-group">
                     <label>Provincia</label>
-                    <input type="text" id="formProvincia" placeholder="es. MI, BG, BS..." maxlength="2" style="text-transform: uppercase;">
+                    <input type="text" id="formProvincia" placeholder="es. MI, BG..." maxlength="2" style="text-transform:uppercase;">
                 </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success">💾 Crea Comune</button>
                     <button type="button" class="btn" id="btnCloseComuneModal">❌ Annulla</button>
@@ -1575,77 +673,59 @@
         </div>
     </div>
 
-<!-- Modal Duplica Adempimento -->
-<div id="duplicaModal" class="modal">
-    <div class="modal-content" style="max-width: 600px;">
-        <div class="modal-header">
-            <h2>📋 Duplica Adempimento Mensile</h2>
-        </div>
-        
-        <div style="background: #dbeafe; border: 2px solid #93c5fd; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span style="font-size: 18px;">ℹ️</span>
-                <strong style="color: #1e40af;">Stai per duplicare:</strong>
+    <!-- ============================================================
+         MODAL DUPLICA
+         ============================================================ -->
+    <div id="duplicaModal" class="modal">
+        <div class="modal-content" style="max-width:600px;">
+            <div class="modal-header"><h2>📋 Duplica Adempimento Mensile</h2></div>
+            <div style="background:#dbeafe;border:2px solid #93c5fd;border-radius:8px;padding:15px;margin-bottom:20px;">
+                <strong style="color:#1e40af;">Stai per duplicare:</strong>
+                <div id="duplicaAdempimentoInfo" style="font-size:14px;color:#1e40af;margin-top:8px;"></div>
             </div>
-            <div id="duplicaAdempimentoInfo" style="font-size: 14px; color: #1e40af; margin-left: 26px;"></div>
-        </div>
-        
-       <form id="duplicaForm">
-    <input type="hidden" id="duplicaAdempimentoId">
-    
-    <div class="form-group">
-        <label>📝 Titolo (puoi modificarlo)</label>
-        <input type="text" id="duplicaNuovoTitolo" required placeholder="es. Versamento IMU">
-    </div>
-
-    <div class="form-group">
-        <label>📋 Descrizione (puoi modificarla)</label>
-        <textarea id="duplicaNuovaDescrizione" rows="4" placeholder="Istruzioni operative..."></textarea>
-    </div>
-    
-    <div class="form-group">
-        <label>📅 Nuovo Mese di Riferimento *</label>
-        <input type="month" id="duplicaNuovoMese" required>
-    </div>
-
-            <div class="form-group">
-                <label>📅 Nuova Data Scadenza *</label>
-                <input type="date" id="duplicaNuovaScadenza" required>
-            </div>
-
-            <div class="form-group">
-                <label>👤 Responsabile (opzionale - lascia vuoto per mantenere)</label>
-                <select id="duplicaNuovoResponsabile">
-                    <option value="">Mantieni responsabile originale</option>
-                    <option value="Andrea">Andrea</option>
-                    <option value="Roberta">Roberta</option>
-                    <option value="Nicoletta">Nicoletta</option>
-                    <option value="Miriana">Miriana</option>
-                </select>
-            </div>
-
-            <div style="background: #fef3c7; border: 2px solid #fde68a; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
-                <div style="font-size: 13px; color: #92400e;">
-                    <strong>📌 Cosa verrà copiato:</strong>
-                    <ul style="margin: 8px 0 0 20px; line-height: 1.8;">
-                        <li>✅ Titolo adempimento</li>
-                        <li>✅ Descrizione/Istruzioni complete</li>
-                        <li>✅ Tipologia</li>
-                        <li>✅ Tutti i comuni assegnati</li>
-                    </ul>
-                    <strong style="display: block; margin-top: 8px;">⚠️ Tutti i comuni partiranno con stato "Da Fare" (0%)</strong>
+            <form id="duplicaForm">
+                <input type="hidden" id="duplicaAdempimentoId">
+                <div class="form-group">
+                    <label>📝 Titolo</label>
+                    <input type="text" id="duplicaNuovoTitolo" required>
                 </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-success">✅ Duplica Adempimento</button>
-                <button type="button" class="btn" id="btnCloseDuplicaModal">❌ Annulla</button>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label>📋 Descrizione</label>
+                    <textarea id="duplicaNuovaDescrizione" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>📅 Nuovo Mese *</label>
+                    <input type="month" id="duplicaNuovoMese" required>
+                </div>
+                <div class="form-group">
+                    <label>📅 Nuova Data Scadenza *</label>
+                    <input type="date" id="duplicaNuovaScadenza" required>
+                </div>
+                <div class="form-group">
+                    <label>👤 Responsabile (opzionale)</label>
+                    <select id="duplicaNuovoResponsabile">
+                        <option value="">Mantieni originale</option>
+                        <option value="Andrea">Andrea</option>
+                        <option value="Roberta">Roberta</option>
+                        <option value="Nicoletta">Nicoletta</option>
+                        <option value="Miriana">Miriana</option>
+                    </select>
+                </div>
+                <div style="background:#fef3c7;border:2px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:20px;font-size:13px;color:#92400e;">
+                    <strong>📌 Cosa viene copiato:</strong> Titolo, Descrizione, Tipologia, Comuni assegnati, Fasi (se presenti).<br>
+                    <strong>⚠️ Tutti i comuni partiranno con stato "Da Fare" (0%)</strong>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">✅ Duplica</button>
+                    <button type="button" class="btn" id="btnCloseDuplicaModal">❌ Annulla</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-    
-        <!-- Modal Note -->
+
+    <!-- ============================================================
+         MODAL NOTE
+         ============================================================ -->
     <div id="noteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1653,18 +733,11 @@
             </div>
             <form id="noteForm">
                 <input type="hidden" id="noteRecordId">
-                
+                <input type="hidden" id="noteListaSource"> <!-- 'enti' o 'comuniFasi' -->
                 <div class="form-group">
                     <label>📝 Note Operative</label>
-                    <textarea id="formNote" rows="8" placeholder="Aggiungi note operative per questo comune...
-
-Esempi:
-- Contattato responsabile il 05/01
-- In attesa documenti
-- Verificare entro fine mese
-- Note per prossimo follow-up"></textarea>
+                    <textarea id="formNote" rows="8" placeholder="Aggiungi note operative..."></textarea>
                 </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success">💾 Salva Note</button>
                     <button type="button" class="btn" id="btnCloseNoteModal">❌ Chiudi</button>
@@ -1672,10 +745,16 @@ Esempi:
             </form>
         </div>
     </div>
-    
-    <script>
-        console.log('🚀 Scadenziario V19 - VERSIONE COMPLETA');
 
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script>
+        console.log('🚀 Scadenziario V20 - Sistema Fasi');
+
+        // ============================================================
+        // CONFIG MSAL & SHAREPOINT
+        // ============================================================
         const msalConfig = {
             auth: {
                 clientId: '931c14fe-e538-4ae3-a336-0d3a9fd75c49',
@@ -1686,60 +765,62 @@ Esempi:
         };
 
         const loginRequest = {
-    scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'],
-    prompt: 'select_account'  // Forza selezione account ogni volta
-};
+            scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'],
+            prompt: 'select_account'
+        };
+
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
         const SHAREPOINT_HOSTNAME = 'studiogrismondi.sharepoint.com';
         const SITE_PATH = '/';
+
         const LISTS = {
-            COMUNI: 'Scadenziario_Comuni',
-            ADEMPIMENTI: 'Scadenziario_Adempimenti',
-            ENTI: 'Scadenziario_Enti'
+            COMUNI:       'Scadenziario_Comuni',
+            ADEMPIMENTI:  'Scadenziario_Adempimenti',
+            ENTI:         'Scadenziario_Enti',
+            // NUOVO - Sistema Fasi
+            FASI:         'Scadenziario_Fasi',         // fasi per adempimento
+            COMUNI_FASI:  'Scadenziario_Comuni_Fasi'   // comuni per ogni fase
         };
+
         const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
 
         let currentUser, userRole, accessToken, siteId;
         let allComuni = [], allAdempimenti = [], allEnti = [];
-        let meseCorrente = null;
+        let allFasi = [], allComuniFasi = [];       // NUOVO - dati fasi
+        let fasiInputCounter = 0;                   // contatore righe fasi nel form
 
-        // Funzione controllo scadenza sessione (15 giorni)
-function checkSessionExpiry() {
-    const lastLogin = localStorage.getItem('lastLogin');
-    const now = Date.now();
-    const fifteenDays = 15 * 24 * 60 * 60 * 1000; // 15 giorni
-    
-    if (lastLogin) {
-        const elapsed = now - parseInt(lastLogin);
-        
-        if (elapsed > fifteenDays) {
-            // Sessione scaduta
-            localStorage.removeItem('lastLogin');
-            alert('⏰ Sessione scaduta dopo 15 giorni.\n\nPer motivi di sicurezza, effettua nuovamente l\'accesso.');
-            logout();
-            return false;
+        // ============================================================
+        // SESSIONE
+        // ============================================================
+        function checkSessionExpiry() {
+            const lastLogin = localStorage.getItem('lastLogin');
+            const now = Date.now();
+            const fifteenDays = 15 * 24 * 60 * 60 * 1000;
+            if (lastLogin) {
+                const elapsed = now - parseInt(lastLogin);
+                if (elapsed > fifteenDays) {
+                    localStorage.removeItem('lastLogin');
+                    alert('⏰ Sessione scaduta dopo 15 giorni. Effettua nuovamente il login.');
+                    logout();
+                    return false;
+                }
+                return Math.ceil((fifteenDays - elapsed) / (24 * 60 * 60 * 1000));
+            }
+            localStorage.setItem('lastLogin', now.toString());
+            return 15;
         }
-        
-        // Calcola giorni rimanenti
-        const daysRemaining = Math.ceil((fifteenDays - elapsed) / (24 * 60 * 60 * 1000));
-        return daysRemaining;
-    }
-    
-    // Prima volta, salva timestamp
-    localStorage.setItem('lastLogin', now.toString());
-    return 15;
-}
 
-        // Funzione per escape HTML e prevenire problemi con caratteri speciali
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
-        
+        // ============================================================
+        // AUTH
+        // ============================================================
         async function login() {
             try {
                 await msalInstance.initialize();
@@ -1756,41 +837,21 @@ function escapeHtml(text) {
             try {
                 const account = msalInstance.getAllAccounts()[0];
                 if (!account) return;
-
-                // Controlla scadenza sessione
-const daysRemaining = checkSessionExpiry();
-if (daysRemaining === false) return; // Sessione scaduta
-
+                const daysRemaining = checkSessionExpiry();
+                if (daysRemaining === false) return;
                 currentUser = account;
-                const tokenResp = await msalInstance.acquireTokenSilent({ 
-                    ...loginRequest, 
-                    account: currentUser 
-                });
+                const tokenResp = await msalInstance.acquireTokenSilent({ ...loginRequest, account: currentUser });
                 accessToken = tokenResp.accessToken;
-                
                 userRole = currentUser.username.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'Admin' : 'User';
-                
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
                 document.getElementById('userName').textContent = currentUser.name || currentUser.username;
-                document.getElementById('userRole').textContent = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
-
-// Display giorni rimanenti sessione
-const sessionDays = checkSessionExpiry();
-const roleText = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
-document.getElementById('userRole').innerHTML = `
-    ${roleText}<br>
-    <span style="font-size: 11px; opacity: 0.8;">🔒 Sessione: ${sessionDays} giorni</span>
-`;
-                
+                const roleText = userRole === 'Admin' ? '👑 Amministratore' : '👤 Utente';
+                document.getElementById('userRole').innerHTML = `${roleText}<br><span style="font-size:11px;opacity:0.8;">🔒 Sessione: ${daysRemaining} giorni</span>`;
                 await loadData();
             } catch (err) {
-                console.error('Auth error:', err);
-                if (err.name === 'InteractionRequiredAuthError') {
-                    await login();
-                } else {
-                    showAlert('Errore autenticazione: ' + err.message, 'error');
-                }
+                if (err.name === 'InteractionRequiredAuthError') await login();
+                else showAlert('Errore autenticazione: ' + err.message, 'error');
             }
         }
 
@@ -1799,55 +860,32 @@ document.getElementById('userRole').innerHTML = `
             location.reload();
         }
 
+        // ============================================================
+        // GRAPH API
+        // ============================================================
         async function callGraph(endpoint, method = 'GET', body = null) {
-    // FIX 401: Auto-refresh token prima di ogni chiamata
-    try {
-        const tokenResponse = await msalInstance.acquireTokenSilent({
-            scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'],
-            account: currentUser
-        });
-        accessToken = tokenResponse.accessToken;
-    } catch (error) {
-        console.error('❌ Token refresh failed:', error);
-        if (error.name === 'InteractionRequiredAuthError') {
-            alert('⚠️ Sessione scaduta. Effettua nuovamente il login.');
-            await logout();
-            return;
+            try {
+                const tokenResponse = await msalInstance.acquireTokenSilent({
+                    scopes: ['User.Read', 'Sites.Read.All', 'Sites.ReadWrite.All'],
+                    account: currentUser
+                });
+                accessToken = tokenResponse.accessToken;
+            } catch (error) {
+                if (error.name === 'InteractionRequiredAuthError') { await logout(); return; }
+            }
+            const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
+            const options = {
+                method,
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }
+            };
+            if (body && (method === 'POST' || method === 'PATCH')) options.body = JSON.stringify(body);
+            const resp = await fetch(url, options);
+            if (resp.status === 401) { alert('⚠️ Sessione scaduta.'); await logout(); return; }
+            if (!resp.ok) { const err = await resp.text(); throw new Error(`API Error: ${resp.status} - ${err}`); }
+            if (method === 'DELETE' || resp.status === 204) return { success: true };
+            return await resp.json();
         }
-    }
-    
-    const url = `https://graph.microsoft.com/v1.0/${endpoint}`;
-    const options = {
-        method,
-        headers: { 
-            'Authorization': `Bearer ${accessToken}`, 
-            'Content-Type': 'application/json' 
-        }
-    };
 
-    if (body && (method === 'POST' || method === 'PATCH')) {
-        options.body = JSON.stringify(body);
-    }
-
-    const resp = await fetch(url, options);
-    
-    // FIX 401: Controlla se token è scaduto
-    if (resp.status === 401) {
-        alert('⚠️ Sessione scaduta. Effettua nuovamente il login.');
-        await logout();
-        return;
-    }
-    
-    if (!resp.ok) {
-        const errorText = await resp.text();
-        console.error('API Error:', resp.status, errorText);
-        throw new Error(`API Error: ${resp.status}`);
-    }
-    
-    if (method === 'DELETE' || resp.status === 204) return { success: true };
-    return await resp.json();
-}
-            
         async function getSiteId() {
             if (siteId) return siteId;
             const result = await callGraph(`sites/${SHAREPOINT_HOSTNAME}:${SITE_PATH}`);
@@ -1862,902 +900,1013 @@ document.getElementById('userRole').innerHTML = `
         }
 
         async function createItem(listName, data) {
-    const site = await getSiteId();
-    
-    // DEBUG: Vedi cosa inviamo
-    console.log('📤 createItem - Lista:', listName);
-    console.log('📤 createItem - Data:', JSON.stringify(data, null, 2));
-    
-    return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
-}
+            const site = await getSiteId();
+            return await callGraph(`sites/${site}/lists/${listName}/items`, 'POST', { fields: data });
+        }
 
         async function updateItem(listName, itemId, data) {
-    const site = await getSiteId();
-    
-    // DEBUG: Vedi cosa inviamo
-    console.log('📤 updateItem - Lista:', listName, '- ID:', itemId);
-    console.log('📤 updateItem - Data:', JSON.stringify(data, null, 2));
-    
-    return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
-}
+            const site = await getSiteId();
+            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}/fields`, 'PATCH', data);
+        }
 
         async function deleteItem(listName, itemId) {
-    const site = await getSiteId();
-    return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
-}
-       function updateDashboardSummary() {
-    if (userRole !== 'Admin') return;
-    
-    const oggi = new Date();
-    oggi.setHours(0, 0, 0, 0);
-    
-    const totali = allAdempimenti.length;
-    
-    const scaduti = allAdempimenti.filter(a => {
-        if (!a.DataScadenza) return false;
-        const scadenza = new Date(a.DataScadenza);
-        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
-        const completato = enti.length > 0 && 
-                          (enti.filter(e => e.StatoEnte === 'Completato').length + 
-                           enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
-        return scadenza < oggi && !completato;
-    }).length;
-    
-    const urgenti = allAdempimenti.filter(a => {
-        if (!a.DataScadenza) return false;
-        const scadenza = new Date(a.DataScadenza);
-        const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
-        const completato = enti.length > 0 && 
-                          (enti.filter(e => e.StatoEnte === 'Completato').length + 
-                           enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
-        return diff >= 0 && diff <= 7 && !completato;
-    }).length;
-    
-    const completati = allAdempimenti.filter(a => {
-        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
-        return enti.length > 0 && 
-               (enti.filter(e => e.StatoEnte === 'Completato').length + 
-                enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
-    }).length;
-    
-    const comuniTotali = allEnti.length;
-    const comuniCompletati = allEnti.filter(e => 
-        e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito'
-    ).length;
-    const progressPercentuale = comuniTotali > 0 ? 
-        Math.round((comuniCompletati / comuniTotali) * 100) : 0;
-    
-    document.getElementById('summary-totali').textContent = totali;
-    document.getElementById('summary-scaduti').textContent = scaduti;
-    document.getElementById('summary-urgenti').textContent = urgenti;
-    document.getElementById('summary-completati').textContent = completati;
-    document.getElementById('summary-comuni').textContent = comuniTotali;
-    document.getElementById('summary-progress').textContent = progressPercentuale + '%';
-    
-    document.getElementById('dashboardSummary').style.display = 'grid';
-}
+            const site = await getSiteId();
+            return await callGraph(`sites/${site}/lists/${listName}/items/${itemId}`, 'DELETE');
+        }
+
+        // ============================================================
+        // LOAD DATA
+        // ============================================================
         async function loadData() {
             try {
                 showLoading(true);
-                
+
                 allComuni = (await getListItems(LISTS.COMUNI)).filter(c => c.StatoEnte === 'Attivo');
                 allAdempimenti = await getListItems(LISTS.ADEMPIMENTI);
 
-// SharePoint restituisce già un array per campi multi-scelta
-// Ma potrebbe restituire anche stringa singola per retrocompatibilità
-allAdempimenti = allAdempimenti.map(function(a) {
-    if (a.Responsabile) {
-        if (typeof a.Responsabile === 'string' && a.Responsabile.indexOf('; ') !== -1) {
-            a.Responsabile = a.Responsabile.split('; ').filter(function(r) { return r.trim(); });
-        } else if (!Array.isArray(a.Responsabile)) {
-            a.Responsabile = [a.Responsabile];
-        }
-    } else {
-        a.Responsabile = [];
-    }
-    return a;
-});
+                // Normalizza Responsabile array
+                allAdempimenti = allAdempimenti.map(function(a) {
+                    if (a.Responsabile) {
+                        if (typeof a.Responsabile === 'string' && a.Responsabile.indexOf('; ') !== -1) {
+                            a.Responsabile = a.Responsabile.split('; ').filter(r => r.trim());
+                        } else if (!Array.isArray(a.Responsabile)) {
+                            a.Responsabile = [a.Responsabile];
+                        }
+                    } else { a.Responsabile = []; }
+                    return a;
+                });
+
                 allEnti = await getListItems(LISTS.ENTI);
-                
+
+                // Carica dati fasi (con gestione errori se lista non esiste ancora)
+                try {
+                    allFasi = await getListItems(LISTS.FASI);
+                } catch(e) {
+                    console.warn('Lista Fasi non trovata - funzionalità fasi disabilitata:', e.message);
+                    allFasi = [];
+                }
+                try {
+                    allComuniFasi = await getListItems(LISTS.COMUNI_FASI);
+                } catch(e) {
+                    console.warn('Lista ComuniFasi non trovata:', e.message);
+                    allComuniFasi = [];
+                }
+
                 populateFilterMesi();
                 renderAdempimenti();
-
-                if (userRole === 'Admin') {
-    updateDashboardSummary();
-}
+                if (userRole === 'Admin') updateDashboardSummary();
                 showLoading(false);
                 showAlert('✅ Dati caricati con successo!', 'success');
+
             } catch (err) {
-                console.error('❌ Load error:', err);
+                console.error('Load error:', err);
                 showAlert('❌ Errore caricamento: ' + err.message, 'error');
                 showLoading(false);
             }
         }
 
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        function updateDashboardSummary() {
+            if (userRole !== 'Admin') return;
+            const oggi = new Date(); oggi.setHours(0,0,0,0);
+            const totali = allAdempimenti.length;
+            const isAdempimentoCompletato = (a) => {
+                if (a.HasFasi) {
+                    const fasi = allFasi.filter(f => f.AdempimentoID == a.ID);
+                    if (fasi.length === 0) return false;
+                    return fasi.every(f => {
+                        const cf = allComuniFasi.filter(c => c.FaseID == f.ID && c.Attivo !== false);
+                        return cf.length > 0 && cf.every(c => c.StatoEnte === 'Completato' || c.StatoEnte === 'Non Gestito');
+                    });
+                } else {
+                    const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+                    return enti.length > 0 && enti.every(e => e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito');
+                }
+            };
+            const scaduti = allAdempimenti.filter(a => {
+                if (!a.DataScadenza) return false;
+                return new Date(a.DataScadenza) < oggi && !isAdempimentoCompletato(a);
+            }).length;
+            const urgenti = allAdempimenti.filter(a => {
+                if (!a.DataScadenza) return false;
+                const diff = Math.floor((new Date(a.DataScadenza) - oggi) / (1000*60*60*24));
+                return diff >= 0 && diff <= 7 && !isAdempimentoCompletato(a);
+            }).length;
+            const completati = allAdempimenti.filter(a => isAdempimentoCompletato(a)).length;
+
+            const allComuniTracked = [...allEnti, ...allComuniFasi.filter(c => c.Attivo !== false)];
+            const progressPerc = allComuniTracked.length > 0 ?
+                Math.round((allComuniTracked.filter(e => e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito').length / allComuniTracked.length) * 100) : 0;
+
+            document.getElementById('summary-totali').textContent = totali;
+            document.getElementById('summary-scaduti').textContent = scaduti;
+            document.getElementById('summary-urgenti').textContent = urgenti;
+            document.getElementById('summary-completati').textContent = completati;
+            document.getElementById('summary-comuni').textContent = allComuniTracked.length;
+            document.getElementById('summary-progress').textContent = progressPerc + '%';
+            document.getElementById('dashboardSummary').style.display = 'grid';
+        }
+
+        // ============================================================
+        // FILTER MESI
+        // ============================================================
         function populateFilterMesi() {
             const select = document.getElementById('filterMese');
             if (!select) return;
-            
             const mesi = new Set();
-            allAdempimenti.forEach(a => {
-                if (a.AnnoMese) mesi.add(a.AnnoMese);
-            });
-            
-            const sortedMesi = Array.from(mesi).sort().reverse();
-            
+            allAdempimenti.forEach(a => { if (a.AnnoMese) mesi.add(a.AnnoMese); });
+            const sorted = Array.from(mesi).sort().reverse();
             select.innerHTML = '<option value="">Tutti i mesi</option>';
-            sortedMesi.forEach(mese => {
-                const option = document.createElement('option');
-                option.value = mese;
-                option.textContent = formatMese(mese);
-                select.appendChild(option);
+            sorted.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; opt.textContent = formatMese(m);
+                select.appendChild(opt);
             });
-            
-           // Imposta mese corrente come default
-const oggi = new Date();
-const meseOggi = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).padStart(2, '0')}`;
-
-if (sortedMesi.includes(meseOggi)) {
-    // Se esiste il mese corrente, selezionalo
-    select.value = meseOggi;
-    meseCorrente = meseOggi;
-} else if (sortedMesi.length > 0) {
-    // Altrimenti seleziona il più recente
-    select.value = sortedMesi[0];
-    meseCorrente = sortedMesi[0];
-}
+            const oggi = new Date();
+            const meseOggi = `${oggi.getFullYear()}-${String(oggi.getMonth()+1).padStart(2,'0')}`;
+            if (sorted.includes(meseOggi)) select.value = meseOggi;
+            else if (sorted.length > 0) select.value = sorted[0];
         }
 
+        // ============================================================
+        // RENDER ADEMPIMENTI
+        // ============================================================
         function renderAdempimenti() {
             const container = document.getElementById('adempimentiContainer');
             if (!container) return;
-            
-            const filterMese = document.getElementById('filterMese')?.value || '';
-            const filterTipologia = document.getElementById('filterTipologia')?.value || '';
-            const filterStato = document.getElementById('filterStato')?.value || '';
-            const filterResponsabile = document.getElementById('filterResponsabile')?.value || '';
-            
+
+            const fM = document.getElementById('filterMese')?.value || '';
+            const fT = document.getElementById('filterTipologia')?.value || '';
+            const fS = document.getElementById('filterStato')?.value || '';
+            const fR = document.getElementById('filterResponsabile')?.value || '';
+
             let filtered = [...allAdempimenti];
-       // FILTRO PRIVACY per Operatori
-if (userRole === 'Operatore' && window.currentUserName) {
-    filtered = filtered.filter(function(a) {
-        if (!a.Responsabile || !Array.isArray(a.Responsabile)) return false;
-        return a.Responsabile.indexOf(window.currentUserName) !== -1;
-    });
-        
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">📋</div>
-                    <h3>Nessun adempimento assegnato</h3>
-                    <p>Al momento non hai adempimenti assegnati.<br>
-                    Contatta Andrea o Roberta per maggiori informazioni.</p>
-                </div>
-            `;
-            return;
-        }
-    }
-            
-            if (filterMese) filtered = filtered.filter(a => a.AnnoMese === filterMese);
-            if (filterTipologia) filtered = filtered.filter(a => a.Tipologia === filterTipologia);
-            if (filterResponsabile) filtered = filtered.filter(a => a.Responsabile === filterResponsabile);
-            
-            if (filterStato) {
+
+            // Privacy operatori
+            if (userRole === 'Operatore' && window.currentUserName) {
+                filtered = filtered.filter(a => Array.isArray(a.Responsabile) && a.Responsabile.includes(window.currentUserName));
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Nessun adempimento assegnato</h3></div>';
+                    return;
+                }
+            }
+
+            if (fM) filtered = filtered.filter(a => a.AnnoMese === fM);
+            if (fT) filtered = filtered.filter(a => a.Tipologia === fT);
+            if (fR) filtered = filtered.filter(a => Array.isArray(a.Responsabile) && a.Responsabile.includes(fR));
+            if (fS) {
                 filtered = filtered.filter(a => {
-                    const entiAdempimento = allEnti.filter(e => e.AdempimentoID == a.ID);
-                    return entiAdempimento.some(e => e.StatoEnte === filterStato);
+                    if (a.HasFasi) {
+                        const cf = allComuniFasi.filter(c => c.AdempimentoID == a.ID);
+                        return cf.some(c => c.StatoEnte === fS);
+                    } else {
+                        return allEnti.filter(e => e.AdempimentoID == a.ID).some(e => e.StatoEnte === fS);
+                    }
                 });
             }
-            
+
             if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📋</div>
-                        <h3>Nessun adempimento trovato</h3>
-                        <p>Clicca "Nuovo Adempimento" per iniziare!</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Nessun adempimento trovato</h3><p>Clicca "Nuovo Adempimento" per iniziare!</p></div>';
                 return;
             }
-            filtered.sort((a, b) => {
-    const dataA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31');
-    const dataB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31');
-    return dataA - dataB;
-});
+
+            filtered.sort((a,b) => {
+                const dA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31');
+                const dB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31');
+                return dA - dB;
+            });
+
             container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
             attachEventListeners();
         }
 
+        // ============================================================
+        // CARD ADEMPIMENTO - differenzia con/senza fasi
+        // ============================================================
         function createAdempimentoCard(adempimento) {
-            const enti = allEnti
-    .filter(e => e.AdempimentoID == adempimento.ID)
-    .sort((a, b) => a.Comune.localeCompare(b.Comune));
-            
-            const totali = enti.length;
-            const daFare = enti.filter(e => e.StatoEnte === 'Da Fare').length;
-const inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
-const completati = enti.filter(e => e.StatoEnte === 'Completato').length;
-const nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
-            
-            const progressPercentuale = totali > 0 ? 
-    Math.round(((completati + nonGestiti) / totali) * 100) : 0;
+            const hasFasi = adempimento.HasFasi === true || adempimento.HasFasi === 'true';
 
-            // Verifica se adempimento è completato
-const isCompletato = totali > 0 && (completati + nonGestiti) === totali;
-            
-           const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
-const oggi = new Date();
-oggi.setHours(0, 0, 0, 0);
+            // Calcola progresso e stati
+            let totali, daFare, inCorso, completati, nonGestiti, progressPercentuale, isCompletato;
 
-let scadenzaClass = 'scadenza-ok';
-let scadenzaText = scadenza ? scadenza.toLocaleDateString('it-IT') : '-';
+            if (hasFasi) {
+                const fasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID);
+                const comuniF = allComuniFasi.filter(c => c.AdempimentoID == adempimento.ID && c.Attivo !== false);
+                totali = comuniF.length;
+                daFare = comuniF.filter(c => c.StatoEnte === 'Da Fare').length;
+                inCorso = comuniF.filter(c => c.StatoEnte === 'In Corso').length;
+                completati = comuniF.filter(c => c.StatoEnte === 'Completato').length;
+                nonGestiti = comuniF.filter(c => !c.StatoEnte || c.StatoEnte === 'Non Gestito').length;
+                progressPercentuale = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
+                isCompletato = totali > 0 && (completati + nonGestiti) === totali;
+            } else {
+                const enti = allEnti.filter(e => e.AdempimentoID == adempimento.ID).sort((a,b) => a.Comune.localeCompare(b.Comune));
+                totali = enti.length;
+                daFare = enti.filter(e => e.StatoEnte === 'Da Fare').length;
+                inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
+                completati = enti.filter(e => e.StatoEnte === 'Completato').length;
+                nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
+                progressPercentuale = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
+                isCompletato = totali > 0 && (completati + nonGestiti) === totali;
+            }
 
-// Se adempimento completato, NON evidenziare scadenza
-if (scadenza && !isCompletato) {
-    const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-    if (diff < 0) {
-        scadenzaClass = 'scadenza-danger';
-        scadenzaText += ' ⚠️ SCADUTO';
-    } else if (diff <= 7) {
-        scadenzaClass = 'scadenza-warning';
-        scadenzaText += ` (${diff}gg)`;
-    }
-}
-            
+            // Scadenza
+            const scadenza = adempimento.DataScadenza ? new Date(adempimento.DataScadenza) : null;
+            const oggi = new Date(); oggi.setHours(0,0,0,0);
+            let scadenzaClass = 'scadenza-ok';
+            let scadenzaText = scadenza ? scadenza.toLocaleDateString('it-IT') : '-';
+            if (scadenza && !isCompletato) {
+                const diff = Math.floor((scadenza - oggi) / (1000*60*60*24));
+                if (diff < 0) { scadenzaClass = 'scadenza-danger'; scadenzaText += ' ⚠️ SCADUTO'; }
+                else if (diff <= 7) { scadenzaClass = 'scadenza-warning'; scadenzaText += ` (${diff}gg)`; }
+            }
+
+            const responsabiliHtml = adempimento.Responsabile && adempimento.Responsabile.length > 0
+                ? adempimento.Responsabile.map(r => `<span class="responsabile-badge">👤 ${r}</span>`).join(' ')
+                : '';
+
+            const fasiBadge = hasFasi ? `<span class="badge-fasi">⚡ ${allFasi.filter(f => f.AdempimentoID == adempimento.ID).length} FASI</span>` : '';
+
+            const innerContent = hasFasi
+                ? createFasiSection(adempimento)
+                : createComuniSection(adempimento);
+
+            const innerClass = hasFasi ? 'fasi-container' : 'comuni-list';
+            const innerId = hasFasi ? `fasi-container-${adempimento.ID}` : `comuni-list-${adempimento.ID}`;
+
             return `
-                <div class="adempimento-card">
-                    <div class="adempimento-header adempimento-toggle ${isCompletato ? 'adempimento-completato' : ''}" data-id="${adempimento.ID}">
-                        <div style="flex: 1;">
-                            <div class="adempimento-titolo">
-    ${isCompletato ? '✅ ' : ''}${adempimento.Title || 'Senza titolo'}${isCompletato ? ' - COMPLETATO' : ''}
-</div>
-                            <div class="adempimento-meta">
-                               📅 ${formatMese(adempimento.AnnoMese)} | 
-${getIconaTipologia(adempimento.Tipologia)} ${adempimento.Tipologia} | 
-<span class="${scadenzaClass}">⏰ ${scadenzaText}</span>
-                                ${adempimento.Responsabile && Array.isArray(adempimento.Responsabile) && adempimento.Responsabile.length > 0 ? `
-    | ${adempimento.Responsabile.map(r => `<span class="responsabile-badge">👤 ${r}</span>`).join(' ')}
-` : adempimento.Responsabile ? `
-    | <span class="responsabile-badge">👤 ${adempimento.Responsabile}</span>
-` : ''}
-                            </div>
+            <div class="adempimento-card">
+                <div class="adempimento-header adempimento-toggle ${isCompletato ? 'adempimento-completato' : ''}" data-id="${adempimento.ID}" data-has-fasi="${hasFasi}">
+                    <div style="flex:1;">
+                        <div class="adempimento-titolo">
+                            ${isCompletato ? '✅ ' : ''}${escapeHtml(adempimento.Title || 'Senza titolo')}${isCompletato ? ' - COMPLETATO' : ''}
                         </div>
-                        <div class="adempimento-stats">
-                            <span class="stat-badge totali">${totali} totali</span>
-                            ${isCompletato ? '<span class="stat-badge" style="background: #10b981; color: white; font-size: 12px; padding: 5px 12px;">✅ COMPLETATO</span>' : ''}
-                            ${daFare > 0 ? `<span class="stat-badge non-gestiti">🔴 ${daFare}</span>` : ''}
-                            ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
-                            ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
-                            ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti-grigio">⚫ ${nonGestiti}</span>` : ''}
-                            <div class="progress-mini" title="${progressPercentuale}% completato">
-                                <div class="progress-mini-fill" style="width: ${progressPercentuale}%"></div>
-                            </div>
-                            
-                            <div class="adempimento-actions">
-    <button class="icon-btn" onclick="event.stopPropagation(); editAdempimento(${adempimento.ID})" title="Modifica">
-        ✏️
-    </button>
-    <button class="icon-btn" onclick="event.stopPropagation(); openDuplicaModal(${adempimento.ID})" title="Duplica in altro mese" style="color: #3b82f6;">
-        📋
-    </button>
-    <button class="icon-btn icon-btn-danger" onclick="event.stopPropagation(); deleteAdempimento(${adempimento.ID})" title="Elimina">
-        🗑️
-    </button>
-</div>
-                            <span class="expand-icon">▼</span>
+                        <div class="adempimento-meta">
+                            📅 ${formatMese(adempimento.AnnoMese)} |
+                            ${getIconaTipologia(adempimento.Tipologia)} ${adempimento.Tipologia} |
+                            <span class="${scadenzaClass}">⏰ ${scadenzaText}</span>
+                            ${responsabiliHtml ? '| ' + responsabiliHtml : ''}
                         </div>
                     </div>
-                    
-                    <div class="comuni-list" id="comuni-list-${adempimento.ID}">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #f0f9ff; border-radius: 8px; margin-bottom: 10px;">
-        <span style="font-size: 13px; font-weight: 600; color: #1e40af;">📍 Stai lavorando su: ${adempimento.Title}</span>
-        <button class="btn btn-sm" onclick="tornaInAlto()" style="background: #3b82f6;">⬆️ Torna Su</button>
-    </div>
-    <div class="comuni-legenda">
-    <div class="legenda-item">
-        <span class="legenda-icon">🔴</span>
-        <span class="legenda-text">Da Fare</span>
-    </div>
-    <div class="legenda-item">
-        <span class="legenda-icon">🟡</span>
-        <span class="legenda-text">In Corso</span>
-    </div>
-    <div class="legenda-item">
-        <span class="legenda-icon">🟢</span>
-        <span class="legenda-text">Completato</span>
-    </div>
-    <div class="legenda-item">
-        <span class="legenda-icon">⚫</span>
-        <span class="legenda-text">Non Gestito</span>
-    </div>
-</div>
-
-${adempimento.Descrizione && adempimento.Descrizione.trim() !== '' ? `
-    <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-            <span style="font-size: 16px;">📋</span>
-            <strong style="color: #92400e;">Istruzioni Operative:</strong>
-        </div>
-        <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; color: #78350f; line-height: 1.6;">
-    ${escapeHtml(adempimento.Descrizione)}
-</div>
-` : ''}
-
-                        <div class="comuni-controls">
-                            <input type="text" 
-                                   class="search-box" 
-                                   placeholder="🔍 Cerca comune..." 
-                                   oninput="filterComuni(${adempimento.ID}, this.value)">
-                            <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID}, 'nome')">🔤 Nome</button>
-                            <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID}, 'stato')">🚦 Stato</button>
-                            <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID}, 'progress')">📊 Progress</button>
+                    <div class="adempimento-stats">
+                        ${fasiBadge}
+                        <span class="stat-badge totali">${totali} totali</span>
+                        ${isCompletato ? '<span class="stat-badge" style="background:#10b981;color:white;padding:5px 12px;">✅ COMPLETATO</span>' : ''}
+                        ${daFare > 0 ? `<span class="stat-badge non-gestiti">🔴 ${daFare}</span>` : ''}
+                        ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
+                        ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
+                        ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti-grigio">⚫ ${nonGestiti}</span>` : ''}
+                        <div class="progress-mini" title="${progressPercentuale}%">
+                            <div class="progress-mini-fill" style="width:${progressPercentuale}%"></div>
                         </div>
-                       <div class="comuni-grid" id="comuni-grid-${adempimento.ID}">
-    ${enti.length > 0 ? enti.map(e => createComuneCard(e)).join('') : '<p style="text-align: center; padding: 20px; color: #9ca3af; grid-column: 1 / -1;">Nessun comune assegnato</p>'}
-</div>
+                        <div class="adempimento-actions">
+                            <button class="icon-btn" onclick="event.stopPropagation();editAdempimento(${adempimento.ID})" title="Modifica">✏️</button>
+                            <button class="icon-btn" onclick="event.stopPropagation();openDuplicaModal(${adempimento.ID})" title="Duplica" style="color:#3b82f6;">📋</button>
+                            <button class="icon-btn" onclick="event.stopPropagation();deleteAdempimento(${adempimento.ID})" title="Elimina" style="color:#ef4444;">🗑️</button>
+                        </div>
+                        <span class="expand-icon">▼</span>
                     </div>
                 </div>
-            `;
+
+                <div class="${innerClass}" id="${innerId}">
+                    ${innerContent}
+                </div>
+            </div>`;
         }
 
-function createComuneCard(ente) {
-    const stato = ente.StatoEnte || 'Da Fare';
-    const progress = ente.ProgressEnte || 0;
-  const note = ente.NoteEnte || '';
-    
-    // Determina icona e testo in base allo stato
-    let statoIcon = '🔴';
-    let statoText = 'Da Fare';
-    let statoClass = 'status-btn-dafare';
-    
-    if (stato === 'In Corso') {
-        statoIcon = '🟡';
-        statoText = 'In Corso';
-        statoClass = 'status-btn-incorso';
-    } else if (stato === 'Completato') {
-        statoIcon = '🟢';
-        statoText = 'Completato';
-        statoClass = 'status-btn-completato';
-    } else if (stato === 'Non Gestito') {
-        statoIcon = '⚫';
-        statoText = 'Non Gestito';
-        statoClass = 'status-btn-nongestito';
-    }
-    
-    return `
-        <div class="comune-card" data-comune="${ente.Comune}">
-            <div class="comune-nome">${ente.Comune}</div>
-            
-            <div class="comune-status-display" onclick="openCambiaStatoModal(${ente.ID}, '${ente.Comune}', '${stato}')">
-                <button class="status-btn-single ${statoClass}">
-                    ${statoIcon} ${statoText}
-                </button>
-            </div>
-            
-            <div class="progress-bar-small">
-                <div class="progress-fill" style="width: ${progress}%"></div>
-            </div>
-            
-            <div class="comune-actions-small">
-                <span class="progress-text-small">${progress}%</span>
-                <button class="icon-btn-small" 
-        data-ente-id="${ente.ID}" 
-        data-comune="${ente.Comune}"
-        onclick="event.stopPropagation(); openNoteModal(${ente.ID}, \`${ente.Comune.replace(/\`/g, '').replace(/'/g, "\\'")}\`)" 
-        title="Note ${ente.NoteEnte && ente.NoteEnte.trim() ? '(già inserita)' : ''}">
-    ${ente.NoteEnte && ente.NoteEnte.trim() !== '' ? '📝✅' : '📝'}
-</button>
-            </div>
-        </div>
-    `;
-}
+        // ============================================================
+        // SEZIONE COMUNI (adempimento senza fasi) - identica alla V19
+        // ============================================================
+        function createComuniSection(adempimento) {
+            const enti = allEnti.filter(e => e.AdempimentoID == adempimento.ID).sort((a,b) => a.Comune.localeCompare(b.Comune));
 
+            return `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:#f0f9ff;border-radius:8px;margin-bottom:10px;">
+                <span style="font-size:13px;font-weight:600;color:#1e40af;">📍 ${escapeHtml(adempimento.Title)}</span>
+                <button class="btn btn-sm" onclick="tornaInAlto()" style="background:#3b82f6;">⬆️ Torna Su</button>
+            </div>
+            <div class="comuni-legenda">
+                <div class="legenda-item"><span>🔴</span> Da Fare</div>
+                <div class="legenda-item"><span>🟡</span> In Corso</div>
+                <div class="legenda-item"><span>🟢</span> Completato</div>
+                <div class="legenda-item"><span>⚫</span> Non Gestito</div>
+            </div>
+            ${adempimento.Descrizione && adempimento.Descrizione.trim() !== '' ? `
+            <div style="background:#fffbeb;border:2px solid #fde68a;border-radius:8px;padding:15px;margin-bottom:15px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span>📋</span><strong style="color:#92400e;">Istruzioni Operative:</strong></div>
+                <div style="white-space:pre-wrap;font-family:'Courier New',monospace;font-size:12px;color:#78350f;line-height:1.6;">${escapeHtml(adempimento.Descrizione)}</div>
+            </div>` : ''}
+            <div class="comuni-controls">
+                <input type="text" class="search-box" placeholder="🔍 Cerca comune..." oninput="filterComuni(${adempimento.ID}, this.value)">
+                <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'nome')">🔤 Nome</button>
+                <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'stato')">🚦 Stato</button>
+                <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'progress')">📊 Progress</button>
+            </div>
+            <div class="comuni-grid" id="comuni-grid-${adempimento.ID}">
+                ${enti.length > 0 ? enti.map(e => createComuneCard(e, 'enti')).join('') : '<p style="text-align:center;padding:20px;color:#9ca3af;grid-column:1/-1;">Nessun comune assegnato</p>'}
+            </div>`;
+        }
+
+        // ============================================================
+        // SEZIONE FASI (adempimento con fasi) - NUOVO
+        // ============================================================
+        function createFasiSection(adempimento) {
+            const fasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0));
+            const oggi = new Date(); oggi.setHours(0,0,0,0);
+
+            return `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:#f3e8ff;border-radius:8px;margin-bottom:12px;border:2px solid #ddd6fe;">
+                <span style="font-size:13px;font-weight:700;color:#7c3aed;">⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length} Fasi</span>
+                <button class="btn btn-sm" onclick="tornaInAlto()" style="background:#9b59b6;">⬆️ Torna Su</button>
+            </div>
+            ${adempimento.Descrizione && adempimento.Descrizione.trim() ? `
+            <div style="background:#fffbeb;border:2px solid #fde68a;border-radius:8px;padding:15px;margin-bottom:15px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span>📋</span><strong style="color:#92400e;">Istruzioni:</strong></div>
+                <div style="white-space:pre-wrap;font-family:'Courier New',monospace;font-size:12px;color:#78350f;line-height:1.6;">${escapeHtml(adempimento.Descrizione)}</div>
+            </div>` : ''}
+            ${fasi.length === 0 ? '<p style="text-align:center;padding:30px;color:#9ca3af;">Nessuna fase configurata</p>' :
+                fasi.map((fase, idx) => createFaseCard(fase, idx + 1, oggi)).join('')
+            }`;
+        }
+
+        // ============================================================
+        // CARD FASE
+        // ============================================================
+        function createFaseCard(fase, ordine, oggi) {
+            const comuniF = allComuniFasi
+                .filter(c => c.FaseID == fase.ID && c.Attivo !== false)
+                .sort((a,b) => a.Comune.localeCompare(b.Comune));
+
+            const totali = comuniF.length;
+            const completati = comuniF.filter(c => c.StatoEnte === 'Completato').length;
+            const nonGestiti = comuniF.filter(c => !c.StatoEnte || c.StatoEnte === 'Non Gestito').length;
+            const inCorso = comuniF.filter(c => c.StatoEnte === 'In Corso').length;
+            const daFare = comuniF.filter(c => c.StatoEnte === 'Da Fare').length;
+            const progressFase = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
+            const fasCompletata = totali > 0 && (completati + nonGestiti) === totali;
+
+            // Scadenza fase
+            let scadenzaFaseClass = 'scadenza-fase-ok';
+            let scadenzaFaseText = '-';
+            if (fase.DataScadenzaFase) {
+                const scadFase = new Date(fase.DataScadenzaFase);
+                scadenzaFaseText = scadFase.toLocaleDateString('it-IT');
+                const diff = Math.floor((scadFase - oggi) / (1000*60*60*24));
+                if (diff < 0 && !fasCompletata) { scadenzaFaseClass = 'scadenza-fase-danger'; scadenzaFaseText += ' ⚠️'; }
+                else if (diff >= 0 && diff <= 7 && !fasCompletata) { scadenzaFaseClass = 'scadenza-fase-warning'; scadenzaFaseText += ` (${diff}gg)`; }
+            }
+
+            const statoIcon = fasCompletata ? '✅' : (inCorso > 0 ? '🟡' : (daFare === totali ? '⚫' : '🔴'));
+
+            return `
+            <div class="fase-card">
+                <div class="fase-header" onclick="toggleFaseComuni('fase-comuni-${fase.ID}', this)">
+                    <div class="fase-ordine">${ordine}</div>
+                    <div class="fase-info">
+                        <div class="fase-title"><span>${statoIcon}</span> ${escapeHtml(fase.Title)}</div>
+                        <div class="fase-meta">
+                            <span class="${scadenzaFaseClass}">📅 ${scadenzaFaseText}</span>
+                            <span>${totali} comuni</span>
+                            <span>${progressFase}%</span>
+                            ${daFare > 0 ? `<span style="color:#991b1b;">🔴 ${daFare}</span>` : ''}
+                            ${inCorso > 0 ? `<span style="color:#92400e;">🟡 ${inCorso}</span>` : ''}
+                            ${completati > 0 ? `<span style="color:#065f46;">🟢 ${completati}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="fase-actions">
+                        <div class="fase-progress-bar">
+                            <div class="fase-progress-fill" style="width:${progressFase}%"></div>
+                        </div>
+                        <span style="font-size:12px;font-weight:700;color:#9b59b6;min-width:36px;text-align:right;">${progressFase}%</span>
+                        <button class="fase-expand-btn" type="button">▼ Comuni</button>
+                    </div>
+                </div>
+                <div class="fase-comuni-container" id="fase-comuni-${fase.ID}">
+                    <div class="comuni-legenda">
+                        <div class="legenda-item"><span>🔴</span> Da Fare</div>
+                        <div class="legenda-item"><span>🟡</span> In Corso</div>
+                        <div class="legenda-item"><span>🟢</span> Completato</div>
+                        <div class="legenda-item"><span>⚫</span> Non Gestito</div>
+                    </div>
+                    <div class="comuni-grid" id="comuniFase-grid-${fase.ID}">
+                        ${comuniF.length > 0
+                            ? comuniF.map(c => createComuneCard(c, 'comuniFasi')).join('')
+                            : '<p style="text-align:center;padding:20px;color:#9ca3af;grid-column:1/-1;">Nessun comune in questa fase</p>'
+                        }
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // Apri/chiudi comuni di una fase
+        window.toggleFaseComuni = function(containerId, headerEl) {
+            const container = document.getElementById(containerId);
+            const btn = headerEl.querySelector('.fase-expand-btn');
+            if (!container) return;
+            const isOpen = container.classList.contains('open');
+            container.classList.toggle('open');
+            if (btn) btn.textContent = isOpen ? '▼ Comuni' : '▲ Chiudi';
+        };
+
+        // ============================================================
+        // CARD COMUNE (condivisa tra enti e comuni_fasi)
+        // ============================================================
+        function createComuneCard(ente, listaSource) {
+            const stato = ente.StatoEnte || 'Da Fare';
+            const progress = ente.ProgressEnte || 0;
+
+            let statoIcon = '🔴', statoText = 'Da Fare', statoClass = 'status-btn-dafare';
+            if (stato === 'In Corso')      { statoIcon = '🟡'; statoText = 'In Corso';    statoClass = 'status-btn-incorso'; }
+            else if (stato === 'Completato') { statoIcon = '🟢'; statoText = 'Completato'; statoClass = 'status-btn-completato'; }
+            else if (stato === 'Non Gestito'){ statoIcon = '⚫'; statoText = 'Non Gestito';statoClass = 'status-btn-nongestito'; }
+
+            const comuneEscaped = (ente.Comune || '').replace(/`/g, '').replace(/'/g, "\\'");
+
+            return `
+            <div class="comune-card" data-comune="${ente.Comune}">
+                <div class="comune-nome">${ente.Comune}</div>
+                <div class="comune-status-display" onclick="openCambiaStatoModal(${ente.ID}, '${comuneEscaped}', '${stato}', '${listaSource}')">
+                    <button class="status-btn-single ${statoClass}">${statoIcon} ${statoText}</button>
+                </div>
+                <div class="progress-bar-small">
+                    <div class="progress-fill" style="width:${progress}%"></div>
+                </div>
+                <div class="comune-actions-small">
+                    <span class="progress-text-small">${progress}%</span>
+                    <button class="icon-btn-small" onclick="event.stopPropagation();openNoteModal(${ente.ID},'${comuneEscaped}','${listaSource}')" title="Note ${ente.NoteEnte && ente.NoteEnte.trim() ? '(presente)' : ''}">
+                        ${ente.NoteEnte && ente.NoteEnte.trim() ? '📝✅' : '📝'}
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        // ============================================================
+        // ATTACH EVENT LISTENERS
+        // ============================================================
         function attachEventListeners() {
             document.querySelectorAll('.adempimento-toggle').forEach(el => {
                 el.addEventListener('click', function(e) {
                     if (e.target.closest('.adempimento-actions')) return;
                     if (e.target.closest('button')) return;
-                    
                     const adempId = this.getAttribute('data-id');
-                    const list = document.getElementById(`comuni-list-${adempId}`);
+                    const hasFasi = this.getAttribute('data-has-fasi') === 'true';
+                    const containerId = hasFasi ? `fasi-container-${adempId}` : `comuni-list-${adempId}`;
+                    const container = document.getElementById(containerId);
                     const icon = this.querySelector('.expand-icon');
-                    
-                    list.classList.toggle('open');
-                    icon.classList.toggle('open');
+                    if (container) container.classList.toggle('open');
+                    if (icon) icon.classList.toggle('open');
                 });
             });
         }
 
+        // ============================================================
+        // FILTRI E SORT COMUNI
+        // ============================================================
         window.filterComuni = function(adempId, searchText) {
             const cards = document.querySelectorAll(`#comuni-grid-${adempId} .comune-card`);
-            const search = searchText.toLowerCase();
-            
-           cards.forEach(card => {
-    const comune = card.getAttribute('data-comune').toLowerCase();
-    card.style.display = comune.includes(search) ? '' : 'none';
-});
+            cards.forEach(card => {
+                card.style.display = card.getAttribute('data-comune').toLowerCase().includes(searchText.toLowerCase()) ? '' : 'none';
+            });
         };
 
-  window.sortComuni = function(adempId, sortBy) {
-    const container = document.getElementById(`comuni-grid-${adempId}`);
-    const cards = Array.from(container.querySelectorAll('.comune-card'));
-            
-    cards.sort((a, b) => {
-        if (sortBy === 'nome') {
-            return a.getAttribute('data-comune').localeCompare(b.getAttribute('data-comune'));
-        } else if (sortBy === 'stato') {
-            const statusOrder = { 'Da Fare': 0, 'In Corso': 1, 'Completato': 2 };
-            const statusA = a.querySelector('.status-btn-single').textContent.includes('Da Fare') ? 0 : 
-                           a.querySelector('.status-btn-single').textContent.includes('In Corso') ? 1 : 
-                           a.querySelector('.status-btn-single').textContent.includes('Completato') ? 2 : 3;
-            const statusB = b.querySelector('.status-btn-single').textContent.includes('Da Fare') ? 0 : 
-                           b.querySelector('.status-btn-single').textContent.includes('In Corso') ? 1 : 
-                           b.querySelector('.status-btn-single').textContent.includes('Completato') ? 2 : 3;
-            return statusA - statusB;
-        } else if (sortBy === 'progress') {
-            const progressA = parseInt(a.querySelector('.progress-text-small').textContent);
-            const progressB = parseInt(b.querySelector('.progress-text-small').textContent);
-            return progressB - progressA;
-        }
-        return 0;
-    });
-    
-    cards.forEach(card => container.appendChild(card));
-};
+        window.sortComuni = function(adempId, sortBy) {
+            const container = document.getElementById(`comuni-grid-${adempId}`);
+            if (!container) return;
+            const cards = Array.from(container.querySelectorAll('.comune-card'));
+            cards.sort((a, b) => {
+                if (sortBy === 'nome') return a.getAttribute('data-comune').localeCompare(b.getAttribute('data-comune'));
+                if (sortBy === 'stato') {
+                    const ord = (c) => { const t = c.querySelector('.status-btn-single').textContent; return t.includes('Da Fare') ? 0 : t.includes('In Corso') ? 1 : t.includes('Completato') ? 2 : 3; };
+                    return ord(a) - ord(b);
+                }
+                if (sortBy === 'progress') return parseInt(b.querySelector('.progress-text-small').textContent) - parseInt(a.querySelector('.progress-text-small').textContent);
+                return 0;
+            });
+            cards.forEach(c => container.appendChild(c));
+        };
 
-window.openCambiaStatoModal = function(enteId, comune, statoAttuale) {
-    document.getElementById('statoRecordId').value = enteId;
-    document.getElementById('statoComune').textContent = comune;
-    
-    // Evidenzia il bottone dello stato attuale
-    document.querySelectorAll('.btn-stato').forEach(btn => btn.classList.remove('active'));
-    if (statoAttuale === 'Da Fare') {
-        document.querySelector('.btn-stato-dafare').classList.add('active');
-    } else if (statoAttuale === 'In Corso') {
-        document.querySelector('.btn-stato-incorso').classList.add('active');
-    } else if (statoAttuale === 'Completato') {
-        document.querySelector('.btn-stato-completato').classList.add('active');
-    } else if (statoAttuale === 'Non Gestito') {
-        document.querySelector('.btn-stato-nongestito').classList.add('active');
-    }
-    
-    document.getElementById('cambiaStatoModal').classList.add('open');
-};
+        // ============================================================
+        // MODAL CAMBIO STATO (ora gestisce sia enti che comuniFasi)
+        // ============================================================
+        window.openCambiaStatoModal = function(enteId, comune, statoAttuale, listaSource) {
+            document.getElementById('statoRecordId').value = enteId;
+            document.getElementById('statoComune').textContent = comune;
+            document.getElementById('statoListaSource').value = listaSource || 'enti';
+            document.querySelectorAll('.btn-stato').forEach(b => b.classList.remove('active'));
+            const map = { 'Da Fare': 'dafare', 'In Corso': 'incorso', 'Completato': 'completato', 'Non Gestito': 'nongestito' };
+            const cls = map[statoAttuale];
+            if (cls) document.querySelector(`.btn-stato-${cls}`)?.classList.add('active');
+            document.getElementById('cambiaStatoModal').classList.add('open');
+        };
 
-window.applicaNuovoStato = async function(nuovoStato) {
-    const enteId = document.getElementById('statoRecordId').value;
-    
-    try {
-        // Calcola progress in base allo stato
-        let nuovoProgress = 0;
-        if (nuovoStato === 'Da Fare') nuovoProgress = 0;
-        if (nuovoStato === 'In Corso') nuovoProgress = 50;
-        if (nuovoStato === 'Completato') nuovoProgress = 100;
-        if (nuovoStato === 'Non Gestito') nuovoProgress = 0;
-        
-        showLoading(true);
-        await updateItem(LISTS.ENTI, enteId, {
-            StatoEnte: nuovoStato,
-            ProgressEnte: nuovoProgress
+        window.applicaNuovoStato = async function(nuovoStato) {
+            const enteId = document.getElementById('statoRecordId').value;
+            const listaSource = document.getElementById('statoListaSource').value;
+            const lista = listaSource === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
+            let nuovoProgress = 0;
+            if (nuovoStato === 'In Corso') nuovoProgress = 50;
+            if (nuovoStato === 'Completato') nuovoProgress = 100;
+            try {
+                showLoading(true);
+                await updateItem(lista, enteId, { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress });
+
+                // Trova adempimentoId per riaprire la card
+                let adempimentoId;
+                if (listaSource === 'comuniFasi') {
+                    const cf = allComuniFasi.find(c => c.ID == enteId);
+                    adempimentoId = cf?.AdempimentoID;
+                } else {
+                    const ente = allEnti.find(e => e.ID == enteId);
+                    adempimentoId = ente?.AdempimentoID;
+                }
+                const hasFasi = adempimentoId && allAdempimenti.find(a => a.ID == adempimentoId)?.HasFasi;
+
+                document.getElementById('cambiaStatoModal').classList.remove('open');
+                await loadData();
+
+                if (adempimentoId) {
+                    setTimeout(() => {
+                        const containerId = hasFasi ? `fasi-container-${adempimentoId}` : `comuni-list-${adempimentoId}`;
+                        const header = document.querySelector(`.adempimento-toggle[data-id="${adempimentoId}"]`);
+                        const container = document.getElementById(containerId);
+                        const icon = header?.querySelector('.expand-icon');
+                        if (container && header && icon) {
+                            container.classList.add('open');
+                            icon.classList.add('open');
+                            header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 300);
+                }
+            } catch (err) {
+                showAlert('❌ Errore: ' + err.message, 'error');
+                showLoading(false);
+            }
+        };
+
+        // ============================================================
+        // MODAL NOTE (ora gestisce sia enti che comuniFasi)
+        // ============================================================
+        window.openNoteModal = function(enteId, comune, listaSource) {
+            const lista = listaSource === 'comuniFasi' ? allComuniFasi : allEnti;
+            const ente = lista.find(e => e.ID == enteId);
+            if (!ente) return;
+            document.getElementById('noteRecordId').value = enteId;
+            document.getElementById('noteListaSource').value = listaSource || 'enti';
+            document.getElementById('noteComune').textContent = comune;
+            document.getElementById('formNote').value = ente.NoteEnte || '';
+            document.getElementById('noteModal').classList.add('open');
+        };
+
+        document.getElementById('noteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const enteId = document.getElementById('noteRecordId').value;
+            const listaSource = document.getElementById('noteListaSource').value;
+            const lista = listaSource === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
+            const note = document.getElementById('formNote').value;
+            try {
+                showLoading(true);
+                await updateItem(lista, enteId, { NoteEnte: note });
+                showAlert('✅ Nota salvata!', 'success');
+                document.getElementById('noteModal').classList.remove('open');
+                await loadData();
+            } catch (err) {
+                showAlert('❌ Errore: ' + err.message, 'error');
+                showLoading(false);
+            }
         });
-        
-      const ente = allEnti.find(e => e.ID == enteId);
-const adempimentoId = ente.AdempimentoID;
 
-document.getElementById('cambiaStatoModal').classList.remove('open');
+        // ============================================================
+        // FORM FASI - toggle e aggiunta righe
+        // ============================================================
+        window.toggleFasiSection = function(checked) {
+            const section = document.getElementById('fasiInputSection');
+            if (checked) {
+                section.classList.add('open');
+                if (document.getElementById('fasiInputList').children.length === 0) {
+                    // Prima apertura: aggiungi 3 fasi di default
+                    aggiungiFaseInput();
+                    aggiungiFaseInput();
+                    aggiungiFaseInput();
+                }
+            } else {
+                section.classList.remove('open');
+            }
+        };
 
-// Ricarica dati ma mantieni aperto l'adempimento
-await loadData();
+        window.aggiungiFaseInput = function() {
+            fasiInputCounter++;
+            const n = fasiInputCounter;
+            const list = document.getElementById('fasiInputList');
+            const righe = list.querySelectorAll('.fase-input-row');
+            const numFase = righe.length + 1;
 
-// Riapri automaticamente l'adempimento
-setTimeout(() => {
-    const list = document.getElementById(`comuni-list-${adempimentoId}`);
-    const header = document.querySelector(`.adempimento-toggle[data-id="${adempimentoId}"]`);
-    const icon = header?.querySelector('.expand-icon');
-    
-    if (list && header && icon) {
-        list.classList.add('open');
-        icon.classList.add('open');
-        
-        // Scroll all'adempimento
-        header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}, 300);
-        
-    } catch (err) {
-        console.error('Errore cambio stato:', err);
-        showAlert('Errore: ' + err.message, 'error');
-        showLoading(false);
-    }
-};
-          
+            const row = document.createElement('div');
+            row.className = 'fase-input-row';
+            row.setAttribute('data-fase-n', n);
+            row.innerHTML = `
+                <span class="fase-num">${numFase}</span>
+                <input type="text" placeholder="Nome fase (es: Raccolta dati)" data-tipo="nome" required>
+                <input type="date" data-tipo="scadenza">
+                <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
+            `;
+            list.appendChild(row);
+            rinumeraFasi();
+        };
 
-        window.deleteAdempimento = async function(adempimentoId) {
-    const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
-    if (!adempimento) return;
-    
-    const entiCollegati = allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
-    const conferma = confirm(`⚠️ ATTENZIONE!\n\nStai per eliminare l'adempimento:\n"${adempimento.Title}"\n\nVerranno eliminati anche tutti i ${entiCollegati} comuni collegati.\n\nSei sicuro?`);
-    
-    if (!conferma) return;
-    
-    try {
-        showLoading(true);
-        
-        const entiDaEliminare = allEnti.filter(e => e.AdempimentoID == adempimentoId);
-        
-        for (const ente of entiDaEliminare) {
-            await deleteItem(LISTS.ENTI, ente.ID);
+        window.removeFaseInput = function(btn) {
+            const row = btn.closest('.fase-input-row');
+            if (row) row.remove();
+            rinumeraFasi();
+        };
+
+        function rinumeraFasi() {
+            document.querySelectorAll('#fasiInputList .fase-input-row .fase-num').forEach((el, i) => {
+                el.textContent = i + 1;
+            });
         }
-        
-        await deleteItem(LISTS.ADEMPIMENTI, adempimentoId);
-        
-        showAlert('✅ Adempimento eliminato con successo!', 'success');
-        await loadData();
-        
-    } catch (err) {
-        console.error('Errore eliminazione:', err);
-        showAlert('❌ Errore: ' + err.message, 'error');
-        showLoading(false);
-    }
-};
 
-        window.openDuplicaModal = function(adempimentoId) {
-    const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
-    if (!adempimento) return;
-    
-    const entiCollegati = allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
-    
-    document.getElementById('duplicaAdempimentoId').value = adempimentoId;
-    const responsabiliText = Array.isArray(adempimento.Responsabile) ? 
-    adempimento.Responsabile.join(', ') : (adempimento.Responsabile || 'Nessuno');
-
-document.getElementById('duplicaAdempimentoInfo').innerHTML = `
-    <strong style="font-size: 15px;">"${adempimento.Title}"</strong><br>
-    <span style="font-size: 13px;">
-        📂 ${adempimento.Tipologia} | 
-        👤 ${responsabiliText} | 
-        🏛️ ${entiCollegati} comuni
-    </span>
-`;
-    
-    // Pre-compila con mese successivo
-    if (adempimento.AnnoMese) {
-        const [year, month] = adempimento.AnnoMese.split('-');
-        const meseOriginale = new Date(parseInt(year), parseInt(month) - 1);
-        const meseSuccessivo = new Date(meseOriginale);
-        meseSuccessivo.setMonth(meseSuccessivo.getMonth() + 1);
-        
-        const meseSuccessivoStr = `${meseSuccessivo.getFullYear()}-${String(meseSuccessivo.getMonth() + 1).padStart(2, '0')}`;
-        document.getElementById('duplicaNuovoMese').value = meseSuccessivoStr;
-        
-        // Pre-compila scadenza con stesso giorno del mese successivo
-        if (adempimento.DataScadenza) {
-            const scadenzaOriginale = new Date(adempimento.DataScadenza);
-            const nuovaScadenza = new Date(meseSuccessivo.getFullYear(), meseSuccessivo.getMonth(), scadenzaOriginale.getDate());
-            document.getElementById('duplicaNuovaScadenza').value = nuovaScadenza.toISOString().split('T')[0];
+        function getFasiDalForm() {
+            const rows = document.querySelectorAll('#fasiInputList .fase-input-row');
+            const fasi = [];
+            rows.forEach((row, idx) => {
+                const nome = row.querySelector('[data-tipo="nome"]')?.value?.trim();
+                const scadenza = row.querySelector('[data-tipo="scadenza"]')?.value;
+                if (nome) fasi.push({ ordine: idx + 1, nome, scadenza: scadenza || null });
+            });
+            return fasi;
         }
-    }
-    
-    // Pre-compila titolo e descrizione (modificabili)
-document.getElementById('duplicaNuovoTitolo').value = adempimento.Title || '';
-document.getElementById('duplicaNuovaDescrizione').value = adempimento.Descrizione || '';
 
-document.getElementById('duplicaNuovoResponsabile').value = '';
-document.getElementById('duplicaModal').classList.add('open');
-};
+        // ============================================================
+        // FORM ADEMPIMENTO - SUBMIT (crea/modifica con o senza fasi)
+        // ============================================================
+        document.getElementById('adempimentoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
- window.openNoteModal = function(enteId, comune) {
-    const ente = allEnti.find(e => e.ID == enteId);
-    if (!ente) {
-        console.error('Ente non trovato:', enteId);
-        return;
-    }
-    
-    const noteRecordIdElement = document.getElementById('noteRecordId');
-    const noteComuneElement = document.getElementById('noteComune');
-    const formNoteElement = document.getElementById('formNote');
-    const noteModalElement = document.getElementById('noteModal');
-    
-    if (!noteRecordIdElement || !noteComuneElement || !formNoteElement || !noteModalElement) {
-        console.error('Modal Note non trovato! Verifica che il modal HTML esista.');
-        showAlert('❌ Errore: Modal Note non disponibile. Contatta il supporto.', 'error');
-        return;
-    }
-    
-    noteRecordIdElement.value = enteId;
-    noteComuneElement.textContent = comune;
-    formNoteElement.value = ente.NoteEnte || '';
-    noteModalElement.classList.add('open');
-};
+            const titolo = document.getElementById('formTitolo').value;
+            const descrizione = document.getElementById('formDescrizione').value;
+            const tipologia = document.getElementById('formTipologia').value;
+            const annoMese = document.getElementById('formAnnoMese').value;
+            const dataScadenza = document.getElementById('formDataScadenza').value;
+            const editId = document.getElementById('editAdempimentoId').value;
+            const usaFasi = document.getElementById('chkUsaFasi').checked;
 
-       window.openAdempimentoModal = function() {
-    document.getElementById('adempimentoModalTitle').textContent = '➕ Nuovo Adempimento';
-    document.getElementById('adempimentoForm').reset();
-    document.getElementById('editAdempimentoId').value = '';
-    
-    // Reset responsabili
-    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
-        cb.checked = false;
-        cb.disabled = false;
-    });
-    
-    // Se Operatore, pre-seleziona e blocca sé stesso
-    if (userRole === 'Operatore' && window.currentUserName) {
-        const respId = `resp_${window.currentUserName.toLowerCase()}`;
-        const checkbox = document.getElementById(respId);
-        if (checkbox) {
-            checkbox.checked = true;
-            checkbox.disabled = true;
-        }
-    }
-    
-    populateComuniCheckboxes();
-    
-    document.getElementById('adempimentoModal').classList.add('open');
-};
+            const responsabiliSelezionati = Array.from(document.querySelectorAll('input[name="responsabili"]:checked')).map(cb => cb.value);
+            if (responsabiliSelezionati.length === 0) { showAlert('❌ Seleziona almeno un responsabile!', 'error'); return; }
+
+            const comuniSelezionati = Array.from(document.querySelectorAll('input[name="comuni"]:checked')).map(cb => cb.value);
+            if (comuniSelezionati.length === 0) { showAlert('❌ Seleziona almeno un comune!', 'error'); return; }
+
+            let faseDalForm = [];
+            if (usaFasi) {
+                faseDalForm = getFasiDalForm();
+                if (faseDalForm.length === 0) { showAlert('❌ Aggiungi almeno una fase!', 'error'); return; }
+            }
+
+            try {
+                showLoading(true);
+                const adempimentoData = {
+                    Title: titolo, Descrizione: descrizione, Tipologia: tipologia,
+                    Responsabile: responsabiliSelezionati.join('; '),
+                    AnnoMese: annoMese, DataScadenza: dataScadenza,
+                    StatoMese: 'Aperto', HasFasi: usaFasi
+                };
+
+                let adempimentoId;
+
+                if (editId) {
+                    // MODIFICA
+                    await updateItem(LISTS.ADEMPIMENTI, editId, adempimentoData);
+                    adempimentoId = editId;
+
+                    if (!usaFasi) {
+                        // Adempimento senza fasi: gestisci enti come prima
+                        const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
+                        const comuniEsistenti = entiEsistenti.map(e => e.Comune);
+                        for (const c of comuniEsistenti.filter(c => !comuniSelezionati.includes(c))) {
+                            const er = entiEsistenti.find(e => e.Comune === c);
+                            if (er) await deleteItem(LISTS.ENTI, er.ID);
+                        }
+                        for (const c of comuniSelezionati.filter(c => !comuniEsistenti.includes(c))) {
+                            await createItem(LISTS.ENTI, { Title: `${titolo} - ${c}`, AdempimentoID: parseInt(adempimentoId), Comune: c, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '' });
+                        }
+                    }
+                    showAlert('✅ Adempimento aggiornato!', 'success');
+                } else {
+                    // CREA NUOVO
+                    const result = await createItem(LISTS.ADEMPIMENTI, adempimentoData);
+                    adempimentoId = result.id;
+
+                    if (usaFasi) {
+                        // Crea fasi + comuni per ogni fase
+                        for (const fase of faseDalForm) {
+                            const faseResult = await createItem(LISTS.FASI, {
+                                Title: fase.nome,
+                                AdempimentoID: parseInt(adempimentoId),
+                                OrdineFase: fase.ordine,
+                                DataScadenzaFase: fase.scadenza
+                            });
+                            const faseId = faseResult.id;
+                            for (const comune of comuniSelezionati) {
+                                await createItem(LISTS.COMUNI_FASI, {
+                                    Title: `${titolo} - F${fase.ordine} - ${comune}`,
+                                    FaseID: parseInt(faseId),
+                                    AdempimentoID: parseInt(adempimentoId),
+                                    Comune: comune, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '', Attivo: true
+                                });
+                            }
+                        }
+                    } else {
+                        // Adempimento standard: crea enti
+                        for (const comune of comuniSelezionati) {
+                            await createItem(LISTS.ENTI, { Title: `${titolo} - ${comune}`, AdempimentoID: parseInt(adempimentoId), Comune: comune, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '' });
+                        }
+                    }
+                    showAlert('✅ Adempimento creato!', 'success');
+                }
+
+                document.getElementById('adempimentoModal').classList.remove('open');
+                await loadData();
+
+            } catch (err) {
+                showAlert('❌ Errore: ' + err.message, 'error');
+                showLoading(false);
+            }
+        });
+
+        // ============================================================
+        // APRI MODAL ADEMPIMENTO
+        // ============================================================
+        window.openAdempimentoModal = function() {
+            document.getElementById('adempimentoModalTitle').textContent = '➕ Nuovo Adempimento';
+            document.getElementById('adempimentoForm').reset();
+            document.getElementById('editAdempimentoId').value = '';
+            document.getElementById('chkUsaFasi').checked = false;
+            document.getElementById('fasiInputSection').classList.remove('open');
+            document.getElementById('fasiInputList').innerHTML = '';
+            fasiInputCounter = 0;
+            document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.disabled = false; });
+            populateComuniCheckboxes();
+            document.getElementById('adempimentoModal').classList.add('open');
+        };
 
         window.editAdempimento = async function(adempimentoId) {
-    const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
-    if (!adempimento) return;
-    
-    document.getElementById('adempimentoModalTitle').textContent = '✏️ Modifica Adempimento';
-    document.getElementById('editAdempimentoId').value = adempimentoId;
-    document.getElementById('formTitolo').value = adempimento.Title || '';
-    document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
-    document.getElementById('formTipologia').value = adempimento.Tipologia || '';
-    document.getElementById('formAnnoMese').value = adempimento.AnnoMese || '';
-    
-    // Gestione responsabili multipli
-    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
-        cb.checked = false;
-        cb.disabled = false;
-    });
-    
-// Seleziona responsabili esistenti
-if (adempimento.Responsabile && Array.isArray(adempimento.Responsabile)) {
-    adempimento.Responsabile.forEach(function(resp) {
-        if (resp) {
-            const respClean = resp.trim().toLowerCase();
-            const checkbox = document.getElementById('resp_' + respClean);
-            if (checkbox) {
-                checkbox.checked = true;
+            const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+            if (!adempimento) return;
+
+            document.getElementById('adempimentoModalTitle').textContent = '✏️ Modifica Adempimento';
+            document.getElementById('editAdempimentoId').value = adempimentoId;
+            document.getElementById('formTitolo').value = adempimento.Title || '';
+            document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
+            document.getElementById('formTipologia').value = adempimento.Tipologia || '';
+            document.getElementById('formAnnoMese').value = adempimento.AnnoMese || '';
+            if (adempimento.DataScadenza) document.getElementById('formDataScadenza').value = new Date(adempimento.DataScadenza).toISOString().split('T')[0];
+
+            document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.disabled = false; });
+            if (Array.isArray(adempimento.Responsabile)) {
+                adempimento.Responsabile.forEach(r => {
+                    const cb = document.getElementById('resp_' + r.trim().toLowerCase());
+                    if (cb) cb.checked = true;
+                });
             }
-        }
-    });
-}
-    
-    // Se Operatore, blocca sé stesso
-    if (userRole === 'Operatore' && window.currentUserName) {
-        const respId = `resp_${window.currentUserName.toLowerCase()}`;
-        const checkbox = document.getElementById(respId);
-        if (checkbox && checkbox.checked) {
-            checkbox.disabled = true;
-        }
-    }
-            
-            if (adempimento.DataScadenza) {
-                const date = new Date(adempimento.DataScadenza);
-                document.getElementById('formDataScadenza').value = date.toISOString().split('T')[0];
+
+            // Gestione fasi in modifica
+            const hasFasi = adempimento.HasFasi === true || adempimento.HasFasi === 'true';
+            document.getElementById('chkUsaFasi').checked = hasFasi;
+            document.getElementById('fasiInputList').innerHTML = '';
+            fasiInputCounter = 0;
+            if (hasFasi) {
+                document.getElementById('fasiInputSection').classList.add('open');
+                const fasi = allFasi.filter(f => f.AdempimentoID == adempimentoId).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0));
+                fasi.forEach(fase => {
+                    fasiInputCounter++;
+                    const list = document.getElementById('fasiInputList');
+                    const row = document.createElement('div');
+                    row.className = 'fase-input-row';
+                    row.setAttribute('data-fase-n', fasiInputCounter);
+                    row.setAttribute('data-fase-id', fase.ID); // ID esistente per aggiornamento
+                    row.innerHTML = `
+                        <span class="fase-num">${fase.OrdineFase}</span>
+                        <input type="text" placeholder="Nome fase" data-tipo="nome" value="${escapeHtml(fase.Title)}" required>
+                        <input type="date" data-tipo="scadenza" value="${fase.DataScadenzaFase ? new Date(fase.DataScadenzaFase).toISOString().split('T')[0] : ''}">
+                        <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
+                    `;
+                    list.appendChild(row);
+                });
+            } else {
+                document.getElementById('fasiInputSection').classList.remove('open');
             }
-            
+
             const entiAdempimento = allEnti.filter(e => e.AdempimentoID == adempimentoId);
-            const comuniAssegnati = entiAdempimento.map(e => e.Comune);
-            
-            populateComuniCheckboxes(comuniAssegnati);
-            
+            populateComuniCheckboxes(entiAdempimento.map(e => e.Comune));
             document.getElementById('adempimentoModal').classList.add('open');
         };
 
         function populateComuniCheckboxes(selected = []) {
             const container = document.getElementById('comuniCheckboxes');
             container.innerHTML = '';
-            
             allComuni.forEach(comune => {
                 const comuneNome = comune.Title || comune.Comune;
-                const isChecked = selected.includes(comuneNome);
-                
                 const div = document.createElement('div');
                 div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" 
-                    name="comuni"
-                           id="comune_${comune.ID}" 
-                           value="${comuneNome}"
-                           ${isChecked ? 'checked' : ''}>
-                    <label for="comune_${comune.ID}">${comuneNome}</label>
-                `;
+                div.innerHTML = `<input type="checkbox" name="comuni" id="comune_${comune.ID}" value="${comuneNome}" ${selected.includes(comuneNome) ? 'checked' : ''}><label for="comune_${comune.ID}">${comuneNome}</label>`;
                 container.appendChild(div);
             });
         }
 
-        window.selectAllComuni = function() {
-            document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = true);
-        };
+        window.selectAllComuni = function() { document.querySelectorAll('#comuniCheckboxes input').forEach(cb => cb.checked = true); };
+        window.deselectAllComuni = function() { document.querySelectorAll('#comuniCheckboxes input').forEach(cb => cb.checked = false); };
+        window.selectAllResponsabili = function() { document.querySelectorAll('#responsabiliCheckboxes input:not(:disabled)').forEach(cb => cb.checked = true); };
+        window.deselectAllResponsabili = function() { document.querySelectorAll('#responsabiliCheckboxes input:not(:disabled)').forEach(cb => cb.checked = false); };
 
-        window.deselectAllComuni = function() {
-            document.querySelectorAll('#comuniCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
-        };
+        // ============================================================
+        // ELIMINA ADEMPIMENTO
+        // ============================================================
+        window.deleteAdempimento = async function(adempimentoId) {
+            const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+            if (!adempimento) return;
+            const hasFasi = adempimento.HasFasi === true || adempimento.HasFasi === 'true';
+            const entiN = allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
+            const fasiN = allFasi.filter(f => f.AdempimentoID == adempimentoId).length;
+            const cfN = allComuniFasi.filter(c => c.AdempimentoID == adempimentoId).length;
 
-        window.selectAllResponsabili = function() {
-    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
-        if (!cb.disabled) cb.checked = true;
-    });
-};
+            const msg = hasFasi
+                ? `⚠️ Elimina "${adempimento.Title}"?\n\nVerranno eliminati: ${fasiN} fasi e ${cfN} comuni collegati.\n\nSei sicuro?`
+                : `⚠️ Elimina "${adempimento.Title}"?\n\nVerranno eliminati ${entiN} comuni collegati.\n\nSei sicuro?`;
 
-window.deselectAllResponsabili = function() {
-    document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => {
-        if (!cb.disabled) cb.checked = false;
-    });
-};
-document.getElementById('adempimentoForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const titolo = document.getElementById('formTitolo').value;
-    const descrizione = document.getElementById('formDescrizione').value;
-    const tipologia = document.getElementById('formTipologia').value;
-    const annoMese = document.getElementById('formAnnoMese').value;
-    const dataScadenza = document.getElementById('formDataScadenza').value;
-    const editId = document.getElementById('editAdempimentoId').value;
-    
-    // Raccogli responsabili selezionati
-    const checkboxesResp = document.querySelectorAll('input[name="responsabili"]:checked');
-    const responsabiliSelezionati = Array.from(checkboxesResp).map(cb => cb.value);
-    
-    if (responsabiliSelezionati.length === 0) {
-        showAlert('❌ Seleziona almeno un responsabile!', 'error');
-        return;
-    }
-    
-    // Se Operatore, verifica che sé stesso sia incluso
-    if (userRole === 'Operatore' && window.currentUserName && 
-        !responsabiliSelezionati.includes(window.currentUserName)) {
-        showAlert('❌ Devi includerti come responsabile!', 'error');
-        return;
-    }
-    
-    const checkboxes = document.querySelectorAll('input[name="comuni"]:checked');
-    const comuniSelezionati = Array.from(checkboxes).map(cb => cb.value);
-    
-    if (comuniSelezionati.length === 0) {
-        showAlert('❌ Seleziona almeno un comune!', 'error');
-        return;
-    }
-    
-    try {
-        showLoading(true);
-        let adempimentoId;
-        
-        if (editId) {
-            // MODIFICA adempimento esistente
-          await updateItem(LISTS.ADEMPIMENTI, editId, {
-    Title: titolo,
-    Descrizione: descrizione,
-    Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati.join('; '),
-    AnnoMese: annoMese,
-    DataScadenza: dataScadenza,
-    StatoMese: 'Aperto'
-});
-            adempimentoId = editId;
-            
-            // Gestione comuni: trova quelli attuali
-            const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
-            const comuniEsistenti = entiEsistenti.map(e => e.Comune);
-            
-            // Trova comuni da RIMUOVERE (erano selezionati, ora non lo sono più)
-            const comuniDaRimuovere = comuniEsistenti.filter(c => !comuniSelezionati.includes(c));
-            
-            // Trova comuni da AGGIUNGERE (non erano selezionati, ora lo sono)
-            const comuniDaAggiungere = comuniSelezionati.filter(c => !comuniEsistenti.includes(c));
-            
-            // RIMUOVI comuni deselezionati
-            for (const comune of comuniDaRimuovere) {
-                const enteRecord = entiEsistenti.find(e => e.Comune === comune);
-                if (enteRecord) {
-                    await deleteItem(LISTS.ENTI, enteRecord.ID);
-                }
-            }
-            
-            // AGGIUNGI nuovi comuni
-            for (const comune of comuniDaAggiungere) {
-                await createItem(LISTS.ENTI, {
-                    Title: `${titolo} - ${comune}`,
-                    AdempimentoID: parseInt(adempimentoId),
-                    Comune: comune,
-                    StatoEnte: 'Da Fare',
-                    ProgressEnte: 0,
-                    NoteEnte: ''
-                });
-            }
-            
-            showAlert('✅ Adempimento aggiornato!', 'success');
-            
-        } else {
-            // CREA nuovo adempimento
-       const result = await createItem(LISTS.ADEMPIMENTI, {
-    Title: titolo,
-    Descrizione: descrizione,
-    Tipologia: tipologia,
-    Responsabile: responsabiliSelezionati.join('; '),
-    AnnoMese: annoMese,
-    DataScadenza: dataScadenza,
-    StatoMese: 'Aperto'
-});
-            adempimentoId = result.id;
-            
-            // Crea record per ogni comune selezionato
-            for (const comune of comuniSelezionati) {
-                await createItem(LISTS.ENTI, {
-                    Title: `${titolo} - ${comune}`,
-                    AdempimentoID: parseInt(adempimentoId),
-                    Comune: comune,
-                    StatoEnte: 'Da Fare',
-                    ProgressEnte: 0,
-                    NoteEnte: ''
-                });
-            }
-            
-            showAlert('✅ Adempimento creato con successo!', 'success');
-        }
-        
-        document.getElementById('adempimentoModal').classList.remove('open');
-        await loadData();
-        
-    } catch (err) {
-        console.error('Errore salvataggio:', err);
-        showAlert('❌ Errore: ' + err.message, 'error');
-        showLoading(false);
-    }
-});
-                    
-                     document.getElementById('comuneForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const nome = document.getElementById('formNomeComune').value;
-            const provincia = document.getElementById('formProvincia').value.toUpperCase();
-            
+            if (!confirm(msg)) return;
             try {
                 showLoading(true);
-                
-                await createItem(LISTS.COMUNI, {
-                    Title: nome,
-                    Provincia: provincia,
-                    StatoEnte: 'Attivo'
-                });
-                
-                showAlert('✅ Comune creato con successo!', 'success');
-                document.getElementById('comuneModal').classList.remove('open');
+                if (hasFasi) {
+                    for (const cf of allComuniFasi.filter(c => c.AdempimentoID == adempimentoId)) await deleteItem(LISTS.COMUNI_FASI, cf.ID);
+                    for (const f of allFasi.filter(f => f.AdempimentoID == adempimentoId)) await deleteItem(LISTS.FASI, f.ID);
+                } else {
+                    for (const e of allEnti.filter(e => e.AdempimentoID == adempimentoId)) await deleteItem(LISTS.ENTI, e.ID);
+                }
+                await deleteItem(LISTS.ADEMPIMENTI, adempimentoId);
+                showAlert('✅ Adempimento eliminato!', 'success');
                 await loadData();
-                
             } catch (err) {
-                console.error('Errore creazione comune:', err);
                 showAlert('❌ Errore: ' + err.message, 'error');
                 showLoading(false);
             }
-        });
+        };
 
-        document.getElementById('noteForm').addEventListener('submit', async function(e) {
+        // ============================================================
+        // DUPLICA ADEMPIMENTO
+        // ============================================================
+        window.openDuplicaModal = function(adempimentoId) {
+            const adempimento = allAdempimenti.find(a => a.ID == adempimentoId);
+            if (!adempimento) return;
+            const hasFasi = adempimento.HasFasi === true || adempimento.HasFasi === 'true';
+            const entiN = hasFasi ? allComuniFasi.filter(c => c.AdempimentoID == adempimentoId).length : allEnti.filter(e => e.AdempimentoID == adempimentoId).length;
+            const fasiN = hasFasi ? allFasi.filter(f => f.AdempimentoID == adempimentoId).length : 0;
+            const respText = Array.isArray(adempimento.Responsabile) ? adempimento.Responsabile.join(', ') : (adempimento.Responsabile || 'N/A');
+
+            document.getElementById('duplicaAdempimentoId').value = adempimentoId;
+            document.getElementById('duplicaAdempimentoInfo').innerHTML = `
+                <strong>"${escapeHtml(adempimento.Title)}"</strong><br>
+                <span>${adempimento.Tipologia} | 👤 ${respText} | ${hasFasi ? `⚡ ${fasiN} fasi - ` : ''}🏛️ ${entiN} comuni</span>`;
+            document.getElementById('duplicaNuovoTitolo').value = adempimento.Title || '';
+            document.getElementById('duplicaNuovaDescrizione').value = adempimento.Descrizione || '';
+            document.getElementById('duplicaNuovoResponsabile').value = '';
+
+            if (adempimento.AnnoMese) {
+                const [y,m] = adempimento.AnnoMese.split('-');
+                const ms = new Date(parseInt(y), parseInt(m) - 1);
+                ms.setMonth(ms.getMonth() + 1);
+                const msStr = `${ms.getFullYear()}-${String(ms.getMonth()+1).padStart(2,'0')}`;
+                document.getElementById('duplicaNuovoMese').value = msStr;
+                if (adempimento.DataScadenza) {
+                    const sd = new Date(adempimento.DataScadenza);
+                    const ns = new Date(ms.getFullYear(), ms.getMonth(), sd.getDate());
+                    document.getElementById('duplicaNuovaScadenza').value = ns.toISOString().split('T')[0];
+                }
+            }
+            document.getElementById('duplicaModal').classList.add('open');
+        };
+
+        document.getElementById('duplicaForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const enteId = document.getElementById('noteRecordId').value;
-            const note = document.getElementById('formNote').value;
-            
+            const adempimentoId = document.getElementById('duplicaAdempimentoId').value;
+            const nuovoMese = document.getElementById('duplicaNuovoMese').value;
+            const nuovaScadenza = document.getElementById('duplicaNuovaScadenza').value;
+            const nuovoResponsabile = document.getElementById('duplicaNuovoResponsabile').value;
+            const nuovoTitolo = document.getElementById('duplicaNuovoTitolo').value;
+            const nuovaDescrizione = document.getElementById('duplicaNuovaDescrizione').value;
+
+            const adempimentoOrig = allAdempimenti.find(a => a.ID == adempimentoId);
+            if (!adempimentoOrig) return;
+            const hasFasi = adempimentoOrig.HasFasi === true || adempimentoOrig.HasFasi === 'true';
+
+            let respDuplicato = nuovoResponsabile || (Array.isArray(adempimentoOrig.Responsabile) ? adempimentoOrig.Responsabile.join('; ') : adempimentoOrig.Responsabile);
+
+            if (!confirm(`Duplicare "${adempimentoOrig.Title}" → "${nuovoTitolo}" per ${formatMese(nuovoMese)}?`)) return;
+
             try {
                 showLoading(true);
-                await updateItem(LISTS.ENTI, enteId, { NoteEnte: note });
-                
-                showAlert('✅ Note salvate!', 'success');
-                document.getElementById('noteModal').classList.remove('open');
+                const nuovoResult = await createItem(LISTS.ADEMPIMENTI, {
+                    Title: nuovoTitolo, Descrizione: nuovaDescrizione,
+                    Tipologia: adempimentoOrig.Tipologia, Responsabile: respDuplicato,
+                    AnnoMese: nuovoMese, DataScadenza: nuovaScadenza,
+                    StatoMese: 'Aperto', HasFasi: hasFasi
+                });
+                const nuovoAdempimentoId = nuovoResult.id;
+
+                if (hasFasi) {
+                    const fasiOrig = allFasi.filter(f => f.AdempimentoID == adempimentoId).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0));
+                    for (const fase of fasiOrig) {
+                        const nuovaFaseResult = await createItem(LISTS.FASI, {
+                            Title: fase.Title,
+                            AdempimentoID: parseInt(nuovoAdempimentoId),
+                            OrdineFase: fase.OrdineFase,
+                            DataScadenzaFase: null // scadenze fasi resettate, da aggiornare manualmente
+                        });
+                        const nuovaFaseId = nuovaFaseResult.id;
+                        const cfOrig = allComuniFasi.filter(c => c.FaseID == fase.ID && c.Attivo !== false);
+                        for (const cf of cfOrig) {
+                            await createItem(LISTS.COMUNI_FASI, {
+                                Title: `${nuovoTitolo} - F${fase.OrdineFase} - ${cf.Comune}`,
+                                FaseID: parseInt(nuovaFaseId),
+                                AdempimentoID: parseInt(nuovoAdempimentoId),
+                                Comune: cf.Comune, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '', Attivo: true
+                            });
+                        }
+                    }
+                } else {
+                    const entiOrig = allEnti.filter(e => e.AdempimentoID == adempimentoId);
+                    for (const ente of entiOrig) {
+                        await createItem(LISTS.ENTI, { Title: `${nuovoTitolo} - ${ente.Comune}`, AdempimentoID: parseInt(nuovoAdempimentoId), Comune: ente.Comune, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '' });
+                    }
+                }
+
+                showAlert(`✅ Duplicato "${nuovoTitolo}" per ${formatMese(nuovoMese)}!`, 'success');
+                document.getElementById('duplicaModal').classList.remove('open');
+                document.getElementById('filterMese').value = nuovoMese;
                 await loadData();
             } catch (err) {
-                console.error('Errore salvataggio note:', err);
-                showAlert('Errore: ' + err.message, 'error');
+                showAlert('❌ Errore duplicazione: ' + err.message, 'error');
                 showLoading(false);
             }
         });
 
+        // ============================================================
+        // FILTRI RAPIDI
+        // ============================================================
+        window.filtroRapido = function(tipo) {
+            const oggi = new Date(); oggi.setHours(0,0,0,0);
+            let filtered = [...allAdempimenti];
+
+            if (userRole === 'Operatore' && window.currentUserName)
+                filtered = filtered.filter(a => Array.isArray(a.Responsabile) && a.Responsabile.includes(window.currentUserName));
+
+            const isCompletato = (a) => {
+                if (a.HasFasi === true || a.HasFasi === 'true') {
+                    const cf = allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false);
+                    return cf.length > 0 && cf.every(c => c.StatoEnte === 'Completato' || c.StatoEnte === 'Non Gestito');
+                }
+                const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+                return enti.length > 0 && enti.every(e => e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito');
+            };
+
+            if (tipo === 'scaduti') filtered = filtered.filter(a => a.DataScadenza && new Date(a.DataScadenza) < oggi && !isCompletato(a));
+            else if (tipo === 'urgenti') filtered = filtered.filter(a => {
+                if (!a.DataScadenza) return false;
+                const diff = Math.floor((new Date(a.DataScadenza) - oggi) / (1000*60*60*24));
+                return diff >= 0 && diff <= 7 && !isCompletato(a);
+            });
+            else if (tipo === 'completati') filtered = filtered.filter(a => isCompletato(a));
+
+            document.querySelectorAll('.filtro-rapido').forEach(b => b.classList.remove('active'));
+            document.getElementById(`filtro-${tipo}`).classList.add('active');
+
+            const container = document.getElementById('adempimentiContainer');
+            if (filtered.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Nessun adempimento trovato</h3></div>'; return; }
+            filtered.sort((a,b) => { const dA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31'); const dB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31'); return dA - dB; });
+            container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
+            attachEventListeners();
+        };
+
+        // ============================================================
+        // COMUNE - CREA NUOVO
+        // ============================================================
+        document.getElementById('comuneForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('formNomeComune').value;
+            const provincia = document.getElementById('formProvincia').value.toUpperCase();
+            try {
+                showLoading(true);
+                await createItem(LISTS.COMUNI, { Title: nome, Provincia: provincia, StatoEnte: 'Attivo' });
+                showAlert('✅ Comune creato!', 'success');
+                document.getElementById('comuneModal').classList.remove('open');
+                await loadData();
+            } catch (err) { showAlert('❌ Errore: ' + err.message, 'error'); showLoading(false); }
+        });
+
+        // ============================================================
+        // UTILITY
+        // ============================================================
         function showLoading(show) {
             document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
             document.getElementById('adempimentiContainer').style.display = show ? 'none' : 'block';
@@ -2773,285 +1922,47 @@ document.getElementById('adempimentoForm').addEventListener('submit', async (e) 
             setTimeout(() => alert.remove(), 5000);
         }
 
-        window.filtroRapido = function(tipo) {
-    const oggi = new Date();
-    oggi.setHours(0, 0, 0, 0);
-    
-    const container = document.getElementById('adempimentiContainer');
-    if (!container) return;
-    
-    let filtered = [...allAdempimenti];
-    
- if (userRole === 'Operatore' && window.currentUserName) {
-    filtered = filtered.filter(function(a) {
-        if (!a.Responsabile || !Array.isArray(a.Responsabile)) return false;
-        return a.Responsabile.indexOf(window.currentUserName) !== -1;
-    });
-}
-    
-    if (tipo === 'scaduti') {
-        filtered = filtered.filter(a => {
-            if (!a.DataScadenza) return false;
-            const scadenza = new Date(a.DataScadenza);
-            const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
-            const completato = enti.length > 0 && 
-                              (enti.filter(e => e.StatoEnte === 'Completato').length + 
-                               enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
-            return scadenza < oggi && !completato;
-        });
-        
-    } else if (tipo === 'urgenti') {
-        filtered = filtered.filter(a => {
-            if (!a.DataScadenza) return false;
-            const scadenza = new Date(a.DataScadenza);
-            const diff = Math.floor((scadenza - oggi) / (1000 * 60 * 60 * 24));
-            const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
-            const completato = enti.length > 0 && 
-                              (enti.filter(e => e.StatoEnte === 'Completato').length + 
-                               enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
-            return diff >= 0 && diff <= 7 && !completato;
-        });
-        
-    } else if (tipo === 'completati') {
-        filtered = filtered.filter(a => {
-            const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
-            return enti.length > 0 && 
-                   (enti.filter(e => e.StatoEnte === 'Completato').length + 
-                    enti.filter(e => e.StatoEnte === 'Non Gestito').length) === enti.length;
-        });
-    }
-    
-    document.querySelectorAll('.filtro-rapido').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`filtro-${tipo}`).classList.add('active');
-    
-    if (filtered.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">📋</div>
-                <h3>Nessun adempimento trovato</h3>
-                <p>Nessun adempimento per questo filtro.</p>
-            </div>
-        `;
-        return;
-    }
-    
-    filtered.sort((a, b) => {
-        const dataA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31');
-        const dataB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31');
-        return dataA - dataB;
-    });
-    
-    container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
-    attachEventListeners();
-};
         function formatMese(yearMonth) {
             if (!yearMonth) return '';
-            const [year, month] = yearMonth.split('-');
-            const mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu',
-                         'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
-            return `${mesi[parseInt(month) - 1]} ${year}`;
+            const [y,m] = yearMonth.split('-');
+            const mesi = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+            return `${mesi[parseInt(m)-1]} ${y}`;
         }
 
-        function getIconaTipologia(tipologia) {
-    const icone = {
-        'Contabilità': '💰',
-        'Tributi': '⚖️',
-        'Personale': '👥',
-        'Altro': '📋'
-    };
-    return icone[tipologia] || '📋';
-}
-        
-        window.tornaInAlto = function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-
-                // Event listener Form Note
-document.getElementById('noteForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const enteId = document.getElementById('noteRecordId').value;
-    const note = document.getElementById('formNote').value;
-    
-    try {
-        showLoading(true);
-        
-        // Salva nota con Graph API semplice
-        const site = await getSiteId();
-        await fetch(`https://graph.microsoft.com/v1.0/sites/${site}/lists/${LISTS.ENTI}/items/${enteId}/fields`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ NoteEnte: note })
-        });
-        
-        showAlert('✅ Nota salvata!', 'success');
-        document.getElementById('noteModal').classList.remove('open');
-        await loadData();
-        
-    } catch (err) {
-        showAlert('❌ Errore: ' + err.message, 'error');
-        showLoading(false);
-    }
-});
-
-        // Event listener Form Duplica Adempimento
-document.getElementById('duplicaForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const adempimentoId = document.getElementById('duplicaAdempimentoId').value;
-    const nuovoMese = document.getElementById('duplicaNuovoMese').value;
-    const nuovaScadenza = document.getElementById('duplicaNuovaScadenza').value;
-    const nuovoResponsabile = document.getElementById('duplicaNuovoResponsabile').value;
-const nuovoTitolo = document.getElementById('duplicaNuovoTitolo').value;
-const nuovaDescrizione = document.getElementById('duplicaNuovaDescrizione').value;
-    
-    const adempimentoOriginale = allAdempimenti.find(a => a.ID == adempimentoId);
-    if (!adempimentoOriginale) {
-        showAlert('❌ Adempimento non trovato!', 'error');
-        return;
-    }
-    
-    const entiOriginali = allEnti.filter(e => e.AdempimentoID == adempimentoId);
-    
-    if (entiOriginali.length === 0) {
-        showAlert('❌ Nessun comune da duplicare!', 'error');
-        return;
-    }
-    
-    const conferma = confirm(
-        `Stai per duplicare:\n\n` +
-        `"${adempimentoOriginale.Title}"\n\n` +
-        `Nel mese: ${formatMese(nuovoMese)}\n` +
-        `Con ${entiOriginali.length} comuni\n\n` +
-        `Confermi?`
-    );
-    
-    if (!conferma) return;
-    
-    try {
-        showLoading(true);
-        
-        // 1. Crea nuovo adempimento
-        // FIX: Converti array responsabili in stringa
-let responsabileDuplicato;
-if (nuovoResponsabile) {
-    responsabileDuplicato = nuovoResponsabile;
-} else {
-    if (Array.isArray(adempimentoOriginale.Responsabile)) {
-        responsabileDuplicato = adempimentoOriginale.Responsabile.join('; ');
-    } else {
-        responsabileDuplicato = adempimentoOriginale.Responsabile;
-    }
-}
-        const nuovoAdempimento = await createItem(LISTS.ADEMPIMENTI, {
-    Title: nuovoTitolo,
-    Descrizione: nuovaDescrizione,
-            Tipologia: adempimentoOriginale.Tipologia,
-           Responsabile: responsabileDuplicato,
-            AnnoMese: nuovoMese,
-            DataScadenza: nuovaScadenza,
-            StatoMese: 'Aperto'
-        });
-        
-        const nuovoAdempimentoId = nuovoAdempimento.id;
-        
-        // 2. Copia tutti gli enti con stato "Da Fare"
-        for (const ente of entiOriginali) {
-            await createItem(LISTS.ENTI, {
-    Title: `${nuovoTitolo} - ${ente.Comune}`,
-                AdempimentoID: parseInt(nuovoAdempimentoId),
-                Comune: ente.Comune,
-                StatoEnte: 'Da Fare',
-                ProgressEnte: 0,
-                NoteEnte: ''
-            });
+        function getIconaTipologia(t) {
+            return { 'Contabilità': '💰', 'Tributi': '⚖️', 'Personale': '👥', 'Altro': '📋' }[t] || '📋';
         }
-        
-        showAlert(
-    `✅ Adempimento duplicato con successo!\n\n` +
-    `"${nuovoTitolo}" creato nel mese ${formatMese(nuovoMese)} con ${entiOriginali.length} comuni.`,
-    'success'
-);
-        
-        document.getElementById('duplicaModal').classList.remove('open');
-        
-        // Cambia filtro mese al nuovo mese
-        document.getElementById('filterMese').value = nuovoMese;
-        
-        await loadData();
-        
-    } catch (err) {
-        console.error('Errore duplicazione:', err);
-        showAlert('❌ Errore durante la duplicazione: ' + err.message, 'error');
-        showLoading(false);
-    }
-});
-        
-        // Event listener chiusura modal note
-        document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => {
-            document.getElementById('noteModal').classList.remove('open');
-        });
-        
-       window.addEventListener('load', async function() {
-    console.log('🚀 Applicazione caricata');
-    
-    try {
-        await msalInstance.initialize();
-        console.log('✅ MSAL inizializzato');
-        
-        // FORZA SEMPRE SCHERMATA LOGIN (no auto-login)
-        const accounts = msalInstance.getAllAccounts();
-        console.log('👥 Account trovati:', accounts.length);
-        
-        // Se ci sono account salvati, rimuovili per forzare nuovo login
-        if (accounts.length > 0) {
-            console.log('🔄 Rimozione account salvati per forzare nuovo login');
-            accounts.forEach(function(account) {
-                msalInstance.setActiveAccount(null);
-            });
-        }
-        
-        console.log('📝 Schermata login obbligatoria');
-        // Non chiamare handleAuth automaticamente
-        
-    } catch (error) {
-        console.error('❌ Errore inizializzazione MSAL:', error);
-        alert('Errore inizializzazione: ' + error.message);
-    }
 
+        window.tornaInAlto = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        window.addEventListener('load', async function() {
+            console.log('🚀 V20 Caricata');
+            try {
+                await msalInstance.initialize();
+                const accounts = msalInstance.getAllAccounts();
+                if (accounts.length > 0) accounts.forEach(() => msalInstance.setActiveAccount(null));
+            } catch (err) { alert('Errore inizializzazione: ' + err.message); }
+
+            // Event listeners
             document.getElementById('loginBtn')?.addEventListener('click', login);
             document.getElementById('logoutBtn')?.addEventListener('click', logout);
-            document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => {
-                document.getElementById('noteModal').classList.remove('open');
-            });
-            document.getElementById('btnCloseAdempimentoModal')?.addEventListener('click', () => {
-                document.getElementById('adempimentoModal').classList.remove('open');
-            });
-            document.getElementById('btnCloseComuneModal')?.addEventListener('click', () => {
-                document.getElementById('comuneModal').classList.remove('open');
-            });
-            document.getElementById('btnCloseCambiaStatoModal')?.addEventListener('click', () => {
-    document.getElementById('cambiaStatoModal').classList.remove('open');
-});
             document.getElementById('btnSync')?.addEventListener('click', loadData);
             document.getElementById('btnAddAdempimento')?.addEventListener('click', openAdempimentoModal);
-            document.getElementById('btnAddComune')?.addEventListener('click', () => {
-                document.getElementById('comuneForm').reset();
-                document.getElementById('comuneModal').classList.add('open');
-            });
+            document.getElementById('btnAddComune')?.addEventListener('click', () => { document.getElementById('comuneForm').reset(); document.getElementById('comuneModal').classList.add('open'); });
+            document.getElementById('btnCloseAdempimentoModal')?.addEventListener('click', () => document.getElementById('adempimentoModal').classList.remove('open'));
+            document.getElementById('btnCloseComuneModal')?.addEventListener('click', () => document.getElementById('comuneModal').classList.remove('open'));
+            document.getElementById('btnCloseCambiaStatoModal')?.addEventListener('click', () => document.getElementById('cambiaStatoModal').classList.remove('open'));
+            document.getElementById('btnCloseNoteModal')?.addEventListener('click', () => document.getElementById('noteModal').classList.remove('open'));
+            document.getElementById('btnCloseDuplicaModal')?.addEventListener('click', () => document.getElementById('duplicaModal').classList.remove('open'));
             document.getElementById('filterMese')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterTipologia')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterStato')?.addEventListener('change', renderAdempimenti);
             document.getElementById('filterResponsabile')?.addEventListener('change', renderAdempimenti);
-           document.getElementById('btnCloseDuplicaModal')?.addEventListener('click', () => {
-            document.getElementById('duplicaModal').classList.remove('open');
         });
-        
-    }); 
+
     </script>
 </body>
 </html>
