@@ -802,6 +802,7 @@
         let allComuni = [], allAdempimenti = [], allEnti = [];
         let allFasi = [], allComuniFasi = [];       // NUOVO - dati fasi
         let fasiInputCounter = 0;                   // contatore righe fasi nel form
+        let activeFilterResp = '';                   // filtro responsabile attivo (per fasi)
 
         // Team dello Studio - AGGIUNGI QUI NUOVE PERSONE
         const TEAM_MEMBERS = ['Andrea', 'Roberta', 'Nicoletta', 'Miriana'];
@@ -1047,6 +1048,37 @@
         }
 
         // ============================================================
+        // HELPER: controlla se un responsabile è assegnato a un adempimento (considerando le fasi)
+        // ============================================================
+        function isResponsabileInAdempimento(adempimento, nomeResp) {
+            const hasFasi = adempimento.HasFasi === true || adempimento.HasFasi === 'true';
+            if (hasFasi) {
+                // Per adempimenti con fasi: controlla ResponsabileFase di ogni fase
+                const fasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID);
+                // Se almeno una fase ha quel responsabile → true
+                const inFasi = fasi.some(f => f.ResponsabileFase && f.ResponsabileFase.split('; ').map(r => r.trim()).includes(nomeResp));
+                if (inFasi) return true;
+                // Fallback: se NESSUNA fase ha responsabili impostati, guarda il padre
+                const nessunaFaseHaResp = fasi.every(f => !f.ResponsabileFase || f.ResponsabileFase.trim() === '');
+                if (nessunaFaseHaResp) return Array.isArray(adempimento.Responsabile) && adempimento.Responsabile.includes(nomeResp);
+                return false;
+            } else {
+                // Senza fasi: logica originale
+                return Array.isArray(adempimento.Responsabile) && adempimento.Responsabile.includes(nomeResp);
+            }
+        }
+
+        function getFasiFiltratePerResp(adempimentoID, nomeResp) {
+            // Ritorna solo le fasi dove il responsabile è assegnato
+            const fasi = allFasi.filter(f => f.AdempimentoID == adempimentoID);
+            if (!nomeResp) return fasi;
+            const filtrate = fasi.filter(f => f.ResponsabileFase && f.ResponsabileFase.split('; ').map(r => r.trim()).includes(nomeResp));
+            // Se nessuna fase ha responsabili impostati, mostra tutte (fallback)
+            if (filtrate.length === 0 && fasi.every(f => !f.ResponsabileFase || f.ResponsabileFase.trim() === '')) return fasi;
+            return filtrate;
+        }
+
+        // ============================================================
         // RENDER ADEMPIMENTI
         // ============================================================
         function renderAdempimenti() {
@@ -1058,11 +1090,14 @@
             const fS = document.getElementById('filterStato')?.value || '';
             const fR = document.getElementById('filterResponsabile')?.value || '';
 
+            // Salva il filtro responsabile globalmente per usarlo in createFasiSection
+            activeFilterResp = fR;
+
             let filtered = [...allAdempimenti];
 
-            // Privacy operatori
+            // Privacy operatori - considera anche i responsabili delle fasi
             if (userRole === 'Operatore' && window.currentUserName) {
-                filtered = filtered.filter(a => Array.isArray(a.Responsabile) && a.Responsabile.includes(window.currentUserName));
+                filtered = filtered.filter(a => isResponsabileInAdempimento(a, window.currentUserName));
                 if (filtered.length === 0) {
                     container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Nessun adempimento assegnato</h3></div>';
                     return;
@@ -1071,7 +1106,7 @@
 
             if (fM) filtered = filtered.filter(a => a.AnnoMese === fM);
             if (fT) filtered = filtered.filter(a => a.Tipologia === fT);
-            if (fR) filtered = filtered.filter(a => Array.isArray(a.Responsabile) && a.Responsabile.includes(fR));
+            if (fR) filtered = filtered.filter(a => isResponsabileInAdempimento(a, fR));
             if (fS) {
                 filtered = filtered.filter(a => {
                     if (a.HasFasi) {
@@ -1108,8 +1143,12 @@
             let totali, daFare, inCorso, completati, nonGestiti, progressPercentuale, isCompletato;
 
             if (hasFasi) {
-                const fasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID);
-                const comuniF = allComuniFasi.filter(c => c.AdempimentoID == adempimento.ID && c.Attivo !== false);
+                // Se c'è filtro responsabile, mostra solo le fasi di quel responsabile
+                const fasiVisibili = activeFilterResp 
+                    ? getFasiFiltratePerResp(adempimento.ID, activeFilterResp)
+                    : allFasi.filter(f => f.AdempimentoID == adempimento.ID);
+                const fasiVisibiliIDs = fasiVisibili.map(f => String(f.ID));
+                const comuniF = allComuniFasi.filter(c => c.AdempimentoID == adempimento.ID && c.Attivo !== false && fasiVisibiliIDs.includes(String(c.FaseID)));
                 totali = comuniF.length;
                 daFare = comuniF.filter(c => c.StatoEnte === 'Da Fare').length;
                 inCorso = comuniF.filter(c => c.StatoEnte === 'In Corso').length;
@@ -1143,7 +1182,10 @@
                 ? adempimento.Responsabile.map(r => `<span class="responsabile-badge">👤 ${r}</span>`).join(' ')
                 : '';
 
-            const fasiBadge = hasFasi ? `<span class="badge-fasi">⚡ ${allFasi.filter(f => f.AdempimentoID == adempimento.ID).length} FASI</span>` : '';
+            const fasiCount = hasFasi 
+                ? (activeFilterResp ? getFasiFiltratePerResp(adempimento.ID, activeFilterResp).length : allFasi.filter(f => f.AdempimentoID == adempimento.ID).length)
+                : 0;
+            const fasiBadge = hasFasi ? `<span class="badge-fasi">⚡ ${fasiCount} FASI</span>` : '';
 
             const innerContent = hasFasi
                 ? createFasiSection(adempimento)
@@ -1229,12 +1271,20 @@
         // SEZIONE FASI (adempimento con fasi) - NUOVO
         // ============================================================
         function createFasiSection(adempimento) {
-            const fasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0));
+            // Se c'è filtro responsabile attivo, mostra solo le fasi di quel responsabile
+            const tutteFasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0));
+            const fasi = activeFilterResp 
+                ? getFasiFiltratePerResp(adempimento.ID, activeFilterResp).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0))
+                : tutteFasi;
             const oggi = new Date(); oggi.setHours(0,0,0,0);
+
+            const headerText = activeFilterResp 
+                ? `⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length}/${tutteFasi.length} Fasi (filtro: ${activeFilterResp})`
+                : `⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length} Fasi`;
 
             return `
             <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:#f3e8ff;border-radius:8px;margin-bottom:12px;border:2px solid #ddd6fe;">
-                <span style="font-size:13px;font-weight:700;color:#7c3aed;">⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length} Fasi</span>
+                <span style="font-size:13px;font-weight:700;color:#7c3aed;">${headerText}</span>
                 <button class="btn btn-sm" onclick="tornaInAlto()" style="background:#9b59b6;">⬆️ Torna Su</button>
             </div>
             ${adempimento.Descrizione && adempimento.Descrizione.trim() ? `
@@ -1898,9 +1948,10 @@
         window.filtroRapido = function(tipo) {
             const oggi = new Date(); oggi.setHours(0,0,0,0);
             let filtered = [...allAdempimenti];
+            activeFilterResp = document.getElementById('filterResponsabile')?.value || '';
 
             if (userRole === 'Operatore' && window.currentUserName)
-                filtered = filtered.filter(a => Array.isArray(a.Responsabile) && a.Responsabile.includes(window.currentUserName));
+                filtered = filtered.filter(a => isResponsabileInAdempimento(a, window.currentUserName));
 
             const isCompletato = (a) => {
                 if (a.HasFasi === true || a.HasFasi === 'true') {
