@@ -635,12 +635,33 @@
                     <div id="fasiInputSection">
                         <div class="fasi-form-container">
                             <div class="fasi-form-header">📋 Fasi dell'adempimento (ognuna con scadenza specifica)</div>
+                            
+                            <!-- CARICA DA TEMPLATE -->
+                            <div id="templateLoadSection" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;padding:10px;background:#e0f2fe;border-radius:8px;border:2px solid #93c5fd;">
+                                <span style="font-size:12px;font-weight:700;color:#1e40af;">📂 Template:</span>
+                                <select id="templateSelect" onchange="caricaTemplate(this.value)" style="flex:1;padding:6px 10px;border:2px solid #93c5fd;border-radius:6px;font-size:13px;">
+                                    <option value="">— Carica da template —</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="eliminaTemplate()" style="font-size:11px;" title="Elimina template selezionato">🗑️</button>
+                            </div>
+
                             <div id="fasiInputList">
                                 <!-- Le righe fasi vengono aggiunte dinamicamente -->
                             </div>
                             <button type="button" id="btnAggiungi-fase" onclick="aggiungiFaseInput()">
                                 ➕ Aggiungi Fase
                             </button>
+
+                            <!-- SALVA COME TEMPLATE -->
+                            <div style="margin-top:12px;padding:10px;background:#f0fdf4;border-radius:8px;border:2px solid #86efac;">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <input type="checkbox" id="chkSalvaTemplate" style="width:18px;height:18px;cursor:pointer;accent-color:#16a34a;">
+                                    <label for="chkSalvaTemplate" style="font-weight:700;color:#16a34a;font-size:13px;cursor:pointer;margin:0;">💾 Salva queste fasi come Template</label>
+                                </div>
+                                <div id="templateNameSection" style="display:none;margin-top:8px;">
+                                    <input type="text" id="templateName" placeholder="es. Rendiconto di Gestione, Bilancio Previsionale..." style="width:100%;padding:8px 12px;border:2px solid #86efac;border-radius:6px;font-size:13px;">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -791,16 +812,19 @@
             COMUNI:       'Scadenziario_Comuni',
             ADEMPIMENTI:  'Scadenziario_Adempimenti',
             ENTI:         'Scadenziario_Enti',
-            // NUOVO - Sistema Fasi
-            FASI:         'Scadenziario_Fasi',         // fasi per adempimento
-            COMUNI_FASI:  'Scadenziario_Comuni_Fasi'   // comuni per ogni fase
+            // Sistema Fasi
+            FASI:         'Scadenziario_Fasi',
+            COMUNI_FASI:  'Scadenziario_Comuni_Fasi',
+            // Template Fasi
+            TEMPLATES:    'Scadenziario_Templates'
         };
 
         const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
 
         let currentUser, userRole, accessToken, siteId;
         let allComuni = [], allAdempimenti = [], allEnti = [];
-        let allFasi = [], allComuniFasi = [];       // NUOVO - dati fasi
+        let allFasi = [], allComuniFasi = [];       // dati fasi
+        let allTemplates = [];                       // template fasi salvati
         let fasiInputCounter = 0;                   // contatore righe fasi nel form
         let activeFilterResp = '';                   // filtro responsabile attivo (per fasi)
 
@@ -967,6 +991,12 @@
                 } catch(e) {
                     console.warn('Lista ComuniFasi non trovata:', e.message);
                     allComuniFasi = [];
+                }
+                try {
+                    allTemplates = await getListItems(LISTS.TEMPLATES);
+                } catch(e) {
+                    console.warn('Lista Templates non trovata:', e.message);
+                    allTemplates = [];
                 }
 
                 populateFilterMesi();
@@ -1607,6 +1637,105 @@
             });
         }
 
+        // ============================================================
+        // TEMPLATE FASI
+        // ============================================================
+        // Toggle nome template
+        document.getElementById('chkSalvaTemplate')?.addEventListener('change', function() {
+            document.getElementById('templateNameSection').style.display = this.checked ? 'block' : 'none';
+        });
+
+        function populateTemplateDropdown() {
+            const select = document.getElementById('templateSelect');
+            if (!select) return;
+            select.innerHTML = '<option value="">— Carica da template —</option>';
+            allTemplates.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.ID;
+                opt.textContent = `📋 ${t.Title}`;
+                select.appendChild(opt);
+            });
+        }
+
+        window.caricaTemplate = function(templateId) {
+            if (!templateId) return;
+            const template = allTemplates.find(t => String(t.ID) === String(templateId));
+            if (!template || !template.FasiJSON) return;
+
+            let fasiData;
+            try { fasiData = JSON.parse(template.FasiJSON); } catch(e) { showAlert('❌ Template non valido', 'error'); return; }
+
+            if (!confirm(`Caricare il template "${template.Title}"?\n\nLe fasi attuali nel form verranno sostituite.`)) {
+                document.getElementById('templateSelect').value = '';
+                return;
+            }
+
+            // Pulisci fasi attuali e ricarica dal template
+            document.getElementById('fasiInputList').innerHTML = '';
+            fasiInputCounter = 0;
+
+            fasiData.forEach(fase => {
+                fasiInputCounter++;
+                const list = document.getElementById('fasiInputList');
+                const respToggles = TEAM_MEMBERS.map(name => {
+                    const isSelected = fase.responsabile && fase.responsabile.split('; ').map(r => r.trim()).includes(name);
+                    return `<span class="fase-resp-toggle${isSelected ? ' selected' : ''}" data-resp="${name}" onclick="this.classList.toggle('selected')">${name}</span>`;
+                }).join('');
+
+                const row = document.createElement('div');
+                row.className = 'fase-input-row';
+                row.setAttribute('data-fase-n', fasiInputCounter);
+                row.innerHTML = `
+                    <span class="fase-num">${fase.ordine}</span>
+                    <input type="text" placeholder="Nome fase" data-tipo="nome" value="${escapeHtml(fase.nome)}" required>
+                    <input type="date" data-tipo="scadenza">
+                    <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
+                    <div class="fase-resp-row">
+                        <span class="fase-resp-label">👤 Resp:</span>
+                        ${respToggles}
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+            rinumeraFasi();
+            showAlert(`✅ Template "${template.Title}" caricato (${fasiData.length} fasi)`, 'success');
+            document.getElementById('templateSelect').value = '';
+        };
+
+        window.eliminaTemplate = async function() {
+            const select = document.getElementById('templateSelect');
+            const templateId = select?.value;
+            if (!templateId) { showAlert('⚠️ Seleziona un template da eliminare', 'error'); return; }
+            const template = allTemplates.find(t => String(t.ID) === String(templateId));
+            if (!template) return;
+            if (!confirm(`Eliminare il template "${template.Title}"?`)) return;
+            try {
+                await deleteItem(LISTS.TEMPLATES, templateId);
+                allTemplates = allTemplates.filter(t => String(t.ID) !== String(templateId));
+                populateTemplateDropdown();
+                showAlert(`✅ Template "${template.Title}" eliminato`, 'success');
+            } catch(err) {
+                showAlert('❌ Errore: ' + err.message, 'error');
+            }
+        };
+
+        async function salvaTemplate(fasiDalForm) {
+            const nome = document.getElementById('templateName')?.value?.trim();
+            if (!nome) { showAlert('❌ Inserisci un nome per il template!', 'error'); return; }
+            // Salva solo nome e responsabile (no scadenze, si ricompilano ogni volta)
+            const fasiPulite = fasiDalForm.map(f => ({ ordine: f.ordine, nome: f.nome, responsabile: f.responsabile }));
+            try {
+                await createItem(LISTS.TEMPLATES, {
+                    Title: nome,
+                    FasiJSON: JSON.stringify(fasiPulite)
+                });
+                allTemplates.push({ Title: nome, FasiJSON: JSON.stringify(fasiPulite) });
+                showAlert(`💾 Template "${nome}" salvato!`, 'success');
+            } catch(err) {
+                showAlert('⚠️ Template non salvato (lista non trovata): ' + err.message, 'error');
+            }
+        }
+
         function getFasiDalForm() {
             const rows = document.querySelectorAll('#fasiInputList .fase-input-row');
             const fasi = [];
@@ -1614,7 +1743,14 @@
                 const nome = row.querySelector('[data-tipo="nome"]')?.value?.trim();
                 const scadenza = row.querySelector('[data-tipo="scadenza"]')?.value;
                 const respSelezionati = Array.from(row.querySelectorAll('.fase-resp-toggle.selected')).map(el => el.getAttribute('data-resp'));
-                if (nome) fasi.push({ ordine: idx + 1, nome, scadenza: scadenza || null, responsabile: respSelezionati.join('; ') });
+                const existingId = row.getAttribute('data-fase-id') || null; // ID SharePoint se fase esistente
+                if (nome) fasi.push({ 
+                    ordine: idx + 1, 
+                    nome, 
+                    scadenza: scadenza || null, 
+                    responsabile: respSelezionati.join('; '),
+                    existingId: existingId  // null = nuova fase, altrimenti = aggiorna
+                });
             });
             return fasi;
         }
@@ -1661,7 +1797,76 @@
                     await updateItem(LISTS.ADEMPIMENTI, editId, adempimentoData);
                     adempimentoId = editId;
 
-                    if (!usaFasi) {
+                    if (usaFasi) {
+                        // ========== GESTIONE FASI IN MODIFICA ==========
+                        const fasiEsistenti = allFasi.filter(f => f.AdempimentoID == editId);
+                        const fasiEsistentiIDs = fasiEsistenti.map(f => String(f.ID));
+                        const fasiFormIDs = faseDalForm.filter(f => f.existingId).map(f => String(f.existingId));
+
+                        // 1. Elimina fasi rimosse dal form (e relativi comuni)
+                        for (const faseOld of fasiEsistenti) {
+                            if (!fasiFormIDs.includes(String(faseOld.ID))) {
+                                // Elimina tutti i comuni di questa fase
+                                const cfDaEliminare = allComuniFasi.filter(c => String(c.FaseID) == String(faseOld.ID));
+                                for (const cf of cfDaEliminare) await deleteItem(LISTS.COMUNI_FASI, cf.ID);
+                                // Elimina la fase
+                                await deleteItem(LISTS.FASI, faseOld.ID);
+                            }
+                        }
+
+                        // 2. Aggiorna fasi esistenti e crea nuove
+                        for (const fase of faseDalForm) {
+                            if (fase.existingId) {
+                                // FASE ESISTENTE → aggiorna solo metadati (NON tocca gli stati comuni!)
+                                await updateItem(LISTS.FASI, fase.existingId, {
+                                    Title: fase.nome,
+                                    OrdineFase: fase.ordine,
+                                    DataScadenzaFase: fase.scadenza,
+                                    ResponsabileFase: fase.responsabile || ''
+                                });
+
+                                // Gestisci comuni: aggiungi nuovi, rimuovi deselezionati
+                                const cfEsistenti = allComuniFasi.filter(c => String(c.FaseID) == String(fase.existingId));
+                                const comuniEsistentiFase = cfEsistenti.map(c => c.Comune);
+
+                                // Aggiungi comuni nuovi (selezionati ma non ancora presenti)
+                                for (const comune of comuniSelezionati) {
+                                    if (!comuniEsistentiFase.includes(comune)) {
+                                        await createItem(LISTS.COMUNI_FASI, {
+                                            Title: `${titolo} - F${fase.ordine} - ${comune}`,
+                                            FaseID: parseInt(fase.existingId),
+                                            AdempimentoID: parseInt(adempimentoId),
+                                            Comune: comune, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '', Attivo: true
+                                        });
+                                    }
+                                }
+                                // Rimuovi comuni deselezionati
+                                for (const cf of cfEsistenti) {
+                                    if (!comuniSelezionati.includes(cf.Comune)) {
+                                        await deleteItem(LISTS.COMUNI_FASI, cf.ID);
+                                    }
+                                }
+                            } else {
+                                // FASE NUOVA → crea fase + crea tutti i comuni
+                                const faseResult = await createItem(LISTS.FASI, {
+                                    Title: fase.nome,
+                                    AdempimentoID: parseInt(adempimentoId),
+                                    OrdineFase: fase.ordine,
+                                    DataScadenzaFase: fase.scadenza,
+                                    ResponsabileFase: fase.responsabile || ''
+                                });
+                                const nuovaFaseId = faseResult.id;
+                                for (const comune of comuniSelezionati) {
+                                    await createItem(LISTS.COMUNI_FASI, {
+                                        Title: `${titolo} - F${fase.ordine} - ${comune}`,
+                                        FaseID: parseInt(nuovaFaseId),
+                                        AdempimentoID: parseInt(adempimentoId),
+                                        Comune: comune, StatoEnte: 'Da Fare', ProgressEnte: 0, NoteEnte: '', Attivo: true
+                                    });
+                                }
+                            }
+                        }
+                    } else {
                         // Adempimento senza fasi: gestisci enti come prima
                         const entiEsistenti = allEnti.filter(e => e.AdempimentoID == editId);
                         const comuniEsistenti = entiEsistenti.map(e => e.Comune);
@@ -1708,6 +1913,11 @@
                     showAlert('✅ Adempimento creato!', 'success');
                 }
 
+                // Salva come template se richiesto
+                if (usaFasi && document.getElementById('chkSalvaTemplate')?.checked) {
+                    await salvaTemplate(faseDalForm);
+                }
+
                 document.getElementById('adempimentoModal').classList.remove('open');
                 await loadData();
 
@@ -1727,7 +1937,10 @@
             document.getElementById('chkUsaFasi').checked = false;
             document.getElementById('fasiInputSection').classList.remove('open');
             document.getElementById('fasiInputList').innerHTML = '';
+            document.getElementById('chkSalvaTemplate').checked = false;
+            document.getElementById('templateNameSection').style.display = 'none';
             fasiInputCounter = 0;
+            populateTemplateDropdown();
             document.querySelectorAll('#responsabiliCheckboxes input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.disabled = false; });
             populateComuniCheckboxes();
             document.getElementById('adempimentoModal').classList.add('open');
@@ -1739,6 +1952,9 @@
 
             document.getElementById('adempimentoModalTitle').textContent = '✏️ Modifica Adempimento';
             document.getElementById('editAdempimentoId').value = adempimentoId;
+            document.getElementById('chkSalvaTemplate').checked = false;
+            document.getElementById('templateNameSection').style.display = 'none';
+            populateTemplateDropdown();
             document.getElementById('formTitolo').value = adempimento.Title || '';
             document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
             document.getElementById('formTipologia').value = adempimento.Tipologia || '';
@@ -1789,7 +2005,12 @@
             }
 
             const entiAdempimento = allEnti.filter(e => e.AdempimentoID == adempimentoId);
-            populateComuniCheckboxes(entiAdempimento.map(e => e.Comune));
+            const comuniFasiAdempimento = allComuniFasi.filter(c => c.AdempimentoID == adempimentoId);
+            // Per adempimenti con fasi, prendi i comuni dalle fasi; altrimenti dagli enti
+            const comuniSelEdit = hasFasi 
+                ? [...new Set(comuniFasiAdempimento.map(c => c.Comune))]
+                : entiAdempimento.map(e => e.Comune);
+            populateComuniCheckboxes(comuniSelEdit);
             document.getElementById('adempimentoModal').classList.add('open');
         };
 
