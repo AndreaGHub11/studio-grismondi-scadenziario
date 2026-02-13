@@ -397,6 +397,9 @@
             margin-bottom: 20px;
         }
         .alert-scadenze-title { font-weight: 800; color: #991b1b; font-size: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .alert-scadenze-panel.collapsed .alert-scadenze-body { display: none; }
+        .alert-scadenze-panel.collapsed .alert-scadenze-title { margin-bottom: 0; }
+        .alert-scadenze-panel.collapsed .alert-scadenze-title span:last-child { transform: rotate(-90deg); }
         .alert-scadenze-item {
             display: flex; align-items: center; gap: 10px; padding: 8px 12px;
             background: white; border-radius: 8px; margin-bottom: 6px; font-size: 13px;
@@ -478,6 +481,9 @@
                     <small id="userRole">Caricamento...</small>
                 </div>
                 <button class="logout-btn" id="btnTestOperatore" style="display:none;background:rgba(255,165,0,0.3);border-color:#ffa500;" title="Testa la vista Operatore">🔄 Vista Operatore</button>
+                <select id="selectTestOperatore" style="display:none;padding:6px 10px;border:2px solid #ffa500;border-radius:8px;font-size:12px;font-weight:700;background:#fff7ed;cursor:pointer;">
+                    <option value="">👑 Admin</option>
+                </select>
                 <button class="logout-btn" id="logoutBtn">Esci</button>
             </div>
         </div>
@@ -559,13 +565,6 @@
                     </div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-icon">🏛️</div>
-                    <div class="summary-content">
-                        <div class="summary-number" id="summary-comuni">0</div>
-                        <div class="summary-label">Comuni Totali</div>
-                    </div>
-                </div>
-                <div class="summary-card">
                     <div class="summary-icon">📊</div>
                     <div class="summary-content">
                         <div class="summary-number" id="summary-progress">0%</div>
@@ -627,6 +626,11 @@
                     <textarea id="formDescrizione" rows="3" placeholder="Istruzioni dettagliate..."></textarea>
                 </div>
                 <div class="form-group">
+                    <label>📎 Allegato (link a documento OneDrive/SharePoint)</label>
+                    <input type="url" id="formAllegato" placeholder="https://studiogrismondi.sharepoint.com/..." style="font-size:13px;">
+                    <small style="color:#6b7280;font-size:11px;">Incolla il link di condivisione del documento da OneDrive o SharePoint</small>
+                </div>
+                <div class="form-group">
                     <label>Tipologia *</label>
                     <select id="formTipologia" required>
                         <option value="">Seleziona...</option>
@@ -676,9 +680,10 @@
                             <!-- CARICA DA TEMPLATE -->
                             <div id="templateLoadSection" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;padding:10px;background:#e0f2fe;border-radius:8px;border:2px solid #93c5fd;">
                                 <span style="font-size:12px;font-weight:700;color:#1e40af;">📂 Template:</span>
-                                <select id="templateSelect" onchange="caricaTemplate(this.value)" style="flex:1;padding:6px 10px;border:2px solid #93c5fd;border-radius:6px;font-size:13px;">
-                                    <option value="">— Carica da template —</option>
+                                <select id="templateSelect" style="flex:1;padding:6px 10px;border:2px solid #93c5fd;border-radius:6px;font-size:13px;">
+                                    <option value="">— Seleziona template —</option>
                                 </select>
+                                <button type="button" class="btn btn-sm" onclick="caricaTemplate(document.getElementById('templateSelect').value)" style="font-size:11px;background:#3b82f6;color:white;" title="Carica template selezionato">📥 Carica</button>
                                 <button type="button" class="btn btn-sm btn-danger" onclick="eliminaTemplate()" style="font-size:11px;" title="Elimina template selezionato">🗑️</button>
                             </div>
 
@@ -866,6 +871,7 @@
         let fasiInputCounter = 0;                   // contatore righe fasi nel form
         let activeFilterResp = '';                   // filtro responsabile attivo (per fasi)
         let testModeOperatore = false;               // toggle per testare vista operatore
+        let testOperatoreName = '';                  // nome operatore simulato
 
         // Team dello Studio - AGGIUNGI QUI NUOVE PERSONE
         const TEAM_MEMBERS = ['Andrea', 'Roberta', 'Nicoletta', 'Miriana'];
@@ -930,23 +936,34 @@
 
                 // Estrai nome per filtri operatore
                 const fullName = currentUser.name || currentUser.username;
-                window.currentUserName = fullName.split(' ')[0]; // Prende il primo nome
+                if (testModeOperatore && testOperatoreName) {
+                    window.currentUserName = testOperatoreName;
+                } else {
+                    window.currentUserName = fullName.split(' ')[0];
+                }
 
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
-                document.getElementById('userName').textContent = fullName;
+                document.getElementById('userName').textContent = testModeOperatore ? `${fullName} (come ${testOperatoreName})` : fullName;
 
                 const roleText = userRole === 'Admin' ? '👑 Amministratore' : '👤 Operatore';
                 const testBadge = testModeOperatore ? ' <span style="background:#ffa500;color:#000;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">TEST</span>' : '';
                 document.getElementById('userRole').innerHTML = `${roleText}${testBadge}<br><span style="font-size:11px;opacity:0.8;">🔒 Sessione: ${daysRemaining} giorni</span>`;
 
-                // Mostra toggle operatore solo per admin
+                // Mostra select operatore solo per admin
                 if (isAdmin) {
-                    const btn = document.getElementById('btnTestOperatore');
-                    btn.style.display = 'inline-block';
-                    btn.textContent = testModeOperatore ? '👑 Torna Admin' : '🔄 Vista Operatore';
-                    btn.style.background = testModeOperatore ? 'rgba(16,185,129,0.3)' : 'rgba(255,165,0,0.3)';
-                    btn.style.borderColor = testModeOperatore ? '#10b981' : '#ffa500';
+                    const select = document.getElementById('selectTestOperatore');
+                    select.style.display = 'inline-block';
+                    select.innerHTML = '<option value="">👑 Admin</option>';
+                    TEAM_MEMBERS.forEach(name => {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = `👤 ${name} (operatore)`;
+                        select.appendChild(opt);
+                    });
+                    if (testModeOperatore && testOperatoreName) select.value = testOperatoreName;
+                    // Nascondi vecchio bottone toggle
+                    document.getElementById('btnTestOperatore').style.display = 'none';
                 }
 
                 // Nascondi/mostra elementi in base al ruolo
@@ -1126,7 +1143,6 @@
             document.getElementById('summary-scaduti').textContent = scaduti;
             document.getElementById('summary-urgenti').textContent = urgenti;
             document.getElementById('summary-completati').textContent = completati;
-            document.getElementById('summary-comuni').textContent = allComuniTracked.length;
             document.getElementById('summary-progress').textContent = progressPerc + '%';
             document.getElementById('dashboardSummary').style.display = 'grid';
         }
@@ -1149,7 +1165,6 @@
             for (const a of adempimentiDaControllare) {
                 const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
 
-                // Controlla completamento
                 const isCompleto = (() => {
                     if (hasFasi) {
                         const cf = allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false);
@@ -1160,70 +1175,65 @@
                 })();
                 if (isCompleto) continue;
 
-                // Adempimento scaduto
+                // Adempimento: scaduto o entro 5gg
                 if (a.DataScadenza) {
                     const scad = new Date(a.DataScadenza); scad.setHours(0,0,0,0);
                     const diff = Math.floor((scad - oggi) / (1000*60*60*24));
-                    if (diff < 0) {
-                        alerts.push({ tipo: 'scaduto', titolo: a.Title, data: scad, diff, mese: a.AnnoMese, adempId: a.ID, hasFasi });
-                    } else if (diff <= 14) {
-                        alerts.push({ tipo: 'urgente', titolo: a.Title, data: scad, diff, mese: a.AnnoMese, adempId: a.ID, hasFasi });
-                    }
+                    if (diff < 0) alerts.push({ tipo: 'scaduto', titolo: a.Title, data: scad, diff, mese: a.AnnoMese, adempId: a.ID, hasFasi });
+                    else if (diff <= 5) alerts.push({ tipo: 'urgente', titolo: a.Title, data: scad, diff, mese: a.AnnoMese, adempId: a.ID, hasFasi });
                 }
 
-                // Fasi scadute (anche se adempimento padre non scaduto!)
+                // Fasi: scadute o entro 5gg
                 if (hasFasi) {
-                    const fasiAdempimento = userRole === 'Operatore' && window.currentUserName
+                    const fasiAd = userRole === 'Operatore' && window.currentUserName
                         ? getFasiFiltratePerResp(a.ID, window.currentUserName)
                         : allFasi.filter(f => f.AdempimentoID == a.ID);
-                    for (const fase of fasiAdempimento) {
+                    for (const fase of fasiAd) {
                         if (!fase.DataScadenzaFase) continue;
                         const cf = allComuniFasi.filter(c => c.FaseID == fase.ID && c.Attivo !== false);
-                        const faseCompleta = cf.length > 0 && cf.every(c => c.StatoEnte === 'Completato' || c.StatoEnte === 'Non Gestito');
-                        if (faseCompleta) continue;
-                        const scadFase = new Date(fase.DataScadenzaFase); scadFase.setHours(0,0,0,0);
-                        const diffF = Math.floor((scadFase - oggi) / (1000*60*60*24));
-                        if (diffF < 0) {
-                            alerts.push({ tipo: 'fase-scaduta', titolo: a.Title, faseNome: fase.Title, data: scadFase, diff: diffF, mese: a.AnnoMese, adempId: a.ID, hasFasi: true });
-                        } else if (diffF <= 7) {
-                            alerts.push({ tipo: 'fase-urgente', titolo: a.Title, faseNome: fase.Title, data: scadFase, diff: diffF, mese: a.AnnoMese, adempId: a.ID, hasFasi: true });
-                        }
+                        const faseOk = cf.length > 0 && cf.every(c => c.StatoEnte === 'Completato' || c.StatoEnte === 'Non Gestito');
+                        if (faseOk) continue;
+                        const scadF = new Date(fase.DataScadenzaFase); scadF.setHours(0,0,0,0);
+                        const dF = Math.floor((scadF - oggi) / (1000*60*60*24));
+                        if (dF < 0) alerts.push({ tipo: 'fase-scaduta', titolo: a.Title, faseNome: fase.Title, data: scadF, diff: dF, mese: a.AnnoMese, adempId: a.ID, hasFasi: true });
+                        else if (dF <= 5) alerts.push({ tipo: 'fase-urgente', titolo: a.Title, faseNome: fase.Title, data: scadF, diff: dF, mese: a.AnnoMese, adempId: a.ID, hasFasi: true });
                     }
                 }
             }
 
             if (alerts.length === 0) { panel.style.display = 'none'; return; }
 
-            // Ordina: scaduti prima, poi urgenti, poi per data
             alerts.sort((a,b) => {
-                const ordTipo = { 'scaduto': 0, 'fase-scaduta': 1, 'urgente': 2, 'fase-urgente': 3 };
-                if (ordTipo[a.tipo] !== ordTipo[b.tipo]) return ordTipo[a.tipo] - ordTipo[b.tipo];
+                const ord = { 'scaduto': 0, 'fase-scaduta': 1, 'urgente': 2, 'fase-urgente': 3 };
+                if (ord[a.tipo] !== ord[b.tipo]) return ord[a.tipo] - ord[b.tipo];
                 return a.diff - b.diff;
             });
 
-            const scadutiCount = alerts.filter(a => a.tipo === 'scaduto' || a.tipo === 'fase-scaduta').length;
-            const urgentiCount = alerts.filter(a => a.tipo === 'urgente' || a.tipo === 'fase-urgente').length;
+            const scadutiN = alerts.filter(a => a.tipo === 'scaduto' || a.tipo === 'fase-scaduta').length;
+            const urgentiN = alerts.filter(a => a.tipo === 'urgente' || a.tipo === 'fase-urgente').length;
 
             panel.style.display = 'block';
             panel.innerHTML = `
                 <div class="alert-scadenze-panel">
-                    <div class="alert-scadenze-title">
-                        🚨 Attenzione — ${scadutiCount > 0 ? `${scadutiCount} scaduti` : ''}${scadutiCount > 0 && urgentiCount > 0 ? ' + ' : ''}${urgentiCount > 0 ? `${urgentiCount} in scadenza` : ''} (tutti i mesi)
+                    <div class="alert-scadenze-title" onclick="this.parentElement.classList.toggle('collapsed')" style="cursor:pointer;user-select:none;">
+                        🚨 ${scadutiN > 0 ? `${scadutiN} scaduti` : ''}${scadutiN > 0 && urgentiN > 0 ? ' + ' : ''}${urgentiN > 0 ? `${urgentiN} entro 5gg` : ''}
+                        <span style="margin-left:auto;font-size:12px;opacity:0.6;">▼ clicca per comprimere</span>
                     </div>
-                    ${alerts.slice(0, 15).map(a => {
-                        const isScaduto = a.tipo === 'scaduto' || a.tipo === 'fase-scaduta';
+                    <div class="alert-scadenze-body">
+                    ${alerts.map(a => {
+                        const isScad = a.tipo === 'scaduto' || a.tipo === 'fase-scaduta';
                         const isFase = a.tipo.startsWith('fase-');
                         const dateStr = a.data.toLocaleDateString('it-IT');
-                        const diffText = a.diff < 0 ? `${Math.abs(a.diff)}gg fa` : (a.diff === 0 ? 'OGGI' : `tra ${a.diff}gg`);
+                        const diffText = a.diff < 0 ? `${Math.abs(a.diff)}gg fa` : (a.diff === 0 ? 'OGGI!' : `tra ${a.diff}gg`);
                         return `
-                        <div class="alert-scadenze-item ${isScaduto ? '' : 'warning'}" onclick="navigaAdempimento('${a.adempId}', ${a.hasFasi}, '${a.mese}')">
-                            <span>${isScaduto ? '🔴' : '🟠'}</span>
+                        <div class="alert-scadenze-item ${isScad ? '' : 'warning'}" onclick="navigaAdempimento('${a.adempId}', ${a.hasFasi}, '${a.mese}')">
+                            <span>${isScad ? '🔴' : '🟠'}</span>
                             <span class="alert-scad-title">${escapeHtml(a.titolo)}${isFase ? ` <span class="alert-scad-fase">→ ${escapeHtml(a.faseNome)}</span>` : ''}</span>
-                            <span class="alert-scad-date ${isScaduto ? 'scadenza-danger' : 'scadenza-warning'}">${dateStr} (${diffText})</span>
+                            <span class="alert-scad-date ${isScad ? 'scadenza-danger' : 'scadenza-warning'}">${dateStr} (${diffText})</span>
                             <span style="font-size:11px;color:#6b7280;">${formatMese(a.mese)}</span>
                         </div>`;
                     }).join('')}
-                    ${alerts.length > 15 ? `<div style="text-align:center;padding:8px;font-size:12px;color:#991b1b;font-weight:600;">... e altri ${alerts.length - 15} elementi</div>` : ''}
+                    </div>
                 </div>`;
         }
 
@@ -1482,17 +1492,15 @@
                 <span style="font-size:13px;font-weight:600;color:#1e40af;">📍 ${escapeHtml(adempimento.Title)}</span>
                 <button class="btn btn-sm" onclick="tornaInAlto()" style="background:#3b82f6;">⬆️ Torna Su</button>
             </div>
-            <div class="comuni-legenda">
-                <div class="legenda-item"><span>🔴</span> Da Fare</div>
-                <div class="legenda-item"><span>🟡</span> In Corso</div>
-                <div class="legenda-item"><span>🟢</span> Completato</div>
-                <div class="legenda-item"><span>⚫</span> Non Gestito</div>
-            </div>
             ${adempimento.Descrizione && adempimento.Descrizione.trim() !== '' ? `
             <div style="background:#fffbeb;border:2px solid #fde68a;border-radius:8px;padding:15px;margin-bottom:15px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span>📋</span><strong style="color:#92400e;">Istruzioni Operative:</strong></div>
                 <div style="white-space:pre-wrap;font-family:'Courier New',monospace;font-size:12px;color:#78350f;line-height:1.6;">${escapeHtml(adempimento.Descrizione)}</div>
-            </div>` : ''}
+                ${adempimento.Allegato ? `<div style="margin-top:10px;"><a href="${escapeHtml(adempimento.Allegato)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#3b82f6;color:white;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">📎 Apri Guida Allegata ↗</a></div>` : ''}
+            </div>` : (adempimento.Allegato ? `
+            <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:8px;padding:12px;margin-bottom:15px;">
+                <a href="${escapeHtml(adempimento.Allegato)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#3b82f6;color:white;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">📎 Apri Guida Allegata ↗</a>
+            </div>` : '')}
             <div class="comuni-controls">
                 <input type="text" class="search-box" placeholder="🔍 Cerca comune..." oninput="filterComuni(${adempimento.ID}, this.value)">
                 <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'nome')">🔤 Nome</button>
@@ -1528,7 +1536,11 @@
             <div style="background:#fffbeb;border:2px solid #fde68a;border-radius:8px;padding:15px;margin-bottom:15px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span>📋</span><strong style="color:#92400e;">Istruzioni:</strong></div>
                 <div style="white-space:pre-wrap;font-family:'Courier New',monospace;font-size:12px;color:#78350f;line-height:1.6;">${escapeHtml(adempimento.Descrizione)}</div>
-            </div>` : ''}
+                ${adempimento.Allegato ? `<div style="margin-top:10px;"><a href="${escapeHtml(adempimento.Allegato)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#3b82f6;color:white;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">📎 Apri Guida Allegata ↗</a></div>` : ''}
+            </div>` : (adempimento.Allegato ? `
+            <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:8px;padding:12px;margin-bottom:15px;">
+                <a href="${escapeHtml(adempimento.Allegato)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#3b82f6;color:white;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">📎 Apri Guida Allegata ↗</a>
+            </div>` : '')}
             ${fasi.length === 0 ? '<p style="text-align:center;padding:30px;color:#9ca3af;">Nessuna fase configurata</p>' :
                 fasi.map((fase, idx) => createFaseCard(fase, idx + 1, oggi)).join('')
             }`;
@@ -1602,12 +1614,6 @@
                     </div>
                 </div>
                 <div class="fase-comuni-container" id="fase-comuni-${fase.ID}">
-                    <div class="comuni-legenda">
-                        <div class="legenda-item"><span>🔴</span> Da Fare</div>
-                        <div class="legenda-item"><span>🟡</span> In Corso</div>
-                        <div class="legenda-item"><span>🟢</span> Completato</div>
-                        <div class="legenda-item"><span>⚫</span> Non Gestito</div>
-                    </div>
                     <div class="comuni-grid" id="comuniFase-grid-${fase.ID}">
                         ${comuniF.length > 0
                             ? comuniF.map(c => createComuneCard(c, 'comuniFasi')).join('')
@@ -1882,7 +1888,6 @@
             try { fasiData = JSON.parse(template.FasiJSON); } catch(e) { showAlert('❌ Template non valido', 'error'); return; }
 
             if (!confirm(`Caricare il template "${template.Title}"?\n\nLe fasi attuali nel form verranno sostituite.`)) {
-                document.getElementById('templateSelect').value = '';
                 return;
             }
 
@@ -1921,17 +1926,24 @@
         window.eliminaTemplate = async function() {
             const select = document.getElementById('templateSelect');
             const templateId = select?.value;
-            if (!templateId) { showAlert('⚠️ Seleziona un template da eliminare', 'error'); return; }
+            if (!templateId) { 
+                showAlert('⚠️ Prima seleziona un template dal menu a tendina, poi premi 🗑️', 'error'); 
+                return; 
+            }
             const template = allTemplates.find(t => String(t.ID) === String(templateId));
-            if (!template) return;
-            if (!confirm(`Eliminare il template "${template.Title}"?`)) return;
+            if (!template) { showAlert('❌ Template non trovato', 'error'); return; }
+            if (!confirm(`Eliminare definitivamente il template "${template.Title}"?\n\nQuesta azione non è reversibile.`)) return;
             try {
+                showLoading(true);
                 await deleteItem(LISTS.TEMPLATES, templateId);
                 allTemplates = allTemplates.filter(t => String(t.ID) !== String(templateId));
                 populateTemplateDropdown();
-                showAlert(`✅ Template "${template.Title}" eliminato`, 'success');
+                showLoading(false);
+                showAlert(`✅ Template "${template.Title}" eliminato con successo!`, 'success');
             } catch(err) {
-                showAlert('❌ Errore: ' + err.message, 'error');
+                showLoading(false);
+                console.error('Errore eliminazione template:', err);
+                showAlert('❌ Errore eliminazione template: ' + err.message, 'error');
             }
         };
 
@@ -1979,6 +1991,7 @@
 
             const titolo = document.getElementById('formTitolo').value;
             const descrizione = document.getElementById('formDescrizione').value;
+            const allegato = document.getElementById('formAllegato').value.trim();
             const tipologia = document.getElementById('formTipologia').value;
             const annoMese = document.getElementById('formAnnoMese').value;
             const dataScadenza = document.getElementById('formDataScadenza').value;
@@ -2000,7 +2013,7 @@
             try {
                 showLoading(true);
                 const adempimentoData = {
-                    Title: titolo, Descrizione: descrizione, Tipologia: tipologia,
+                    Title: titolo, Descrizione: descrizione, Allegato: allegato, Tipologia: tipologia,
                     Responsabile: responsabiliSelezionati.join('; '),
                     AnnoMese: annoMese, DataScadenza: dataScadenza,
                     StatoMese: 'Aperto', HasFasi: usaFasi
@@ -2173,6 +2186,7 @@
             populateTemplateDropdown();
             document.getElementById('formTitolo').value = adempimento.Title || '';
             document.getElementById('formDescrizione').value = adempimento.Descrizione || '';
+            document.getElementById('formAllegato').value = adempimento.Allegato || '';
             document.getElementById('formTipologia').value = adempimento.Tipologia || '';
             document.getElementById('formAnnoMese').value = adempimento.AnnoMese || '';
             if (adempimento.DataScadenza) document.getElementById('formDataScadenza').value = new Date(adempimento.DataScadenza).toISOString().split('T')[0];
@@ -2335,6 +2349,7 @@
                 showLoading(true);
                 const nuovoResult = await createItem(LISTS.ADEMPIMENTI, {
                     Title: nuovoTitolo, Descrizione: nuovaDescrizione,
+                    Allegato: adempimentoOrig.Allegato || '',
                     Tipologia: adempimentoOrig.Tipologia, Responsabile: respDuplicato,
                     AnnoMese: nuovoMese, DataScadenza: nuovaScadenza,
                     StatoMese: 'Aperto', HasFasi: hasFasi
@@ -2490,6 +2505,17 @@
             document.getElementById('logoutBtn')?.addEventListener('click', logout);
             document.getElementById('btnTestOperatore')?.addEventListener('click', async function() {
                 testModeOperatore = !testModeOperatore;
+                await handleAuth();
+            });
+            document.getElementById('selectTestOperatore')?.addEventListener('change', async function() {
+                const val = this.value;
+                if (val) {
+                    testModeOperatore = true;
+                    testOperatoreName = val;
+                } else {
+                    testModeOperatore = false;
+                    testOperatoreName = '';
+                }
                 await handleAuth();
             });
             document.getElementById('btnSync')?.addEventListener('click', loadData);
