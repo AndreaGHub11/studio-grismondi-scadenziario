@@ -531,7 +531,9 @@
     <!-- LOGIN -->
     <div id="loginContainer" class="login-container">
         <div class="logo">
-            <img src="https://raw.githubusercontent.com/AndreaGHub11/studio-grismondi-scadenziario/main/1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img">
+            <img src="./1_Bozza_Logo_ufficiale.png" alt="Studio Grismondi Logo" class="logo-img"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+            <div style="display:none;font-size:48px;">📋</div>
         </div>
         <h1>Studio Grismondi</h1>
         <p>Sistema Scadenziario Integrato</p>
@@ -542,7 +544,8 @@
     <div id="appContainer" class="app-container">
         <div class="header">
             <div style="display:flex;align-items:center;gap:15px;">
-                <img src="https://raw.githubusercontent.com/AndreaGHub11/studio-grismondi-scadenziario/main/1_Bozza_Logo_ufficiale.png" alt="Logo" style="width:45px;height:45px;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2));border-radius:8px;">
+                <img src="./1_Bozza_Logo_ufficiale.png" alt="Logo" style="width:45px;height:45px;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2));border-radius:8px;"
+                     onerror="this.style.display='none';">
                 <h1>📅 Scadenziario Studio Grismondi</h1>
             </div>
             <div class="user-info">
@@ -2954,7 +2957,7 @@
                 const accounts = msalInstance.getAllAccounts();
                 // Controlla se la sessione è ancora valida
                 const lastLogin = localStorage.getItem('lastLogin');
-                const sessionValid = lastLogin && (Date.now() - parseInt(lastLogin)) < (10 * 24 * 60 * 60 * 1000);
+                const sessionValid = lastLogin && (Date.now() - parseInt(lastLogin)) < (5 * 24 * 60 * 60 * 1000);
                 if (accounts.length > 0 && sessionValid) {
                     // Sessione ancora valida: auto-login
                     await handleAuth();
@@ -2984,6 +2987,24 @@
                 await handleAuth();
             });
             document.getElementById('btnSync')?.addEventListener('click', loadData);
+            
+            // ============================================================
+            // AUTO-REFRESH: aggiorna dati ogni 5 minuti per tutti gli utenti
+            // ============================================================
+            setInterval(async () => {
+                if (!accessToken || document.getElementById('appContainer').style.display === 'none') return;
+                // Non aggiornare se un modal è aperto (evita conflitti)
+                const modalAperto = document.querySelector('.modal.open');
+                if (modalAperto) return;
+                try {
+                    console.log('🔄 Auto-sync in corso...');
+                    await loadData();
+                    console.log('✅ Auto-sync completato');
+                } catch (err) {
+                    console.warn('⚠️ Auto-sync fallito:', err.message);
+                }
+            }, 1 * 60 * 1000); // 1 minuto
+            
             document.getElementById('btnAddAdempimento')?.addEventListener('click', openAdempimentoModal);
             document.getElementById('btnAddComune')?.addEventListener('click', () => { document.getElementById('comuneForm').reset(); document.getElementById('comuneModal').classList.add('open'); });
             document.getElementById('btnCloseAdempimentoModal')?.addEventListener('click', () => document.getElementById('adempimentoModal').classList.remove('open'));
