@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V27</title>
+    <title>Scadenziario Studio Grismondi V28</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -589,13 +589,18 @@
         </div>
 
         <div style="padding:10px 20px;background:#f0f9ff;border-bottom:2px solid #bae6fd;">
-            <div style="display:flex;align-items:center;gap:10px;max-width:600px;">
+            <div style="display:flex;align-items:center;gap:10px;max-width:700px;">
                 <span style="font-size:18px;">🔍</span>
-                <input type="text" id="searchAdempimento" placeholder="Cerca adempimento per titolo..." 
+                <input type="text" id="searchAdempimento" placeholder="Cerca su TUTTI i mesi (titolo, comune, tipologia)..." 
                     oninput="searchAdempimenti(this.value)"
                     style="flex:1;padding:10px 15px;border:2px solid #93c5fd;border-radius:10px;font-size:14px;outline:none;transition:border-color 0.2s;">
                 <button onclick="document.getElementById('searchAdempimento').value='';searchAdempimenti('')" 
                     style="padding:8px 12px;border:none;border-radius:8px;background:#e0f2fe;cursor:pointer;font-size:13px;font-weight:600;">✕</button>
+            </div>
+            <div id="searchGlobalIndicator" style="display:none;margin-top:6px;font-size:12px;color:#2563eb;font-weight:600;">
+                🌐 Ricerca globale su tutti i mesi — <span id="searchResultCount">0</span> risultati trovati
+                <button onclick="document.getElementById('searchAdempimento').value='';searchAdempimenti('')" 
+                    style="margin-left:8px;padding:2px 8px;border:1px solid #93c5fd;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;color:#2563eb;">Annulla ricerca</button>
             </div>
         </div>
 
@@ -643,6 +648,7 @@
                 <button class="btn btn-sm btn-warning filtro-rapido" onclick="filtroRapido('urgenti')" id="filtro-urgenti">🔥 Urgenti</button>
                 <button class="btn btn-sm filtro-rapido" onclick="filtroRapido('inattesa')" id="filtro-inattesa" style="background:linear-gradient(135deg,#f97316,#ea580c);">🟠 In Attesa</button>
                 <button class="btn btn-sm btn-success filtro-rapido" onclick="filtroRapido('completati')" id="filtro-completati">✅ Completati</button>
+                <button class="btn btn-sm filtro-rapido" onclick="filtroRapido('archivio')" id="filtro-archivio" style="background:linear-gradient(135deg,#6b7280,#4b5563);color:white;">📦 Archivio</button>
             </div>
         </div>
 
@@ -689,6 +695,13 @@
                     <div class="summary-content">
                         <div class="summary-number" id="summary-progress">0%</div>
                         <div class="summary-label">Completamento</div>
+                    </div>
+                </div>
+                <div class="summary-card" style="border-color:#9ca3af;">
+                    <div class="summary-icon">📦</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-archiviati" style="color:#6b7280;">0</div>
+                        <div class="summary-label">Mesi Archiviati</div>
                     </div>
                 </div>
             </div>
@@ -967,6 +980,7 @@
                 <h2 style="color:#7c3aed;">📋 Istruzioni Fase - <span id="faseNoteTitolo"></span></h2>
             </div>
             <input type="hidden" id="faseNoteId">
+            <div id="faseNoteTrackInfo" style="display:none;font-size:11px;color:#9ca3af;font-style:italic;margin-bottom:10px;padding:6px 10px;background:#f9fafb;border-radius:6px;"></div>
             <div class="form-group">
                 <label style="color:#7c3aed;">✏️ Istruzioni operative per questa fase</label>
                 <textarea id="formNoteFase" rows="8" placeholder="Scrivi qui le istruzioni dettagliate per questa fase...&#10;Es: Verificare i dati del bilancio, controllare le voci di spesa...&#10;Contattare l'ente per documentazione mancante..." 
@@ -998,7 +1012,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V27 - NoteFase + InAttesaEnte + Sync10min');
+        console.log('🚀 Scadenziario V28 - TrackIstruzioni + NomeAutoNota + RicercaGlobale + ArchivioMesi');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -1329,6 +1343,11 @@
             document.getElementById('summary-completati').textContent = completati;
             document.getElementById('summary-inattesa').textContent = inAttesaCount;
             document.getElementById('summary-progress').textContent = progressPerc + '%';
+            
+            // Contatore mesi archiviati
+            const mesiCompletati = getMesiCompletati();
+            document.getElementById('summary-archiviati').textContent = mesiCompletati.size;
+            
             document.getElementById('dashboardSummary').style.display = 'grid';
         }
 
@@ -1443,24 +1462,74 @@
         };
 
         // ============================================================
-        // FILTER MESI
+        // FILTER MESI + ARCHIVIO MESI COMPLETATI
         // ============================================================
+        function getMesiCompletati() {
+            // Ritorna un Set di mesi (AnnoMese) dove TUTTI gli adempimenti sono completati al 100%
+            const mesiCompletati = new Set();
+            const mesiMap = {};
+            allAdempimenti.forEach(a => {
+                if (!a.AnnoMese) return;
+                if (!mesiMap[a.AnnoMese]) mesiMap[a.AnnoMese] = [];
+                mesiMap[a.AnnoMese].push(a);
+            });
+            for (const [mese, adempimenti] of Object.entries(mesiMap)) {
+                if (adempimenti.length === 0) continue;
+                const tuttiCompletati = adempimenti.every(a => {
+                    const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+                    if (hasFasi) {
+                        const cf = allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false);
+                        return cf.length > 0 && cf.every(c => c.StatoEnte === 'Completato' || c.StatoEnte === 'Non Gestito');
+                    }
+                    const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+                    return enti.length > 0 && enti.every(e => e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito');
+                });
+                if (tuttiCompletati) mesiCompletati.add(mese);
+            }
+            return mesiCompletati;
+        }
+
         function populateFilterMesi() {
             const select = document.getElementById('filterMese');
             if (!select) return;
             const mesi = new Set();
             allAdempimenti.forEach(a => { if (a.AnnoMese) mesi.add(a.AnnoMese); });
             const sorted = Array.from(mesi).sort().reverse();
-            select.innerHTML = '<option value="">Tutti i mesi</option>';
-            sorted.forEach(m => {
+            const mesiCompletati = getMesiCompletati();
+            const mesiAttivi = sorted.filter(m => !mesiCompletati.has(m));
+            const numArchiviati = sorted.length - mesiAttivi.length;
+            
+            select.innerHTML = '<option value="">Tutti i mesi attivi</option>';
+            mesiAttivi.forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m; opt.textContent = formatMese(m);
                 select.appendChild(opt);
             });
+            
+            // Se ci sono mesi archiviati, aggiungili come gruppo separato
+            if (numArchiviati > 0) {
+                const sepOpt = document.createElement('option');
+                sepOpt.disabled = true;
+                sepOpt.textContent = `── 📦 Archiviati (${numArchiviati}) ──`;
+                select.appendChild(sepOpt);
+                sorted.filter(m => mesiCompletati.has(m)).forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m; opt.textContent = `✅ ${formatMese(m)} (completato)`;
+                    select.appendChild(opt);
+                });
+            }
+            
+            // Seleziona mese corrente tra quelli attivi, altrimenti il primo attivo
             const oggi = new Date();
             const meseOggi = `${oggi.getFullYear()}-${String(oggi.getMonth()+1).padStart(2,'0')}`;
-            if (sorted.includes(meseOggi)) select.value = meseOggi;
-            else if (sorted.length > 0) select.value = sorted[0];
+            if (mesiAttivi.includes(meseOggi)) select.value = meseOggi;
+            else if (mesiAttivi.length > 0) select.value = mesiAttivi[0];
+            
+            // Aggiorna il contatore archivio nel pulsante
+            const btnArchivio = document.getElementById('filtro-archivio');
+            if (btnArchivio) {
+                btnArchivio.textContent = numArchiviati > 0 ? `📦 Archivio (${numArchiviati})` : '📦 Archivio';
+            }
         }
 
         // ============================================================
@@ -1520,13 +1589,57 @@
                 }
             }
 
-            if (fM) filtered = filtered.filter(a => a.AnnoMese === fM);
+            // Filtro ricerca testo GLOBALE (bypassa filtro mese)
+            const searchText = document.getElementById('searchAdempimento')?.value?.trim().toLowerCase() || '';
+            const isSearching = searchText.length >= 2;
+            
+            // Filtro mese: NON applicare se c'è ricerca globale attiva
+            if (!isSearching) {
+                if (fM) {
+                    filtered = filtered.filter(a => a.AnnoMese === fM);
+                } else {
+                    // "Tutti i mesi attivi" → escludi mesi archiviati (100% completati)
+                    const mesiCompletati = getMesiCompletati();
+                    if (mesiCompletati.size > 0) {
+                        filtered = filtered.filter(a => !a.AnnoMese || !mesiCompletati.has(a.AnnoMese));
+                    }
+                }
+            }
             if (fT) filtered = filtered.filter(a => a.Tipologia === fT);
             if (fR) filtered = filtered.filter(a => isResponsabileInAdempimento(a, fR));
             
-            // Filtro ricerca testo
-            const searchText = document.getElementById('searchAdempimento')?.value?.trim().toLowerCase() || '';
-            if (searchText) filtered = filtered.filter(a => (a.Title || '').toLowerCase().includes(searchText));
+            // Ricerca globale: cerca in titolo, tipologia E nomi comuni associati
+            if (isSearching) {
+                filtered = filtered.filter(a => {
+                    // Cerca nel titolo
+                    if ((a.Title || '').toLowerCase().includes(searchText)) return true;
+                    // Cerca nella tipologia
+                    if ((a.Tipologia || '').toLowerCase().includes(searchText)) return true;
+                    // Cerca nel mese formattato
+                    if (a.AnnoMese && formatMese(a.AnnoMese).toLowerCase().includes(searchText)) return true;
+                    // Cerca nei nomi dei comuni associati
+                    const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+                    if (hasFasi) {
+                        const comuniF = allComuniFasi.filter(c => c.AdempimentoID == a.ID);
+                        if (comuniF.some(c => (c.Title || '').toLowerCase().includes(searchText))) return true;
+                    } else {
+                        const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+                        if (enti.some(e => (e.Title || '').toLowerCase().includes(searchText))) return true;
+                    }
+                    return false;
+                });
+            }
+            
+            // Mostra/nascondi indicatore ricerca globale
+            const searchIndicator = document.getElementById('searchGlobalIndicator');
+            if (searchIndicator) {
+                if (isSearching) {
+                    searchIndicator.style.display = 'block';
+                    document.getElementById('searchResultCount').textContent = filtered.length;
+                } else {
+                    searchIndicator.style.display = 'none';
+                }
+            }
             
             if (fS) {
                 filtered = filtered.filter(a => {
@@ -1799,11 +1912,15 @@
 
             // NoteFase (istruzioni)
             const noteFaseContent = fase.NoteFase ? escapeHtml(fase.NoteFase) : '';
+            const noteFaseModDa = fase.NoteFaseModDa || '';
+            const noteFaseTrackHtml = (userRole === 'Admin' && noteFaseModDa) 
+                ? `<div style="font-size:10px;color:#9ca3af;font-style:italic;margin-top:4px;border-top:1px solid #e9d5ff;padding-top:4px;">📌 ${escapeHtml(noteFaseModDa)}</div>` 
+                : '';
             const noteFaseHtml = `
                 <div class="fase-note-box" onclick="openFaseNoteModal(${fase.ID}, '${escapeHtml(fase.Title).replace(/'/g, "\\'")}')">
                     <div class="fase-note-label">📋 Istruzioni ${noteFaseContent ? '✅' : ''}</div>
                     ${noteFaseContent 
-                        ? `<div class="fase-note-content">${noteFaseContent}</div>`
+                        ? `<div class="fase-note-content">${noteFaseContent}</div>${noteFaseTrackHtml}`
                         : `<div class="fase-note-placeholder">Clicca per aggiungere istruzioni per questa fase...</div>`
                     }
                 </div>`;
@@ -1867,12 +1984,26 @@
             document.getElementById('faseNoteId').value = faseId;
             document.getElementById('faseNoteTitolo').textContent = faseTitolo;
             document.getElementById('formNoteFase').value = fase.NoteFase || '';
+            
+            // Mostra info tracciamento solo ad admin
+            const trackInfo = document.getElementById('faseNoteTrackInfo');
+            if (userRole === 'Admin' && fase.NoteFaseModDa) {
+                trackInfo.textContent = '📌 ' + fase.NoteFaseModDa;
+                trackInfo.style.display = 'block';
+            } else {
+                trackInfo.style.display = 'none';
+            }
+            
             document.getElementById('faseNoteModal').classList.add('open');
         };
 
         window.salvaNoteFase = async function() {
             const faseId = document.getElementById('faseNoteId').value;
             const noteFase = document.getElementById('formNoteFase').value;
+            const userName = window.currentUserName || 'Admin';
+            const now = new Date();
+            const dataStr = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+            const noteFaseModDa = `Mod: ${userName} (${dataStr})`;
             
             // Salva posizione scroll e stato UI
             const scrollY = window.scrollY;
@@ -1883,7 +2014,10 @@
             
             // Aggiorna locale
             const fase = allFasi.find(f => f.ID == faseId);
-            if (fase) fase.NoteFase = noteFase;
+            if (fase) {
+                fase.NoteFase = noteFase;
+                fase.NoteFaseModDa = noteFaseModDa;
+            }
             
             document.getElementById('faseNoteModal').classList.remove('open');
             renderAdempimenti();
@@ -1911,7 +2045,7 @@
             
             // Salva su SharePoint in background
             try {
-                await updateItem(LISTS.FASI, faseId, { NoteFase: noteFase });
+                await updateItem(LISTS.FASI, faseId, { NoteFase: noteFase, NoteFaseModDa: noteFaseModDa });
             } catch (err) {
                 showAlert('⚠️ Errore salvataggio istruzioni fase: ' + err.message, 'error');
             }
@@ -2038,7 +2172,8 @@
                         const ente = listaLocale.find(e => e.ID == id);
                         const now = new Date();
                         const dataOra = now.toLocaleString('it-IT', { day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit' });
-                        const autoNote = `Inviata richiesta all'ente, in attesa di risposta - ${dataOra}`;
+                        const batchUserName = window.currentUserName || 'Admin';
+                        const autoNote = `[${dataOra} - ${batchUserName}] Inviata richiesta all'ente, in attesa di risposta`;
                         const existingNote = ente ? (ente.NoteEnte || '') : '';
                         updateData.NoteEnte = existingNote.trim() ? `${autoNote}\n---\n${existingNote}` : autoNote;
                     }
@@ -2200,7 +2335,8 @@
                     day: '2-digit', month: '2-digit', year: 'numeric',
                     hour: '2-digit', minute: '2-digit'
                 });
-                const autoNote = `Inviata richiesta all'ente, in attesa di risposta - ${dataOra}`;
+                const userName = window.currentUserName || 'Admin';
+                const autoNote = `[${dataOra} - ${userName}] Inviata richiesta all'ente, in attesa di risposta`;
                 const existingNote = ente.NoteEnte || '';
                 updateData.NoteEnte = existingNote.trim() ? `${autoNote}\n---\n${existingNote}` : autoNote;
                 ente.NoteEnte = updateData.NoteEnte;
@@ -2690,12 +2826,14 @@
                         for (const fase of faseDalForm) {
                             if (fase.existingId) {
                                 // FASE ESISTENTE → aggiorna solo metadati (NON tocca gli stati comuni!)
+                                const faseModInfo = fase.noteFase ? `Mod: ${userName} (${dataStr})` : '';
                                 await updateItem(LISTS.FASI, fase.existingId, {
                                     Title: fase.nome,
                                     OrdineFase: fase.ordine,
                                     DataScadenzaFase: fase.scadenza,
                                     ResponsabileFase: fase.responsabile || '',
-                                    NoteFase: fase.noteFase || ''
+                                    NoteFase: fase.noteFase || '',
+                                    NoteFaseModDa: faseModInfo
                                 });
 
                                 // Gestisci comuni: aggiungi nuovi, rimuovi deselezionati
@@ -2727,7 +2865,8 @@
                                     OrdineFase: fase.ordine,
                                     DataScadenzaFase: fase.scadenza,
                                     ResponsabileFase: fase.responsabile || '',
-                                    NoteFase: fase.noteFase || ''
+                                    NoteFase: fase.noteFase || '',
+                                    NoteFaseModDa: fase.noteFase ? `Creato: ${userName} (${dataStr})` : ''
                                 });
                                 const nuovaFaseId = faseResult.id;
                                 for (const comune of comuniSelezionati) {
@@ -2768,7 +2907,8 @@
                                 OrdineFase: fase.ordine,
                                 DataScadenzaFase: fase.scadenza,
                                 ResponsabileFase: fase.responsabile || '',
-                                NoteFase: fase.noteFase || ''
+                                NoteFase: fase.noteFase || '',
+                                NoteFaseModDa: fase.noteFase ? `Creato: ${userName} (${dataStr})` : ''
                             });
                             const faseId = faseResult.id;
                             for (const comune of comuniSelezionati) {
@@ -3019,7 +3159,8 @@
                             OrdineFase: fase.OrdineFase,
                             DataScadenzaFase: null, // scadenze fasi resettate, da aggiornare manualmente
                             ResponsabileFase: fase.ResponsabileFase || '',
-                            NoteFase: fase.NoteFase || ''  // Copia istruzioni dalla fase originale
+                            NoteFase: fase.NoteFase || '',  // Copia istruzioni dalla fase originale
+                            NoteFaseModDa: fase.NoteFaseModDa || ''  // Copia tracciamento originale
                         });
                         const nuovaFaseId = nuovaFaseResult.id;
                         const cfOrig = allComuniFasi.filter(c => c.FaseID == fase.ID && c.Attivo !== false);
@@ -3083,14 +3224,40 @@
                 }
                 return allEnti.filter(e => e.AdempimentoID == a.ID && e.StatoEnte === 'In Attesa Ente').length > 0;
             });
+            else if (tipo === 'archivio') {
+                // Mostra SOLO gli adempimenti di mesi completamente archiviati (100% completati)
+                const mesiCompletati = getMesiCompletati();
+                filtered = filtered.filter(a => a.AnnoMese && mesiCompletati.has(a.AnnoMese));
+            }
 
             document.querySelectorAll('.filtro-rapido').forEach(b => b.classList.remove('active'));
             document.getElementById(`filtro-${tipo}`).classList.add('active');
 
             const container = document.getElementById('adempimentiContainer');
+            if (tipo === 'archivio' && filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><h3>Nessun mese archiviato</h3><p>Quando tutti gli adempimenti di un mese sono completati (🟢), quel mese viene automaticamente archiviato.</p></div>';
+                return;
+            }
             if (filtered.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Nessun adempimento trovato</h3></div>'; return; }
             filtered.sort((a,b) => { const dA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31'); const dB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31'); return dA - dB; });
-            container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
+            
+            // Per archivio, raggruppa per mese con header
+            if (tipo === 'archivio') {
+                const perMese = {};
+                filtered.forEach(a => {
+                    const m = a.AnnoMese || 'Senza mese';
+                    if (!perMese[m]) perMese[m] = [];
+                    perMese[m].push(a);
+                });
+                let html = '<div style="padding:12px 0 8px 0;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 16px;background:linear-gradient(135deg,#f3f4f6,#e5e7eb);border-radius:10px;border-left:4px solid #6b7280;"><span style="font-size:22px;">📦</span><div><strong style="font-size:16px;color:#374151;">Archivio Mesi Completati</strong><div style="font-size:12px;color:#6b7280;">Mesi in cui tutti gli adempimenti sono al 100%</div></div></div></div>';
+                Object.keys(perMese).sort().forEach(m => {
+                    html += `<div style="margin-bottom:8px;padding:8px 12px;background:#f0fdf4;border-radius:8px;border-left:3px solid #22c55e;"><strong style="color:#065f46;">✅ ${formatMese(m)}</strong> — ${perMese[m].length} adempimenti completati</div>`;
+                    html += perMese[m].map(a => createAdempimentoCard(a)).join('');
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = filtered.map(a => createAdempimentoCard(a)).join('');
+            }
             attachEventListeners();
         };
 
