@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V26</title>
+    <title>Scadenziario Studio Grismondi V27</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -424,6 +424,32 @@
             font-size: 11px; font-weight: 700; animation: pulse-scadenza 2s infinite;
         }
         
+        /* ===================== NOTE FASE (Istruzioni) ===================== */
+        .fase-note-box {
+            background: #f3e8ff; border: 2px solid #c084fc; border-radius: 8px;
+            padding: 10px 14px; margin: 0 18px 8px 18px; cursor: pointer;
+            transition: all 0.2s; font-size: 12px; line-height: 1.6;
+        }
+        .fase-note-box:hover { border-color: #a855f7; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.15); }
+        .fase-note-label { font-weight: 700; color: #7c3aed; font-size: 12px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .fase-note-content { white-space: pre-wrap; font-family: 'Segoe UI', sans-serif; color: #581c87; font-size: 12px; }
+        .fase-note-placeholder { color: #a78bfa; font-style: italic; font-size: 12px; }
+
+        /* ===================== STATUS IN ATTESA ENTE ===================== */
+        .status-btn-single.status-btn-inattesa { border-color: #fdba74; background: #fff7ed; color: #9a3412; }
+        .btn-stato-inattesa:hover { border-color: #f97316; background: #fff7ed; }
+        .stat-badge.in-attesa { background: #ffe0b2; color: #e65100; }
+
+        /* ===================== SYNC BUTTON HEADER ===================== */
+        .btn-sync-header {
+            background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.5);
+            padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            transition: all 0.3s; font-size: 13px; display: flex; align-items: center; gap: 6px;
+        }
+        .btn-sync-header:hover { background: rgba(255,255,255,0.35); }
+        .btn-sync-header.syncing { animation: pulse-sync 1s infinite; }
+        @keyframes pulse-sync { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
         .hidden { display: none !important; }
         
         /* ===================== RESPONSIVE ===================== */
@@ -557,6 +583,7 @@
                 <select id="selectTestOperatore" style="display:none;padding:6px 10px;border:2px solid #ffa500;border-radius:8px;font-size:12px;font-weight:700;background:#fff7ed;cursor:pointer;">
                     <option value="">👑 Admin</option>
                 </select>
+                <button class="btn-sync-header" id="btnSyncHeader" title="Sincronizza dati">🔄 Sync</button>
                 <button class="logout-btn" id="logoutBtn">Esci</button>
             </div>
         </div>
@@ -603,6 +630,7 @@
                     <option value="">Tutti</option>
                     <option value="Non Gestito">Da Fare</option>
                     <option value="In Corso">In Corso</option>
+                    <option value="In Attesa Ente">In Attesa Ente</option>
                     <option value="Completato">Completato</option>
                 </select>
             </div>
@@ -613,6 +641,7 @@
                 <button class="btn btn-sm filtro-rapido active" onclick="filtroRapido('tutti')" id="filtro-tutti">📋 Tutti</button>
                 <button class="btn btn-sm btn-danger filtro-rapido" onclick="filtroRapido('scaduti')" id="filtro-scaduti">⚠️ Scaduti</button>
                 <button class="btn btn-sm btn-warning filtro-rapido" onclick="filtroRapido('urgenti')" id="filtro-urgenti">🔥 Urgenti</button>
+                <button class="btn btn-sm filtro-rapido" onclick="filtroRapido('inattesa')" id="filtro-inattesa" style="background:linear-gradient(135deg,#f97316,#ea580c);">🟠 In Attesa</button>
                 <button class="btn btn-sm btn-success filtro-rapido" onclick="filtroRapido('completati')" id="filtro-completati">✅ Completati</button>
             </div>
         </div>
@@ -648,6 +677,13 @@
                         <div class="summary-label">Completati</div>
                     </div>
                 </div>
+                <div class="summary-card" style="border-color:#fdba74;">
+                    <div class="summary-icon">🟠</div>
+                    <div class="summary-content">
+                        <div class="summary-number" id="summary-inattesa" style="color:#ea580c;">0</div>
+                        <div class="summary-label">In Attesa Ente</div>
+                    </div>
+                </div>
                 <div class="summary-card">
                     <div class="summary-icon">📊</div>
                     <div class="summary-content">
@@ -681,6 +717,7 @@
             <div style="display:flex;flex-direction:column;gap:10px;">
                 <button class="btn-stato btn-stato-dafare" onclick="applicaNuovoStato('Da Fare')">🔴 Da Fare</button>
                 <button class="btn-stato btn-stato-incorso" onclick="applicaNuovoStato('In Corso')">🟡 In Corso</button>
+                <button class="btn-stato btn-stato-inattesa" onclick="applicaNuovoStato('In Attesa Ente')">🟠 In Attesa Ente</button>
                 <button class="btn-stato btn-stato-completato" onclick="applicaNuovoStato('Completato')">🟢 Completato</button>
                 <button class="btn-stato btn-stato-nongestito" onclick="applicaNuovoStato('Non Gestito')">⚫ Non Gestito</button>
             </div>
@@ -921,12 +958,35 @@
     </div>
 
     <!-- Batch action bar (floating) -->
+    <!-- ============================================================
+         MODAL NOTE FASE (Istruzioni per fase)
+         ============================================================ -->
+    <div id="faseNoteModal" class="modal">
+        <div class="modal-content" style="max-width:650px;">
+            <div class="modal-header" style="border-bottom-color:#e9d5ff;">
+                <h2 style="color:#7c3aed;">📋 Istruzioni Fase - <span id="faseNoteTitolo"></span></h2>
+            </div>
+            <input type="hidden" id="faseNoteId">
+            <div class="form-group">
+                <label style="color:#7c3aed;">✏️ Istruzioni operative per questa fase</label>
+                <textarea id="formNoteFase" rows="8" placeholder="Scrivi qui le istruzioni dettagliate per questa fase...&#10;Es: Verificare i dati del bilancio, controllare le voci di spesa...&#10;Contattare l'ente per documentazione mancante..." 
+                    style="min-height:180px;border-color:#c084fc;font-size:13px;line-height:1.6;"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-fasi" onclick="salvaNoteFase()">💾 Salva Istruzioni</button>
+                <button type="button" class="btn" onclick="document.getElementById('faseNoteModal').classList.remove('open')">❌ Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch action bar (floating) -->
     <div id="batchActionBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:12px 20px;z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.3);border-radius:16px 16px 0 0;">
         <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
             <span id="batchCount" style="color:white;font-weight:700;font-size:14px;">0 selezionati</span>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <button onclick="applicaStatoBatch('Da Fare')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fef2f2;color:#991b1b;">🔴 Da Fare</button>
                 <button onclick="applicaStatoBatch('In Corso')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fefce8;color:#92400e;">🟡 In Corso</button>
+                <button onclick="applicaStatoBatch('In Attesa Ente')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fff7ed;color:#9a3412;">🟠 In Attesa</button>
                 <button onclick="applicaStatoBatch('Completato')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#f0fdf4;color:#065f46;">🟢 Completato</button>
                 <button onclick="applicaStatoBatch('Non Gestito')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#f9fafb;color:#6b7280;">⚫ Non Gestito</button>
                 <button onclick="deselezionaTutti()" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fee2e2;color:#991b1b;">✕ Deseleziona</button>
@@ -938,7 +998,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V26 - Config Definitiva Ruoli + Sessione 5gg');
+        console.log('🚀 Scadenziario V27 - NoteFase + InAttesaEnte + Sync10min');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -1093,7 +1153,7 @@
                 const isOperatore = userRole === 'Operatore';
                 document.getElementById('btnAddAdempimento').style.display = ''; // Operatori possono creare
                 document.getElementById('btnAddComune').style.display = isOperatore ? 'none' : '';
-                document.getElementById('btnSync').style.display = isOperatore ? 'none' : '';
+                document.getElementById('btnSync').style.display = ''; // Visibile a tutti
                 document.getElementById('dashboardSummary').style.display = isOperatore ? 'none' : 'grid';
                 // Operatori non vedono filtro responsabile (vedono solo i propri)
                 const filtroRespContainer = document.getElementById('filterResponsabile')?.closest('div');
@@ -1259,6 +1319,7 @@
             const completati = allAdempimenti.filter(a => isAdempimentoCompletato(a)).length;
 
             const allComuniTracked = [...allEnti, ...allComuniFasi.filter(c => c.Attivo !== false)];
+            const inAttesaCount = allComuniTracked.filter(e => e.StatoEnte === 'In Attesa Ente').length;
             const progressPerc = allComuniTracked.length > 0 ?
                 Math.round((allComuniTracked.filter(e => e.StatoEnte === 'Completato' || e.StatoEnte === 'Non Gestito').length / allComuniTracked.length) * 100) : 0;
 
@@ -1266,6 +1327,7 @@
             document.getElementById('summary-scaduti').textContent = scaduti;
             document.getElementById('summary-urgenti').textContent = urgenti;
             document.getElementById('summary-completati').textContent = completati;
+            document.getElementById('summary-inattesa').textContent = inAttesaCount;
             document.getElementById('summary-progress').textContent = progressPerc + '%';
             document.getElementById('dashboardSummary').style.display = 'grid';
         }
@@ -1499,7 +1561,7 @@
             const hasFasi = adempimento.HasFasi === true || adempimento.HasFasi === 'true';
 
             // Calcola progresso e stati
-            let totali, daFare, inCorso, completati, nonGestiti, progressPercentuale, isCompletato;
+            let totali, daFare, inCorso, completati, nonGestiti, inAttesa, progressPercentuale, isCompletato;
 
             if (hasFasi) {
                 // Se operatore o filtro responsabile, mostra solo le fasi assegnate
@@ -1513,6 +1575,7 @@
                 totali = comuniF.length;
                 daFare = comuniF.filter(c => c.StatoEnte === 'Da Fare').length;
                 inCorso = comuniF.filter(c => c.StatoEnte === 'In Corso').length;
+                inAttesa = comuniF.filter(c => c.StatoEnte === 'In Attesa Ente').length;
                 completati = comuniF.filter(c => c.StatoEnte === 'Completato').length;
                 nonGestiti = comuniF.filter(c => !c.StatoEnte || c.StatoEnte === 'Non Gestito').length;
                 progressPercentuale = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
@@ -1522,6 +1585,7 @@
                 totali = enti.length;
                 daFare = enti.filter(e => e.StatoEnte === 'Da Fare').length;
                 inCorso = enti.filter(e => e.StatoEnte === 'In Corso').length;
+                inAttesa = enti.filter(e => e.StatoEnte === 'In Attesa Ente').length;
                 completati = enti.filter(e => e.StatoEnte === 'Completato').length;
                 nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
                 progressPercentuale = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
@@ -1598,6 +1662,7 @@
                         ${isCompletato ? '<span class="stat-badge" style="background:#10b981;color:white;padding:5px 12px;">✅ COMPLETATO</span>' : ''}
                         ${daFare > 0 ? `<span class="stat-badge non-gestiti">🔴 ${daFare}</span>` : ''}
                         ${inCorso > 0 ? `<span class="stat-badge in-corso">🟡 ${inCorso}</span>` : ''}
+                        ${inAttesa > 0 ? `<span class="stat-badge in-attesa">🟠 ${inAttesa}</span>` : ''}
                         ${completati > 0 ? `<span class="stat-badge completati">🟢 ${completati}</span>` : ''}
                         ${nonGestiti > 0 ? `<span class="stat-badge non-gestiti-grigio">⚫ ${nonGestiti}</span>` : ''}
                         <div class="progress-mini" title="${progressPercentuale}%">
@@ -1701,6 +1766,7 @@
             const nonGestiti = comuniF.filter(c => !c.StatoEnte || c.StatoEnte === 'Non Gestito').length;
             const inCorso = comuniF.filter(c => c.StatoEnte === 'In Corso').length;
             const daFare = comuniF.filter(c => c.StatoEnte === 'Da Fare').length;
+            const inAttesa = comuniF.filter(c => c.StatoEnte === 'In Attesa Ente').length;
             const progressFase = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
             const fasCompletata = totali > 0 && (completati + nonGestiti) === totali;
 
@@ -1731,6 +1797,17 @@
                 else if (diffCheck <= 7) faseCardClass += ' fase-warning';
             }
 
+            // NoteFase (istruzioni)
+            const noteFaseContent = fase.NoteFase ? escapeHtml(fase.NoteFase) : '';
+            const noteFaseHtml = `
+                <div class="fase-note-box" onclick="openFaseNoteModal(${fase.ID}, '${escapeHtml(fase.Title).replace(/'/g, "\\'")}')">
+                    <div class="fase-note-label">📋 Istruzioni ${noteFaseContent ? '✅' : ''}</div>
+                    ${noteFaseContent 
+                        ? `<div class="fase-note-content">${noteFaseContent}</div>`
+                        : `<div class="fase-note-placeholder">Clicca per aggiungere istruzioni per questa fase...</div>`
+                    }
+                </div>`;
+
             return `
             <div class="${faseCardClass}">
                 <div class="fase-header" onclick="toggleFaseComuni('fase-comuni-${fase.ID}', this)">
@@ -1744,6 +1821,7 @@
                             <span>${progressFase}%</span>
                             ${daFare > 0 ? `<span style="color:#991b1b;">🔴 ${daFare}</span>` : ''}
                             ${inCorso > 0 ? `<span style="color:#92400e;">🟡 ${inCorso}</span>` : ''}
+                            ${inAttesa > 0 ? `<span style="color:#9a3412;">🟠 ${inAttesa}</span>` : ''}
                             ${completati > 0 ? `<span style="color:#065f46;">🟢 ${completati}</span>` : ''}
                         </div>
                     </div>
@@ -1755,6 +1833,7 @@
                         <button class="fase-expand-btn" type="button">▼ Comuni</button>
                     </div>
                 </div>
+                ${noteFaseHtml}
                 <div class="fase-comuni-container" id="fase-comuni-${fase.ID}">
                     <div style="display:flex;gap:6px;padding:6px 8px;align-items:center;">
                         <button class="btn btn-sm" onclick="toggleSelectAll('${fase.ID}','comuniFasi')" style="background:#8b5cf6;color:white;font-size:11px;padding:4px 10px;">☑️ Sel. Tutti</button>
@@ -1780,6 +1859,65 @@
         };
 
         // ============================================================
+        // NOTE FASE (Istruzioni per ogni fase)
+        // ============================================================
+        window.openFaseNoteModal = function(faseId, faseTitolo) {
+            const fase = allFasi.find(f => f.ID == faseId);
+            if (!fase) return;
+            document.getElementById('faseNoteId').value = faseId;
+            document.getElementById('faseNoteTitolo').textContent = faseTitolo;
+            document.getElementById('formNoteFase').value = fase.NoteFase || '';
+            document.getElementById('faseNoteModal').classList.add('open');
+        };
+
+        window.salvaNoteFase = async function() {
+            const faseId = document.getElementById('faseNoteId').value;
+            const noteFase = document.getElementById('formNoteFase').value;
+            
+            // Salva posizione scroll e stato UI
+            const scrollY = window.scrollY;
+            const openFasiIds = [];
+            document.querySelectorAll('.fase-comuni-container.open').forEach(el => openFasiIds.push(el.id));
+            const openAdempIds = [];
+            document.querySelectorAll('.comuni-list.open, .fasi-container.open').forEach(el => openAdempIds.push(el.id));
+            
+            // Aggiorna locale
+            const fase = allFasi.find(f => f.ID == faseId);
+            if (fase) fase.NoteFase = noteFase;
+            
+            document.getElementById('faseNoteModal').classList.remove('open');
+            renderAdempimenti();
+            
+            // Ripristina stato UI
+            openAdempIds.forEach(cId => {
+                const c = document.getElementById(cId);
+                if (c) {
+                    c.classList.add('open');
+                    const adempId = cId.replace('comuni-list-','').replace('fasi-container-','');
+                    const header = document.querySelector(`.adempimento-toggle[data-id="${adempId}"]`);
+                    const icon = header?.querySelector('.expand-icon');
+                    if (icon) icon.classList.add('open');
+                }
+            });
+            openFasiIds.forEach(fId => {
+                const fc = document.getElementById(fId);
+                if (fc) {
+                    fc.classList.add('open');
+                    const btn = fc.previousElementSibling?.querySelector('.fase-expand-btn');
+                    if (btn) btn.textContent = '▲ Chiudi';
+                }
+            });
+            window.scrollTo(0, scrollY);
+            
+            // Salva su SharePoint in background
+            try {
+                await updateItem(LISTS.FASI, faseId, { NoteFase: noteFase });
+            } catch (err) {
+                showAlert('⚠️ Errore salvataggio istruzioni fase: ' + err.message, 'error');
+            }
+        };
+
+        // ============================================================
         // CARD COMUNE (condivisa tra enti e comuni_fasi)
         // ============================================================
         function createComuneCard(ente, listaSource) {
@@ -1787,9 +1925,10 @@
             const progress = ente.ProgressEnte || 0;
 
             let statoIcon = '🔴', statoText = 'Da Fare', statoClass = 'status-btn-dafare';
-            if (stato === 'In Corso')      { statoIcon = '🟡'; statoText = 'In Corso';    statoClass = 'status-btn-incorso'; }
-            else if (stato === 'Completato') { statoIcon = '🟢'; statoText = 'Completato'; statoClass = 'status-btn-completato'; }
-            else if (stato === 'Non Gestito'){ statoIcon = '⚫'; statoText = 'Non Gestito';statoClass = 'status-btn-nongestito'; }
+            if (stato === 'In Corso')          { statoIcon = '🟡'; statoText = 'In Corso';       statoClass = 'status-btn-incorso'; }
+            else if (stato === 'In Attesa Ente') { statoIcon = '🟠'; statoText = 'In Attesa Ente'; statoClass = 'status-btn-inattesa'; }
+            else if (stato === 'Completato')   { statoIcon = '🟢'; statoText = 'Completato';     statoClass = 'status-btn-completato'; }
+            else if (stato === 'Non Gestito')  { statoIcon = '⚫'; statoText = 'Non Gestito';    statoClass = 'status-btn-nongestito'; }
 
             const comuneEscaped = (ente.Comune || '').replace(/`/g, '').replace(/'/g, "\\'");
 
@@ -1875,6 +2014,7 @@
 
             let nuovoProgress = 0;
             if (nuovoStato === 'In Corso') nuovoProgress = 50;
+            if (nuovoStato === 'In Attesa Ente') nuovoProgress = 50;
             if (nuovoStato === 'Completato') nuovoProgress = 100;
 
             const scrollY = window.scrollY;
@@ -1888,8 +2028,22 @@
                 // Batch parallel update
                 const promises = checked.map(cb => {
                     const id = cb.getAttribute('data-id');
-                    const lista = cb.getAttribute('data-lista') === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
-                    return updateItem(lista, id, { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress });
+                    const listaSource = cb.getAttribute('data-lista');
+                    const lista = listaSource === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
+                    const updateData = { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress };
+                    
+                    // Auto-nota per "In Attesa Ente" anche in batch
+                    if (nuovoStato === 'In Attesa Ente') {
+                        const listaLocale = listaSource === 'comuniFasi' ? allComuniFasi : allEnti;
+                        const ente = listaLocale.find(e => e.ID == id);
+                        const now = new Date();
+                        const dataOra = now.toLocaleString('it-IT', { day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit' });
+                        const autoNote = `Inviata richiesta all'ente, in attesa di risposta - ${dataOra}`;
+                        const existingNote = ente ? (ente.NoteEnte || '') : '';
+                        updateData.NoteEnte = existingNote.trim() ? `${autoNote}\n---\n${existingNote}` : autoNote;
+                    }
+                    
+                    return updateItem(lista, id, updateData);
                 });
                 await Promise.all(promises);
 
@@ -2010,7 +2164,7 @@
             document.getElementById('statoComune').textContent = comune;
             document.getElementById('statoListaSource').value = listaSource || 'enti';
             document.querySelectorAll('.btn-stato').forEach(b => b.classList.remove('active'));
-            const map = { 'Da Fare': 'dafare', 'In Corso': 'incorso', 'Completato': 'completato', 'Non Gestito': 'nongestito' };
+            const map = { 'Da Fare': 'dafare', 'In Corso': 'incorso', 'In Attesa Ente': 'inattesa', 'Completato': 'completato', 'Non Gestito': 'nongestito' };
             const cls = map[statoAttuale];
             if (cls) document.querySelector(`.btn-stato-${cls}`)?.classList.add('active');
             document.getElementById('cambiaStatoModal').classList.add('open');
@@ -2022,6 +2176,7 @@
             const lista = listaSource === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
             let nuovoProgress = 0;
             if (nuovoStato === 'In Corso') nuovoProgress = 50;
+            if (nuovoStato === 'In Attesa Ente') nuovoProgress = 50;
             if (nuovoStato === 'Completato') nuovoProgress = 100;
 
             // Salva posizione scroll e stato UI
@@ -2034,6 +2189,23 @@
             // Aggiorna subito locale (ottimistico)
             const listaLocale = listaSource === 'comuniFasi' ? allComuniFasi : allEnti;
             const ente = listaLocale.find(e => e.ID == enteId);
+            
+            // Prepara dati per aggiornamento
+            const updateData = { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress };
+            
+            // Auto-nota per "In Attesa Ente"
+            if (nuovoStato === 'In Attesa Ente' && ente) {
+                const now = new Date();
+                const dataOra = now.toLocaleString('it-IT', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                const autoNote = `Inviata richiesta all'ente, in attesa di risposta - ${dataOra}`;
+                const existingNote = ente.NoteEnte || '';
+                updateData.NoteEnte = existingNote.trim() ? `${autoNote}\n---\n${existingNote}` : autoNote;
+                ente.NoteEnte = updateData.NoteEnte;
+            }
+            
             if (ente) { ente.StatoEnte = nuovoStato; ente.ProgressEnte = nuovoProgress; }
 
             document.getElementById('cambiaStatoModal').classList.remove('open');
@@ -2062,7 +2234,7 @@
 
             // Salva in background su SharePoint
             try {
-                await updateItem(lista, enteId, { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress });
+                await updateItem(lista, enteId, updateData);
             } catch (err) {
                 showAlert('⚠️ Errore sync: ' + err.message + ' (ricarica per verificare)', 'error');
             }
@@ -2220,6 +2392,9 @@
                     <span class="fase-resp-label">👤 Resp:</span>
                     ${respToggles}
                 </div>
+                <div style="grid-column:1/-1;margin-top:2px;">
+                    <textarea data-tipo="notefase" placeholder="📋 Istruzioni operative per questa fase (opzionale)..." rows="2" style="width:100%;padding:6px 10px;border:1px solid #c084fc;border-radius:6px;font-size:12px;resize:vertical;min-height:40px;background:#faf5ff;"></textarea>
+                </div>
             `;
             list.appendChild(row);
             rinumeraFasi();
@@ -2309,6 +2484,9 @@
                         <span class="fase-resp-label">👤 Resp:</span>
                         ${respToggles}
                     </div>
+                    <div style="grid-column:1/-1;margin-top:2px;">
+                        <textarea data-tipo="notefase" placeholder="📋 Istruzioni operative per questa fase (opzionale)..." rows="2" style="width:100%;padding:6px 10px;border:1px solid #c084fc;border-radius:6px;font-size:12px;resize:vertical;min-height:40px;background:#faf5ff;"></textarea>
+                    </div>
                 `;
                 list.appendChild(row);
             });
@@ -2364,6 +2542,7 @@
             rows.forEach((row, idx) => {
                 const nome = row.querySelector('[data-tipo="nome"]')?.value?.trim();
                 const scadenza = row.querySelector('[data-tipo="scadenza"]')?.value;
+                const noteFase = row.querySelector('[data-tipo="notefase"]')?.value?.trim() || '';
                 const respSelezionati = Array.from(row.querySelectorAll('.fase-resp-toggle.selected')).map(el => el.getAttribute('data-resp'));
                 const existingId = row.getAttribute('data-fase-id') || null; // ID SharePoint se fase esistente
                 if (nome) fasi.push({ 
@@ -2371,6 +2550,7 @@
                     nome, 
                     scadenza: scadenza || null, 
                     responsabile: respSelezionati.join('; '),
+                    noteFase: noteFase,
                     existingId: existingId  // null = nuova fase, altrimenti = aggiorna
                 });
             });
@@ -2514,7 +2694,8 @@
                                     Title: fase.nome,
                                     OrdineFase: fase.ordine,
                                     DataScadenzaFase: fase.scadenza,
-                                    ResponsabileFase: fase.responsabile || ''
+                                    ResponsabileFase: fase.responsabile || '',
+                                    NoteFase: fase.noteFase || ''
                                 });
 
                                 // Gestisci comuni: aggiungi nuovi, rimuovi deselezionati
@@ -2545,7 +2726,8 @@
                                     AdempimentoID: parseInt(adempimentoId),
                                     OrdineFase: fase.ordine,
                                     DataScadenzaFase: fase.scadenza,
-                                    ResponsabileFase: fase.responsabile || ''
+                                    ResponsabileFase: fase.responsabile || '',
+                                    NoteFase: fase.noteFase || ''
                                 });
                                 const nuovaFaseId = faseResult.id;
                                 for (const comune of comuniSelezionati) {
@@ -2585,7 +2767,8 @@
                                 AdempimentoID: parseInt(adempimentoId),
                                 OrdineFase: fase.ordine,
                                 DataScadenzaFase: fase.scadenza,
-                                ResponsabileFase: fase.responsabile || ''
+                                ResponsabileFase: fase.responsabile || '',
+                                NoteFase: fase.noteFase || ''
                             });
                             const faseId = faseResult.id;
                             for (const comune of comuniSelezionati) {
@@ -2694,6 +2877,9 @@
                         <div class="fase-resp-row">
                             <span class="fase-resp-label">👤 Resp:</span>
                             ${respToggles}
+                        </div>
+                        <div style="grid-column:1/-1;margin-top:2px;">
+                            <textarea data-tipo="notefase" placeholder="📋 Istruzioni operative per questa fase (opzionale)..." rows="2" style="width:100%;padding:6px 10px;border:1px solid #c084fc;border-radius:6px;font-size:12px;resize:vertical;min-height:40px;background:#faf5ff;">${escapeHtml(fase.NoteFase || '')}</textarea>
                         </div>
                     `;
                     list.appendChild(row);
@@ -2832,7 +3018,8 @@
                             AdempimentoID: parseInt(nuovoAdempimentoId),
                             OrdineFase: fase.OrdineFase,
                             DataScadenzaFase: null, // scadenze fasi resettate, da aggiornare manualmente
-                            ResponsabileFase: fase.ResponsabileFase || ''
+                            ResponsabileFase: fase.ResponsabileFase || '',
+                            NoteFase: fase.NoteFase || ''  // Copia istruzioni dalla fase originale
                         });
                         const nuovaFaseId = nuovaFaseResult.id;
                         const cfOrig = allComuniFasi.filter(c => c.FaseID == fase.ID && c.Attivo !== false);
@@ -2889,6 +3076,13 @@
                 return diff >= 0 && diff <= 7 && !isCompletato(a);
             });
             else if (tipo === 'completati') filtered = filtered.filter(a => isCompletato(a));
+            else if (tipo === 'inattesa') filtered = filtered.filter(a => {
+                // Mostra adempimenti che hanno almeno un comune "In Attesa Ente"
+                if (a.HasFasi === true || a.HasFasi === 'true') {
+                    return allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false && c.StatoEnte === 'In Attesa Ente').length > 0;
+                }
+                return allEnti.filter(e => e.AdempimentoID == a.ID && e.StatoEnte === 'In Attesa Ente').length > 0;
+            });
 
             document.querySelectorAll('.filtro-rapido').forEach(b => b.classList.remove('active'));
             document.getElementById(`filtro-${tipo}`).classList.add('active');
@@ -2988,8 +3182,24 @@
             });
             document.getElementById('btnSync')?.addEventListener('click', loadData);
             
+            // Pulsante sync nell'header (per tutti gli utenti)
+            document.getElementById('btnSyncHeader')?.addEventListener('click', async function() {
+                const btn = this;
+                btn.classList.add('syncing');
+                btn.textContent = '⏳ Sync...';
+                try {
+                    await loadData();
+                    btn.textContent = '✅ Fatto!';
+                    setTimeout(() => { btn.textContent = '🔄 Sync'; }, 2000);
+                } catch(e) {
+                    btn.textContent = '❌ Errore';
+                    setTimeout(() => { btn.textContent = '🔄 Sync'; }, 3000);
+                }
+                btn.classList.remove('syncing');
+            });
+            
             // ============================================================
-            // AUTO-REFRESH: aggiorna dati ogni 5 minuti per tutti gli utenti
+            // AUTO-REFRESH: aggiorna dati ogni 10 minuti per tutti gli utenti
             // ============================================================
             setInterval(async () => {
                 if (!accessToken || document.getElementById('appContainer').style.display === 'none') return;
@@ -3003,7 +3213,7 @@
                 } catch (err) {
                     console.warn('⚠️ Auto-sync fallito:', err.message);
                 }
-            }, 1 * 60 * 1000); // 1 minuto
+            }, 10 * 60 * 1000); // 10 minuti
             
             document.getElementById('btnAddAdempimento')?.addEventListener('click', openAdempimentoModal);
             document.getElementById('btnAddComune')?.addEventListener('click', () => { document.getElementById('comuneForm').reset(); document.getElementById('comuneModal').classList.add('open'); });
