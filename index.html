@@ -935,7 +935,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V25 - Cerca + Storico Dettagliato + Fix Operatore Fasi');
+        console.log('🚀 Scadenziario V25 - Cerca + Storico Dettagliato Comuni/Fasi + Fix Operatore Fasi');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -2420,6 +2420,46 @@
                         if (vecchioResp !== nuovoResp) cambiamenti.push(`Responsabili: ${vecchioResp || '-'} → ${nuovoResp || '-'}`);
                         if ((vecchio.Descrizione || '') !== descrizione) cambiamenti.push('Istruzioni operative modificate');
                         if ((vecchio.Allegato || '') !== allegato) cambiamenti.push(`Allegato ${allegato ? 'aggiornato' : 'rimosso'}`);
+                        
+                        // Tracking comuni aggiunti/rimossi
+                        if (usaFasi) {
+                            // Per adempimenti con fasi: confronta comuni selezionati con quelli esistenti
+                            const comuniEsistentiFasi = [...new Set(allComuniFasi.filter(c => c.AdempimentoID == editId).map(c => c.Comune))];
+                            const comuniAggiunti = comuniSelezionati.filter(c => !comuniEsistentiFasi.includes(c));
+                            const comuniRimossi = comuniEsistentiFasi.filter(c => !comuniSelezionati.includes(c));
+                            if (comuniAggiunti.length > 0) cambiamenti.push(`Comuni aggiunti: ${comuniAggiunti.join(', ')}`);
+                            if (comuniRimossi.length > 0) cambiamenti.push(`Comuni rimossi: ${comuniRimossi.join(', ')}`);
+                            
+                            // Tracking fasi aggiunte/rimosse
+                            const fasiEsistentiPre = allFasi.filter(f => f.AdempimentoID == editId);
+                            const fasiFormIDsPre = faseDalForm.filter(f => f.existingId).map(f => String(f.existingId));
+                            const fasiRimosse = fasiEsistentiPre.filter(f => !fasiFormIDsPre.includes(String(f.ID)));
+                            const fasiNuove = faseDalForm.filter(f => !f.existingId);
+                            if (fasiNuove.length > 0) cambiamenti.push(`Fasi aggiunte: ${fasiNuove.map(f => f.nome).join(', ')}`);
+                            if (fasiRimosse.length > 0) cambiamenti.push(`Fasi rimosse: ${fasiRimosse.map(f => f.Title).join(', ')}`);
+                            
+                            // Tracking responsabili fasi modificati
+                            for (const fase of faseDalForm) {
+                                if (fase.existingId) {
+                                    const vecchiaFase = fasiEsistentiPre.find(f => String(f.ID) === String(fase.existingId));
+                                    if (vecchiaFase) {
+                                        if ((vecchiaFase.ResponsabileFase || '') !== fase.responsabile) {
+                                            cambiamenti.push(`Fase "${fase.nome}" resp: ${vecchiaFase.ResponsabileFase || '-'} → ${fase.responsabile || '-'}`);
+                                        }
+                                        if (vecchiaFase.Title !== fase.nome) {
+                                            cambiamenti.push(`Fase rinominata: "${vecchiaFase.Title}" → "${fase.nome}"`);
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // Per adempimenti senza fasi
+                            const comuniEsistentiEnti = allEnti.filter(e => e.AdempimentoID == editId).map(e => e.Comune);
+                            const comuniAggiunti = comuniSelezionati.filter(c => !comuniEsistentiEnti.includes(c));
+                            const comuniRimossi = comuniEsistentiEnti.filter(c => !comuniSelezionati.includes(c));
+                            if (comuniAggiunti.length > 0) cambiamenti.push(`Comuni aggiunti: ${comuniAggiunti.join(', ')}`);
+                            if (comuniRimossi.length > 0) cambiamenti.push(`Comuni rimossi: ${comuniRimossi.join(', ')}`);
+                        }
                     }
                     
                     const dettaglioMod = cambiamenti.length > 0 ? cambiamenti.join(' | ') : 'Nessun campo principale modificato';
