@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V23</title>
+    <title>Scadenziario Studio Grismondi V24</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -430,29 +430,99 @@
         @media (max-width: 1200px) { .comuni-grid { grid-template-columns: repeat(2, 1fr); } }
         
         @media only screen and (max-width: 768px) {
-            body { padding: 10px; }
+            body { padding: 5px; }
             .login-container { padding: 30px 20px; margin: 50px auto; }
             .logo-img { width: 90px; height: 90px; }
             .login-container h1 { font-size: 22px; }
-            .header { padding: 20px; flex-direction: column; gap: 15px; text-align: center; }
-            .header h1 { font-size: 18px; }
-            .user-info { flex-direction: column; gap: 10px; }
-            .controls { padding: 15px; flex-direction: column; align-items: stretch; }
+            .header { padding: 12px 15px; flex-direction: column; gap: 10px; text-align: center; }
+            .header h1 { font-size: 16px; }
+            .user-info { flex-direction: column; gap: 8px; }
+            .user-info span { font-size: 12px; }
+            .logout-btn { padding: 6px 10px; font-size: 11px; }
+            .controls { padding: 10px; flex-direction: column; align-items: stretch; gap: 8px; }
             .controls > div { width: 100%; }
-            .btn { width: 100%; padding: 12px; }
-            .dashboard-summary { grid-template-columns: 1fr; padding: 15px; gap: 10px; }
-            .content { padding: 15px; }
-            .adempimento-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
-            .adempimento-stats { flex-wrap: wrap; width: 100%; }
+            .controls select, .controls input { width: 100%; font-size: 13px; }
+            .btn { width: 100%; padding: 10px; font-size: 13px; }
+            .dashboard-summary { grid-template-columns: repeat(2, 1fr); padding: 10px; gap: 8px; }
+            .summary-card { padding: 10px; }
+            .summary-number { font-size: 20px; }
+            .summary-label { font-size: 10px; }
+            .content { padding: 10px; }
+            
+            /* Adempimento card mobile */
+            .adempimento-header { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px; }
+            .adempimento-titolo { font-size: 14px; }
+            .adempimento-meta { font-size: 11px; line-height: 1.6; }
+            .adempimento-stats { flex-wrap: wrap; width: 100%; gap: 4px; }
+            .stat-badge { font-size: 10px; padding: 3px 6px; }
             .progress-mini { width: 100%; }
-            .comuni-grid { grid-template-columns: 1fr !important; }
-            .fase-input-row { grid-template-columns: 25px 1fr; grid-template-rows: auto auto; }
+            .adempimento-actions { gap: 4px; margin-left: 0; }
+            .icon-btn { font-size: 16px; padding: 4px; }
+            .expand-icon { font-size: 16px; }
+            
+            /* Comuni grid mobile */
+            .comuni-grid { grid-template-columns: 1fr !important; gap: 6px; }
+            .comune-card { padding: 8px; }
+            .comune-nome { font-size: 12px; }
+            .status-btn-single { font-size: 10px; padding: 4px 8px; }
+            .comuni-controls { flex-wrap: wrap; gap: 4px; padding: 8px; }
+            .comuni-controls .search-box { width: 100%; }
+            .comuni-controls .btn { width: auto; padding: 6px 10px; font-size: 11px; }
+            
+            /* Fase card mobile */
+            .fase-card { margin-bottom: 8px; }
+            .fase-header { flex-direction: column; gap: 6px; padding: 10px; }
+            .fase-ordine { font-size: 14px; min-width: 28px; min-height: 28px; }
+            .fase-title { font-size: 13px; }
+            .fase-meta { flex-wrap: wrap; gap: 4px; }
+            .fase-meta span { font-size: 10px; }
+            .fase-actions { width: 100%; }
+            .fase-progress-bar { flex: 1; }
+            .fase-expand-btn { font-size: 11px; padding: 4px 8px; }
+            .fase-resp-badge { font-size: 10px; padding: 2px 6px; }
+            
+            /* Form mobile */
+            .fase-input-row { grid-template-columns: 25px 30px 1fr; grid-template-rows: auto auto; gap: 4px; }
             .fase-input-row input[type="date"] { grid-column: 1 / -1; }
+            .fase-input-row input[type="text"] { font-size: 13px; }
             .remove-fase-btn { justify-self: end; }
-            .checkbox-grid { grid-template-columns: 1fr !important; }
-            .modal-content { width: 95%; padding: 20px; margin: 10px; }
+            .fase-resp-row { grid-column: 1 / -1; }
+            .fase-resp-toggle { font-size: 11px; padding: 3px 8px; }
+            .checkbox-grid { grid-template-columns: 1fr 1fr !important; }
+            .modal-content { width: 95%; padding: 15px; margin: 5px; max-height: 95vh; }
             .form-actions { flex-direction: column; }
             .form-actions .btn { width: 100%; }
+            
+            /* Alert panel mobile */
+            .alert-scadenze-panel { padding: 10px; }
+            .alert-scadenze-title { font-size: 13px; }
+            .alert-scadenze-item { font-size: 11px; padding: 6px 8px; flex-wrap: wrap; }
+            .alert-scad-title { font-size: 11px; }
+            
+            /* Batch bar mobile */
+            #batchActionBar > div { flex-direction: column; gap: 8px; }
+            #batchActionBar > div > div { flex-wrap: wrap; justify-content: center; }
+            #batchActionBar button { padding: 6px 10px !important; font-size: 11px !important; }
+            
+            /* Responsabile badges */
+            .responsabile-badge { font-size: 10px; padding: 2px 6px; }
+            .badge-fasi { font-size: 10px; padding: 2px 6px; }
+            .badge-fasi-scadute { font-size: 10px; }
+            
+            /* Quick filter buttons */
+            .quick-filter-btn { font-size: 11px; padding: 6px 10px; }
+            
+            /* Select operatore mobile */
+            #selectTestOperatore { font-size: 11px; padding: 4px 8px; max-width: 180px; }
+        }
+        
+        @media only screen and (max-width: 480px) {
+            .header h1 { font-size: 14px; }
+            .dashboard-summary { grid-template-columns: 1fr 1fr; }
+            .summary-icon { font-size: 20px; }
+            .adempimento-titolo { font-size: 13px; }
+            .checkbox-grid { grid-template-columns: 1fr !important; }
+            .modal-content { padding: 10px; }
         }
     </style>
 </head>
@@ -626,9 +696,14 @@
                     <textarea id="formDescrizione" rows="3" placeholder="Istruzioni dettagliate..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>📎 Link Allegato / Guida (opzionale)</label>
+                    <label>📎 Allegato / Guida (opzionale)</label>
                     <input type="text" id="formAllegato" placeholder="Incolla qui il link al documento..." style="font-size:13px;">
-                    <small style="color:#6b7280;font-size:11px;">Copia il link di condivisione da OneDrive, SharePoint o Google Drive e incollalo qui</small>
+                    <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:6px;padding:8px 12px;margin-top:6px;font-size:11px;color:#1e40af;line-height:1.5;">
+                        <strong>Come allegare un file:</strong><br>
+                        1️⃣ Apri OneDrive → carica il file nella cartella condivisa<br>
+                        2️⃣ Click destro sul file → "Condividi" → "Copia link"<br>
+                        3️⃣ Incolla il link qui sopra
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Tipologia *</label>
@@ -815,8 +890,12 @@
                     <textarea id="formNuovaNota" rows="3" placeholder="Scrivi qui la nuova nota..."></textarea>
                 </div>
                 <div class="form-group" id="noteStoricoSection" style="display:none;">
-                    <label>📋 Storico Note</label>
-                    <div id="noteStoricoContent" style="max-height:250px;overflow-y:auto;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;padding:12px;font-size:12px;line-height:1.6;white-space:pre-wrap;font-family:'Courier New',monospace;color:#374151;"></div>
+                    <label style="display:flex;justify-content:space-between;align-items:center;">
+                        <span>📋 Storico Note</span>
+                        <button type="button" id="btnEditStorico" onclick="toggleEditStorico()" style="display:none;font-size:11px;padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff7ed;cursor:pointer;">✏️ Modifica storico</button>
+                    </label>
+                    <div id="noteStoricoDisplay" style="max-height:250px;overflow-y:auto;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;padding:12px;font-size:12px;line-height:1.6;white-space:pre-wrap;font-family:'Courier New',monospace;color:#374151;"></div>
+                    <textarea id="noteStoricoEdit" rows="8" style="display:none;font-size:12px;font-family:'Courier New',monospace;line-height:1.6;"></textarea>
                 </div>
                 <input type="hidden" id="formNote">
                 <div class="form-actions">
@@ -845,7 +924,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V23 - Multi-Select + Note Storico + Frecce Fasi');
+        console.log('🚀 Scadenziario V24 - Mobile + Tracking + Bug Fix Operatore');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -1393,9 +1472,11 @@
             let totali, daFare, inCorso, completati, nonGestiti, progressPercentuale, isCompletato;
 
             if (hasFasi) {
-                // Se c'è filtro responsabile, mostra solo le fasi di quel responsabile
-                const fasiVisibili = activeFilterResp 
-                    ? getFasiFiltratePerResp(adempimento.ID, activeFilterResp)
+                // Se operatore o filtro responsabile, mostra solo le fasi assegnate
+                const filtroStats = (userRole === 'Operatore' && window.currentUserName) 
+                    ? window.currentUserName : activeFilterResp;
+                const fasiVisibili = filtroStats 
+                    ? getFasiFiltratePerResp(adempimento.ID, filtroStats)
                     : allFasi.filter(f => f.AdempimentoID == adempimento.ID);
                 const fasiVisibiliIDs = fasiVisibili.map(f => String(f.ID));
                 const comuniF = allComuniFasi.filter(c => c.AdempimentoID == adempimento.ID && c.Attivo !== false && fasiVisibiliIDs.includes(String(c.FaseID)));
@@ -1432,8 +1513,10 @@
                 ? adempimento.Responsabile.map(r => `<span class="responsabile-badge">👤 ${r}</span>`).join(' ')
                 : '';
 
+            const filtroRespPerFasi = (userRole === 'Operatore' && window.currentUserName) 
+                ? window.currentUserName : activeFilterResp;
             const fasiCount = hasFasi 
-                ? (activeFilterResp ? getFasiFiltratePerResp(adempimento.ID, activeFilterResp).length : allFasi.filter(f => f.AdempimentoID == adempimento.ID).length)
+                ? (filtroRespPerFasi ? getFasiFiltratePerResp(adempimento.ID, filtroRespPerFasi).length : allFasi.filter(f => f.AdempimentoID == adempimento.ID).length)
                 : 0;
             const fasiBadge = hasFasi ? `<span class="badge-fasi">⚡ ${fasiCount} FASI</span>` : '';
 
@@ -1471,6 +1554,10 @@
                             ${getIconaTipologia(adempimento.Tipologia)} ${adempimento.Tipologia} |
                             <span class="${scadenzaClass}">⏰ ${scadenzaText}</span>
                             ${responsabiliHtml ? '| ' + responsabiliHtml : ''}
+                            ${userRole === 'Admin' && (adempimento.CreatoDa || adempimento.ModificatoDa) ? `<br><span style="font-size:10px;color:#9ca3af;font-style:italic;">
+                                ${adempimento.CreatoDa ? '📌 Creato: ' + escapeHtml(adempimento.CreatoDa) : ''}
+                                ${adempimento.ModificatoDa ? ' | ✏️ Mod: ' + escapeHtml(adempimento.ModificatoDa) : ''}
+                            </span>` : ''}
                         </div>
                     </div>
                     <div class="adempimento-stats">
@@ -1536,15 +1623,19 @@
         // SEZIONE FASI (adempimento con fasi) - NUOVO
         // ============================================================
         function createFasiSection(adempimento) {
-            // Se c'è filtro responsabile attivo, mostra solo le fasi di quel responsabile
+            // Determina il filtro responsabile: operatore usa sempre il proprio nome
+            const filtroResp = (userRole === 'Operatore' && window.currentUserName) 
+                ? window.currentUserName 
+                : activeFilterResp;
+            
             const tutteFasi = allFasi.filter(f => f.AdempimentoID == adempimento.ID).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0));
-            const fasi = activeFilterResp 
-                ? getFasiFiltratePerResp(adempimento.ID, activeFilterResp).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0))
+            const fasi = filtroResp 
+                ? getFasiFiltratePerResp(adempimento.ID, filtroResp).sort((a,b) => (a.OrdineFase||0) - (b.OrdineFase||0))
                 : tutteFasi;
             const oggi = new Date(); oggi.setHours(0,0,0,0);
 
-            const headerText = activeFilterResp 
-                ? `⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length}/${tutteFasi.length} Fasi (filtro: ${activeFilterResp})`
+            const headerText = filtroResp 
+                ? `⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length}/${tutteFasi.length} Fasi (${filtroResp})`
                 : `⚡ ${escapeHtml(adempimento.Title)} — ${fasi.length} Fasi`;
 
             return `
@@ -1907,16 +1998,44 @@
             document.getElementById('noteComune').textContent = comune;
             document.getElementById('formNuovaNota').value = '';
             
-            // Mostra storico
+            // Storico
             const storico = ente.NoteEnte || '';
             document.getElementById('formNote').value = storico;
+            
+            // Reset edit mode
+            document.getElementById('noteStoricoDisplay').style.display = '';
+            document.getElementById('noteStoricoEdit').style.display = 'none';
+            
             if (storico.trim()) {
                 document.getElementById('noteStoricoSection').style.display = 'block';
-                document.getElementById('noteStoricoContent').textContent = storico;
+                document.getElementById('noteStoricoDisplay').textContent = storico;
+                document.getElementById('noteStoricoEdit').value = storico;
+                // Solo admin vede il bottone modifica storico
+                document.getElementById('btnEditStorico').style.display = userRole === 'Admin' ? 'inline-block' : 'none';
             } else {
                 document.getElementById('noteStoricoSection').style.display = 'none';
             }
             document.getElementById('noteModal').classList.add('open');
+        };
+        
+        window.toggleEditStorico = function() {
+            const display = document.getElementById('noteStoricoDisplay');
+            const edit = document.getElementById('noteStoricoEdit');
+            const btn = document.getElementById('btnEditStorico');
+            if (edit.style.display === 'none') {
+                display.style.display = 'none';
+                edit.style.display = '';
+                btn.textContent = '👁️ Visualizza';
+                btn.style.background = '#dbeafe';
+            } else {
+                display.style.display = '';
+                edit.style.display = 'none';
+                btn.textContent = '✏️ Modifica storico';
+                btn.style.background = '#fff7ed';
+                // Aggiorna hidden con storico modificato
+                document.getElementById('formNote').value = edit.value;
+                document.getElementById('noteStoricoDisplay').textContent = edit.value;
+            }
         };
 
         document.getElementById('noteForm').addEventListener('submit', async function(e) {
@@ -1925,23 +2044,33 @@
             const listaSource = document.getElementById('noteListaSource').value;
             const lista = listaSource === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
             const nuovaNota = document.getElementById('formNuovaNota').value.trim();
-            const storicoEsistente = document.getElementById('formNote').value;
             
-            if (!nuovaNota) { showAlert('⚠️ Scrivi una nota prima di salvare', 'error'); return; }
+            // Se admin ha modificato lo storico, usa quello modificato
+            const storicoEditato = document.getElementById('noteStoricoEdit').style.display !== 'none'
+                ? document.getElementById('noteStoricoEdit').value
+                : document.getElementById('formNote').value;
             
-            // Prepara nota con data
-            const now = new Date();
-            const dataStr = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
-            const userName = window.currentUserName || 'Admin';
-            const nuovaEntry = `[${dataStr} - ${userName}] ${nuovaNota}`;
-            const noteFinali = storicoEsistente ? nuovaEntry + '\n---\n' + storicoEsistente : nuovaEntry;
+            if (!nuovaNota && storicoEditato === document.getElementById('formNote').value) { 
+                showAlert('⚠️ Scrivi una nota o modifica lo storico prima di salvare', 'error'); return; 
+            }
+            
+            let noteFinali;
+            if (nuovaNota) {
+                const now = new Date();
+                const dataStr = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+                const userName = window.currentUserName || 'Admin';
+                const nuovaEntry = `[${dataStr} - ${userName}] ${nuovaNota}`;
+                noteFinali = storicoEditato.trim() ? nuovaEntry + '\n---\n' + storicoEditato : nuovaEntry;
+            } else {
+                // Solo modifica storico (admin)
+                noteFinali = storicoEditato;
+            }
             
             try {
                 await updateItem(lista, enteId, { NoteEnte: noteFinali });
                 showAlert('✅ Nota salvata!', 'success');
                 document.getElementById('noteModal').classList.remove('open');
                 
-                // Aggiorna locale senza reload completo
                 const listaLocale = listaSource === 'comuniFasi' ? allComuniFasi : allEnti;
                 const ente = listaLocale.find(e => e.ID == enteId);
                 if (ente) ente.NoteEnte = noteFinali;
@@ -2182,6 +2311,10 @@
 
             try {
                 showLoading(true);
+                const now = new Date();
+                const dataStr = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+                const userName = window.currentUserName || 'Admin';
+                
                 const adempimentoData = {
                     Title: titolo, Descrizione: descrizione, Allegato: allegato, Tipologia: tipologia,
                     Responsabile: responsabiliSelezionati.join('; '),
@@ -2192,7 +2325,8 @@
                 let adempimentoId;
 
                 if (editId) {
-                    // MODIFICA
+                    // MODIFICA - aggiungi tracking
+                    adempimentoData.ModificatoDa = `${userName} (${dataStr})`;
                     await updateItem(LISTS.ADEMPIMENTI, editId, adempimentoData);
                     adempimentoId = editId;
 
@@ -2279,7 +2413,8 @@
                     }
                     showAlert('✅ Adempimento aggiornato!', 'success');
                 } else {
-                    // CREA NUOVO
+                    // CREA NUOVO - aggiungi tracking
+                    adempimentoData.CreatoDa = `${userName} (${dataStr})`;
                     const result = await createItem(LISTS.ADEMPIMENTI, adempimentoData);
                     adempimentoId = result.id;
 
