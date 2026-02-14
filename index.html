@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V25</title>
+    <title>Scadenziario Studio Grismondi V26</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -935,7 +935,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V25 - Cerca + Storico Dettagliato Comuni/Fasi + Fix Operatore Fasi');
+        console.log('🚀 Scadenziario V26 - Config Definitiva Ruoli + Sessione 5gg');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -973,6 +973,14 @@
         const ADMIN_EMAIL = 'info@studiogrismondisrl.it';
         const ADMIN_EMAILS = ['info@studiogrismondisrl.it', 'roberta@studiogrismondisrl.it'];  // Admin: Andrea e Roberta
 
+        // Mapping email → nome (per riconoscimento sicuro operatori)
+        const EMAIL_TO_NAME = {
+            'info@studiogrismondisrl.it': 'Andrea',
+            'roberta@studiogrismondisrl.it': 'Roberta',
+            'miriana.brevi@studiogrismondisrl.it': 'Miriana',
+            'nicoletta.filetti@studiogrismondisrl.it': 'Nicoletta'
+        };
+
         let currentUser, userRole, accessToken, siteId;
         let allComuni = [], allAdempimenti = [], allEnti = [];
         let allFasi = [], allComuniFasi = [];       // dati fasi
@@ -991,20 +999,20 @@
         function checkSessionExpiry() {
             const lastLogin = localStorage.getItem('lastLogin');
             const now = Date.now();
-            const tenDays = 10 * 24 * 60 * 60 * 1000;
+            const fiveDays = 5 * 24 * 60 * 60 * 1000;
             if (lastLogin) {
                 const elapsed = now - parseInt(lastLogin);
-                if (elapsed > tenDays) {
+                if (elapsed > fiveDays) {
                     localStorage.removeItem('lastLogin');
                     localStorage.removeItem('msalCache');
-                    alert('⏰ Sessione scaduta dopo 10 giorni. Effettua nuovamente il login con autenticazione.');
+                    alert('⏰ Sessione scaduta dopo 5 giorni. Effettua nuovamente il login con autenticazione a due fattori.');
                     logout();
                     return false;
                 }
-                return Math.ceil((tenDays - elapsed) / (24 * 60 * 60 * 1000));
+                return Math.ceil((fiveDays - elapsed) / (24 * 60 * 60 * 1000));
             }
             localStorage.setItem('lastLogin', now.toString());
-            return 10;
+            return 5;
         }
 
         function escapeHtml(text) {
@@ -1043,10 +1051,13 @@
                 const isAdmin = ADMIN_EMAILS.some(e => e.toLowerCase() === currentUser.username.toLowerCase());
                 userRole = (isAdmin && !testModeOperatore) ? 'Admin' : 'Operatore';
 
-                // Estrai nome per filtri operatore
+                // Estrai nome per filtri operatore - usa mapping email (prioritario) poi fallback
                 const fullName = currentUser.name || currentUser.username;
+                const emailLower = currentUser.username.toLowerCase();
                 if (testModeOperatore && testOperatoreName) {
                     window.currentUserName = testOperatoreName;
+                } else if (EMAIL_TO_NAME[emailLower]) {
+                    window.currentUserName = EMAIL_TO_NAME[emailLower];
                 } else {
                     window.currentUserName = fullName.split(' ')[0];
                 }
