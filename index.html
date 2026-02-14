@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V22</title>
+    <title>Scadenziario Studio Grismondi V23</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -626,9 +626,9 @@
                     <textarea id="formDescrizione" rows="3" placeholder="Istruzioni dettagliate..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>📎 Allegato (link a documento OneDrive/SharePoint)</label>
-                    <input type="url" id="formAllegato" placeholder="https://studiogrismondi.sharepoint.com/..." style="font-size:13px;">
-                    <small style="color:#6b7280;font-size:11px;">Incolla il link di condivisione del documento da OneDrive o SharePoint</small>
+                    <label>📎 Link Allegato / Guida (opzionale)</label>
+                    <input type="text" id="formAllegato" placeholder="Incolla qui il link al documento..." style="font-size:13px;">
+                    <small style="color:#6b7280;font-size:11px;">Copia il link di condivisione da OneDrive, SharePoint o Google Drive e incollalo qui</small>
                 </div>
                 <div class="form-group">
                     <label>Tipologia *</label>
@@ -811,14 +811,33 @@
                 <input type="hidden" id="noteRecordId">
                 <input type="hidden" id="noteListaSource"> <!-- 'enti' o 'comuniFasi' -->
                 <div class="form-group">
-                    <label>📝 Note Operative</label>
-                    <textarea id="formNote" rows="8" placeholder="Aggiungi note operative..."></textarea>
+                    <label>✏️ Aggiungi nuova nota</label>
+                    <textarea id="formNuovaNota" rows="3" placeholder="Scrivi qui la nuova nota..."></textarea>
                 </div>
+                <div class="form-group" id="noteStoricoSection" style="display:none;">
+                    <label>📋 Storico Note</label>
+                    <div id="noteStoricoContent" style="max-height:250px;overflow-y:auto;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;padding:12px;font-size:12px;line-height:1.6;white-space:pre-wrap;font-family:'Courier New',monospace;color:#374151;"></div>
+                </div>
+                <input type="hidden" id="formNote">
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Salva Note</button>
+                    <button type="submit" class="btn btn-success">💾 Salva Nota</button>
                     <button type="button" class="btn" id="btnCloseNoteModal">❌ Chiudi</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Batch action bar (floating) -->
+    <div id="batchActionBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:12px 20px;z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.3);border-radius:16px 16px 0 0;">
+        <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <span id="batchCount" style="color:white;font-weight:700;font-size:14px;">0 selezionati</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button onclick="applicaStatoBatch('Da Fare')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fef2f2;color:#991b1b;">🔴 Da Fare</button>
+                <button onclick="applicaStatoBatch('In Corso')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fefce8;color:#92400e;">🟡 In Corso</button>
+                <button onclick="applicaStatoBatch('Completato')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#f0fdf4;color:#065f46;">🟢 Completato</button>
+                <button onclick="applicaStatoBatch('Non Gestito')" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#f9fafb;color:#6b7280;">⚫ Non Gestito</button>
+                <button onclick="deselezionaTutti()" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;background:#fee2e2;color:#991b1b;">✕ Deseleziona</button>
+            </div>
         </div>
     </div>
 
@@ -826,7 +845,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V22 - Alert Scadenze + Ruoli Operatore');
+        console.log('🚀 Scadenziario V23 - Multi-Select + Note Storico + Frecce Fasi');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -968,7 +987,7 @@
 
                 // Nascondi/mostra elementi in base al ruolo
                 const isOperatore = userRole === 'Operatore';
-                document.getElementById('btnAddAdempimento').style.display = isOperatore ? 'none' : '';
+                document.getElementById('btnAddAdempimento').style.display = ''; // Operatori possono creare
                 document.getElementById('btnAddComune').style.display = isOperatore ? 'none' : '';
                 document.getElementById('btnSync').style.display = isOperatore ? 'none' : '';
                 document.getElementById('dashboardSummary').style.display = isOperatore ? 'none' : 'grid';
@@ -1214,10 +1233,10 @@
 
             panel.style.display = 'block';
             panel.innerHTML = `
-                <div class="alert-scadenze-panel">
+                <div class="alert-scadenze-panel collapsed">
                     <div class="alert-scadenze-title" onclick="this.parentElement.classList.toggle('collapsed')" style="cursor:pointer;user-select:none;">
                         🚨 ${scadutiN > 0 ? `${scadutiN} scaduti` : ''}${scadutiN > 0 && urgentiN > 0 ? ' + ' : ''}${urgentiN > 0 ? `${urgentiN} entro 5gg` : ''}
-                        <span style="margin-left:auto;font-size:12px;opacity:0.6;">▼ clicca per comprimere</span>
+                        <span style="margin-left:auto;font-size:12px;opacity:0.6;">▶ clicca per dettagli</span>
                     </div>
                     <div class="alert-scadenze-body">
                     ${alerts.map(a => {
@@ -1466,10 +1485,10 @@
                         <div class="progress-mini" title="${progressPercentuale}%">
                             <div class="progress-mini-fill" style="width:${progressPercentuale}%"></div>
                         </div>
-                        <div class="adempimento-actions" ${userRole === 'Operatore' ? 'style="display:none;"' : ''}>
+                        <div class="adempimento-actions">
                             <button class="icon-btn" onclick="event.stopPropagation();editAdempimento(${adempimento.ID})" title="Modifica">✏️</button>
                             <button class="icon-btn" onclick="event.stopPropagation();openDuplicaModal(${adempimento.ID})" title="Duplica" style="color:#3b82f6;">📋</button>
-                            <button class="icon-btn" onclick="event.stopPropagation();deleteAdempimento(${adempimento.ID})" title="Elimina" style="color:#ef4444;">🗑️</button>
+                            ${userRole !== 'Operatore' ? `<button class="icon-btn" onclick="event.stopPropagation();deleteAdempimento(${adempimento.ID})" title="Elimina" style="color:#ef4444;">🗑️</button>` : ''}
                         </div>
                         <span class="expand-icon">▼</span>
                     </div>
@@ -1503,6 +1522,7 @@
             </div>` : '')}
             <div class="comuni-controls">
                 <input type="text" class="search-box" placeholder="🔍 Cerca comune..." oninput="filterComuni(${adempimento.ID}, this.value)">
+                <button class="btn btn-sm" onclick="toggleSelectAll(${adempimento.ID},'enti')" style="background:#8b5cf6;color:white;">☑️ Sel. Tutti</button>
                 <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'nome')">🔤 Nome</button>
                 <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'stato')">🚦 Stato</button>
                 <button class="btn btn-sm" onclick="sortComuni(${adempimento.ID},'progress')">📊 Progress</button>
@@ -1614,6 +1634,9 @@
                     </div>
                 </div>
                 <div class="fase-comuni-container" id="fase-comuni-${fase.ID}">
+                    <div style="display:flex;gap:6px;padding:6px 8px;align-items:center;">
+                        <button class="btn btn-sm" onclick="toggleSelectAll('${fase.ID}','comuniFasi')" style="background:#8b5cf6;color:white;font-size:11px;padding:4px 10px;">☑️ Sel. Tutti</button>
+                    </div>
                     <div class="comuni-grid" id="comuniFase-grid-${fase.ID}">
                         ${comuniF.length > 0
                             ? comuniF.map(c => createComuneCard(c, 'comuniFasi')).join('')
@@ -1649,8 +1672,11 @@
             const comuneEscaped = (ente.Comune || '').replace(/`/g, '').replace(/'/g, "\\'");
 
             return `
-            <div class="comune-card" data-comune="${ente.Comune}">
-                <div class="comune-nome">${ente.Comune}</div>
+            <div class="comune-card" data-comune="${ente.Comune}" data-ente-id="${ente.ID}" data-lista="${listaSource}">
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="checkbox" class="comune-check" data-id="${ente.ID}" data-lista="${listaSource}" onclick="event.stopPropagation();updateBatchBar(this)" style="width:16px;height:16px;cursor:pointer;">
+                    <div class="comune-nome">${ente.Comune}</div>
+                </div>
                 <div class="comune-status-display" onclick="openCambiaStatoModal(${ente.ID}, '${comuneEscaped}', '${stato}', '${listaSource}')">
                     <button class="status-btn-single ${statoClass}">${statoIcon} ${statoText}</button>
                 </div>
@@ -1684,6 +1710,98 @@
                 });
             });
         }
+
+        // ============================================================
+        // MULTI-SELECT COMUNI (BATCH)
+        // ============================================================
+        window.updateBatchBar = function(checkbox) {
+            const checked = document.querySelectorAll('.comune-check:checked');
+            const bar = document.getElementById('batchActionBar');
+            if (checked.length > 0) {
+                bar.style.display = 'block';
+                document.getElementById('batchCount').textContent = `${checked.length} selezionati`;
+            } else {
+                bar.style.display = 'none';
+            }
+        };
+
+        window.toggleSelectAll = function(id, listaSource) {
+            // For fasi, the grid ID is comuniFase-grid-{faseId}
+            // For enti, the grid ID is comuni-grid-{adempId}
+            let grid;
+            if (listaSource === 'comuniFasi') {
+                grid = document.getElementById(`comuniFase-grid-${id}`);
+            } else {
+                grid = document.getElementById(`comuni-grid-${id}`);
+            }
+            if (!grid) return;
+            const checks = grid.querySelectorAll('.comune-check');
+            const allChecked = Array.from(checks).every(c => c.checked);
+            checks.forEach(c => c.checked = !allChecked);
+            updateBatchBar();
+        };
+
+        window.deselezionaTutti = function() {
+            document.querySelectorAll('.comune-check:checked').forEach(c => c.checked = false);
+            document.getElementById('batchActionBar').style.display = 'none';
+        };
+
+        window.applicaStatoBatch = async function(nuovoStato) {
+            const checked = Array.from(document.querySelectorAll('.comune-check:checked'));
+            if (checked.length === 0) return;
+            if (!confirm(`Cambiare ${checked.length} comuni a "${nuovoStato}"?`)) return;
+
+            let nuovoProgress = 0;
+            if (nuovoStato === 'In Corso') nuovoProgress = 50;
+            if (nuovoStato === 'Completato') nuovoProgress = 100;
+
+            const scrollY = window.scrollY;
+            const openFasi = [];
+            document.querySelectorAll('.fase-comuni-container.open').forEach(el => openFasi.push(el.id));
+            const openAdemp = [];
+            document.querySelectorAll('.comuni-list.open, .fasi-container.open').forEach(el => openAdemp.push(el.id));
+
+            showLoading(true);
+            try {
+                // Batch parallel update
+                const promises = checked.map(cb => {
+                    const id = cb.getAttribute('data-id');
+                    const lista = cb.getAttribute('data-lista') === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
+                    return updateItem(lista, id, { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress });
+                });
+                await Promise.all(promises);
+
+                deselezionaTutti();
+                await loadData();
+
+                // Ripristina stato UI
+                setTimeout(() => {
+                    openAdemp.forEach(cId => {
+                        const c = document.getElementById(cId);
+                        if (c) {
+                            c.classList.add('open');
+                            const adempId = cId.replace('comuni-list-','').replace('fasi-container-','');
+                            const header = document.querySelector(`.adempimento-toggle[data-id="${adempId}"]`);
+                            const icon = header?.querySelector('.expand-icon');
+                            if (icon) icon.classList.add('open');
+                        }
+                    });
+                    openFasi.forEach(fId => {
+                        const fc = document.getElementById(fId);
+                        if (fc) {
+                            fc.classList.add('open');
+                            const btn = fc.previousElementSibling?.querySelector('.fase-expand-btn');
+                            if (btn) btn.textContent = '▲ Chiudi';
+                        }
+                    });
+                    window.scrollTo(0, scrollY);
+                }, 200);
+
+                showAlert(`✅ ${checked.length} comuni aggiornati a "${nuovoStato}"`, 'success');
+            } catch (err) {
+                showAlert('❌ Errore batch: ' + err.message, 'error');
+            }
+        };
 
         // ============================================================
         // FILTRI E SORT COMUNI
@@ -1732,40 +1850,48 @@
             let nuovoProgress = 0;
             if (nuovoStato === 'In Corso') nuovoProgress = 50;
             if (nuovoStato === 'Completato') nuovoProgress = 100;
+
+            // Salva posizione scroll e stato UI
+            const scrollY = window.scrollY;
+            const openFasi = [];
+            document.querySelectorAll('.fase-comuni-container.open').forEach(el => openFasi.push(el.id));
+            const openAdemp = [];
+            document.querySelectorAll('.comuni-list.open, .fasi-container.open').forEach(el => openAdemp.push(el.id));
+
+            // Aggiorna subito locale (ottimistico)
+            const listaLocale = listaSource === 'comuniFasi' ? allComuniFasi : allEnti;
+            const ente = listaLocale.find(e => e.ID == enteId);
+            if (ente) { ente.StatoEnte = nuovoStato; ente.ProgressEnte = nuovoProgress; }
+
+            document.getElementById('cambiaStatoModal').classList.remove('open');
+            renderAdempimenti();
+
+            // Ripristina stato UI
+            openAdemp.forEach(cId => {
+                const c = document.getElementById(cId);
+                if (c) {
+                    c.classList.add('open');
+                    const adempId = cId.replace('comuni-list-','').replace('fasi-container-','');
+                    const header = document.querySelector(`.adempimento-toggle[data-id="${adempId}"]`);
+                    const icon = header?.querySelector('.expand-icon');
+                    if (icon) icon.classList.add('open');
+                }
+            });
+            openFasi.forEach(fId => {
+                const fc = document.getElementById(fId);
+                if (fc) {
+                    fc.classList.add('open');
+                    const btn = fc.previousElementSibling?.querySelector('.fase-expand-btn');
+                    if (btn) btn.textContent = '▲ Chiudi';
+                }
+            });
+            window.scrollTo(0, scrollY);
+
+            // Salva in background su SharePoint
             try {
-                showLoading(true);
                 await updateItem(lista, enteId, { StatoEnte: nuovoStato, ProgressEnte: nuovoProgress });
-
-                // Trova adempimentoId per riaprire la card
-                let adempimentoId;
-                if (listaSource === 'comuniFasi') {
-                    const cf = allComuniFasi.find(c => c.ID == enteId);
-                    adempimentoId = cf?.AdempimentoID;
-                } else {
-                    const ente = allEnti.find(e => e.ID == enteId);
-                    adempimentoId = ente?.AdempimentoID;
-                }
-                const hasFasi = adempimentoId && allAdempimenti.find(a => a.ID == adempimentoId)?.HasFasi;
-
-                document.getElementById('cambiaStatoModal').classList.remove('open');
-                await loadData();
-
-                if (adempimentoId) {
-                    setTimeout(() => {
-                        const containerId = hasFasi ? `fasi-container-${adempimentoId}` : `comuni-list-${adempimentoId}`;
-                        const header = document.querySelector(`.adempimento-toggle[data-id="${adempimentoId}"]`);
-                        const container = document.getElementById(containerId);
-                        const icon = header?.querySelector('.expand-icon');
-                        if (container && header && icon) {
-                            container.classList.add('open');
-                            icon.classList.add('open');
-                            header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }, 300);
-                }
             } catch (err) {
-                showAlert('❌ Errore: ' + err.message, 'error');
-                showLoading(false);
+                showAlert('⚠️ Errore sync: ' + err.message + ' (ricarica per verificare)', 'error');
             }
         };
 
@@ -1779,7 +1905,17 @@
             document.getElementById('noteRecordId').value = enteId;
             document.getElementById('noteListaSource').value = listaSource || 'enti';
             document.getElementById('noteComune').textContent = comune;
-            document.getElementById('formNote').value = ente.NoteEnte || '';
+            document.getElementById('formNuovaNota').value = '';
+            
+            // Mostra storico
+            const storico = ente.NoteEnte || '';
+            document.getElementById('formNote').value = storico;
+            if (storico.trim()) {
+                document.getElementById('noteStoricoSection').style.display = 'block';
+                document.getElementById('noteStoricoContent').textContent = storico;
+            } else {
+                document.getElementById('noteStoricoSection').style.display = 'none';
+            }
             document.getElementById('noteModal').classList.add('open');
         };
 
@@ -1788,16 +1924,30 @@
             const enteId = document.getElementById('noteRecordId').value;
             const listaSource = document.getElementById('noteListaSource').value;
             const lista = listaSource === 'comuniFasi' ? LISTS.COMUNI_FASI : LISTS.ENTI;
-            const note = document.getElementById('formNote').value;
+            const nuovaNota = document.getElementById('formNuovaNota').value.trim();
+            const storicoEsistente = document.getElementById('formNote').value;
+            
+            if (!nuovaNota) { showAlert('⚠️ Scrivi una nota prima di salvare', 'error'); return; }
+            
+            // Prepara nota con data
+            const now = new Date();
+            const dataStr = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+            const userName = window.currentUserName || 'Admin';
+            const nuovaEntry = `[${dataStr} - ${userName}] ${nuovaNota}`;
+            const noteFinali = storicoEsistente ? nuovaEntry + '\n---\n' + storicoEsistente : nuovaEntry;
+            
             try {
-                showLoading(true);
-                await updateItem(lista, enteId, { NoteEnte: note });
+                await updateItem(lista, enteId, { NoteEnte: noteFinali });
                 showAlert('✅ Nota salvata!', 'success');
                 document.getElementById('noteModal').classList.remove('open');
-                await loadData();
+                
+                // Aggiorna locale senza reload completo
+                const listaLocale = listaSource === 'comuniFasi' ? allComuniFasi : allEnti;
+                const ente = listaLocale.find(e => e.ID == enteId);
+                if (ente) ente.NoteEnte = noteFinali;
+                renderAdempimenti();
             } catch (err) {
                 showAlert('❌ Errore: ' + err.message, 'error');
-                showLoading(false);
             }
         });
 
@@ -1835,6 +1985,10 @@
             row.setAttribute('data-fase-n', n);
             row.innerHTML = `
                 <span class="fase-num">${numFase}</span>
+                <div style="display:flex;flex-direction:column;gap:2px;">
+                    <button type="button" onclick="spostFase(this,-1)" style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:1px 5px;font-size:11px;" title="Sposta su">▲</button>
+                    <button type="button" onclick="spostFase(this,1)" style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:1px 5px;font-size:11px;" title="Sposta giù">▼</button>
+                </div>
                 <input type="text" placeholder="Nome fase (es: Raccolta dati)" data-tipo="nome" required>
                 <input type="date" data-tipo="scadenza">
                 <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
@@ -1858,6 +2012,18 @@
                 el.textContent = i + 1;
             });
         }
+
+        window.spostFase = function(btn, direction) {
+            const row = btn.closest('.fase-input-row');
+            const list = document.getElementById('fasiInputList');
+            if (!row || !list) return;
+            if (direction === -1 && row.previousElementSibling) {
+                list.insertBefore(row, row.previousElementSibling);
+            } else if (direction === 1 && row.nextElementSibling) {
+                list.insertBefore(row.nextElementSibling, row);
+            }
+            rinumeraFasi();
+        };
 
         // ============================================================
         // TEMPLATE FASI
@@ -1908,6 +2074,10 @@
                 row.setAttribute('data-fase-n', fasiInputCounter);
                 row.innerHTML = `
                     <span class="fase-num">${fase.ordine}</span>
+                    <div style="display:flex;flex-direction:column;gap:2px;">
+                        <button type="button" onclick="spostFase(this,-1)" style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:1px 5px;font-size:11px;" title="Sposta su">▲</button>
+                        <button type="button" onclick="spostFase(this,1)" style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:1px 5px;font-size:11px;" title="Sposta giù">▼</button>
+                    </div>
                     <input type="text" placeholder="Nome fase" data-tipo="nome" value="${escapeHtml(fase.nome)}" required>
                     <input type="date" data-tipo="scadenza">
                     <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
@@ -2220,6 +2390,10 @@
                     row.setAttribute('data-fase-id', fase.ID); // ID esistente per aggiornamento
                     row.innerHTML = `
                         <span class="fase-num">${fase.OrdineFase}</span>
+                        <div style="display:flex;flex-direction:column;gap:2px;">
+                            <button type="button" onclick="spostFase(this,-1)" style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:1px 5px;font-size:11px;" title="Sposta su">▲</button>
+                            <button type="button" onclick="spostFase(this,1)" style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:1px 5px;font-size:11px;" title="Sposta giù">▼</button>
+                        </div>
                         <input type="text" placeholder="Nome fase" data-tipo="nome" value="${escapeHtml(fase.Title)}" required>
                         <input type="date" data-tipo="scadenza" value="${fase.DataScadenzaFase ? new Date(fase.DataScadenzaFase).toISOString().split('T')[0] : ''}">
                         <button type="button" class="remove-fase-btn" onclick="removeFaseInput(this)">✕</button>
