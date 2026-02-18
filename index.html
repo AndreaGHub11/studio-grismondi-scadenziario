@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scadenziario Studio Grismondi V28</title>
+    <title>Scadenziario Studio Grismondi V29</title>
     
     <script src="https://alcdn.msauth.net/browser/2.32.2/js/msal-browser.min.js"></script>
     
@@ -642,6 +642,7 @@
             <button class="btn btn-success" id="btnAddAdempimento">➕ Nuovo Adempimento</button>
             <button class="btn btn-warning" id="btnAddComune">🏛️ Nuovo Comune</button>
             <button class="btn" id="btnSync">🔄 Sincronizza</button>
+            <button class="btn" id="btnStampa" onclick="openStampaModal()" style="display:none;background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;">🖨️ Stampa / Esporta</button>
             <div style="margin-left:auto;display:flex;gap:8px;">
                 <button class="btn btn-sm filtro-rapido active" onclick="filtroRapido('tutti')" id="filtro-tutti">📋 Tutti</button>
                 <button class="btn btn-sm btn-danger filtro-rapido" onclick="filtroRapido('scaduti')" id="filtro-scaduti">⚠️ Scaduti</button>
@@ -994,6 +995,71 @@
     </div>
 
     <!-- Batch action bar (floating) -->
+
+    <!-- ============================================================
+         MODAL STAMPA / ESPORTA
+         ============================================================ -->
+    <div id="stampaModal" class="modal">
+        <div class="modal-content" style="max-width:700px;">
+            <div class="modal-header" style="border-bottom-color:#c7d2fe;background:linear-gradient(135deg,#eef2ff,#e0e7ff);">
+                <h2 style="color:#4338ca;">🖨️ Stampa / Esporta</h2>
+            </div>
+            <div style="padding:5px 0;">
+                <!-- Tipo stampa -->
+                <div class="form-group">
+                    <label style="color:#4338ca;font-weight:700;">📋 Cosa vuoi stampare?</label>
+                    <select id="stampaTipo" onchange="onStampaTipoChange()" style="border-color:#a5b4fc;">
+                        <option value="mese">📅 Riepilogo mese corrente</option>
+                        <option value="periodo">📆 Riepilogo periodo personalizzato</option>
+                        <option value="adempimento">📄 Scheda adempimento per comune</option>
+                    </select>
+                </div>
+
+                <!-- Opzioni per PERIODO -->
+                <div id="stampaPeriodoOpts" style="display:none;" class="form-group">
+                    <label style="color:#4338ca;">📆 Seleziona periodo</label>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <select id="stampaMeseDa" style="flex:1;border-color:#a5b4fc;"></select>
+                        <span style="font-weight:700;">→</span>
+                        <select id="stampaMeseA" style="flex:1;border-color:#a5b4fc;"></select>
+                    </div>
+                </div>
+
+                <!-- Opzioni per ADEMPIMENTO -->
+                <div id="stampaAdempOpts" style="display:none;" class="form-group">
+                    <label style="color:#4338ca;">📄 Seleziona adempimento</label>
+                    <select id="stampaAdempimento" onchange="onStampaAdempChange()" style="border-color:#a5b4fc;">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                    <div id="stampaAdempInfo" style="display:none;margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac;font-size:12px;color:#065f46;">
+                    </div>
+                    <div style="margin-top:10px;">
+                        <label style="font-size:13px;color:#6b7280;">
+                            <input type="checkbox" id="stampaPerComune" checked> Genera una scheda per ogni comune (allegabile alla pratica)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Formato -->
+                <div class="form-group" style="margin-top:15px;padding-top:15px;border-top:2px solid #e0e7ff;">
+                    <label style="color:#4338ca;font-weight:700;">📥 Formato esportazione</label>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn" onclick="eseguiStampa('pdf')" style="flex:1;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;font-weight:700;">
+                            📄 Genera PDF
+                        </button>
+                        <button class="btn" id="btnExcelExport" onclick="eseguiStampa('excel')" style="flex:1;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-weight:700;display:none;">
+                            📊 Esporta Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn" onclick="document.getElementById('stampaModal').classList.remove('open')">❌ Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch action bar (floating) -->
     <div id="batchActionBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:12px 20px;z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.3);border-radius:16px 16px 0 0;">
         <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
             <span id="batchCount" style="color:white;font-weight:700;font-size:14px;">0 selezionati</span>
@@ -1012,7 +1078,7 @@
          SCRIPT
          ============================================================ -->
     <script>
-        console.log('🚀 Scadenziario V28 - TrackIstruzioni + NomeAutoNota + RicercaGlobale + ArchivioMesi');
+        console.log('🚀 Scadenziario V29 - TrackIstruzioni + NomeAutoNota + RicercaGlobale + ArchivioMesi + StampaExport');
 
         // ============================================================
         // CONFIG MSAL & SHAREPOINT
@@ -1168,6 +1234,7 @@
                 document.getElementById('btnAddAdempimento').style.display = ''; // Operatori possono creare
                 document.getElementById('btnAddComune').style.display = isOperatore ? 'none' : '';
                 document.getElementById('btnSync').style.display = ''; // Visibile a tutti
+                document.getElementById('btnStampa').style.display = isOperatore ? 'none' : ''; // Solo admin
                 document.getElementById('dashboardSummary').style.display = isOperatore ? 'none' : 'grid';
                 // Operatori non vedono filtro responsabile (vedono solo i propri)
                 const filtroRespContainer = document.getElementById('filterResponsabile')?.closest('div');
@@ -3307,6 +3374,391 @@
         }
 
         window.tornaInAlto = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+        // ============================================================
+        // SISTEMA STAMPA / ESPORTA
+        // ============================================================
+        window.openStampaModal = function() {
+            // Mostra/nascondi Excel per admin
+            document.getElementById('btnExcelExport').style.display = userRole === 'Admin' ? 'block' : 'none';
+            
+            // Popola select mesi per periodo
+            const mesi = new Set();
+            allAdempimenti.forEach(a => { if (a.AnnoMese) mesi.add(a.AnnoMese); });
+            const sorted = Array.from(mesi).sort();
+            ['stampaMeseDa', 'stampaMeseA'].forEach(id => {
+                const sel = document.getElementById(id);
+                sel.innerHTML = sorted.map(m => `<option value="${m}">${formatMese(m)}</option>`).join('');
+            });
+            if (sorted.length > 0) {
+                document.getElementById('stampaMeseDa').value = sorted[0];
+                document.getElementById('stampaMeseA').value = sorted[sorted.length - 1];
+            }
+            
+            // Popola select adempimenti (con fasi in evidenza)
+            const selAdemp = document.getElementById('stampaAdempimento');
+            selAdemp.innerHTML = '<option value="">-- Seleziona adempimento --</option>';
+            const adempSorted = [...allAdempimenti].sort((a,b) => {
+                const ma = a.AnnoMese || ''; const mb = b.AnnoMese || '';
+                if (ma !== mb) return mb.localeCompare(ma);
+                return (a.Title || '').localeCompare(b.Title || '');
+            });
+            adempSorted.forEach(a => {
+                const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+                const opt = document.createElement('option');
+                opt.value = a.ID;
+                opt.textContent = `${formatMese(a.AnnoMese)} — ${a.Title}${hasFasi ? ' ⚡FASI' : ''}`;
+                selAdemp.appendChild(opt);
+            });
+            
+            onStampaTipoChange();
+            document.getElementById('stampaModal').classList.add('open');
+        };
+
+        window.onStampaTipoChange = function() {
+            const tipo = document.getElementById('stampaTipo').value;
+            document.getElementById('stampaPeriodoOpts').style.display = tipo === 'periodo' ? 'block' : 'none';
+            document.getElementById('stampaAdempOpts').style.display = tipo === 'adempimento' ? 'block' : 'none';
+        };
+
+        window.onStampaAdempChange = function() {
+            const adempId = document.getElementById('stampaAdempimento').value;
+            const infoDiv = document.getElementById('stampaAdempInfo');
+            if (!adempId) { infoDiv.style.display = 'none'; return; }
+            const a = allAdempimenti.find(x => x.ID == adempId);
+            if (!a) return;
+            const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+            let comuniCount = 0;
+            if (hasFasi) {
+                comuniCount = new Set(allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false).map(c => c.Comune)).size;
+            } else {
+                comuniCount = allEnti.filter(e => e.AdempimentoID == a.ID).length;
+            }
+            const fasiCount = hasFasi ? allFasi.filter(f => f.AdempimentoID == a.ID).length : 0;
+            infoDiv.innerHTML = `<strong>${escapeHtml(a.Title)}</strong><br>
+                ${hasFasi ? `⚡ ${fasiCount} fasi | ` : ''}🏛️ ${comuniCount} comuni | 📅 Scad: ${a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '-'}
+                <br><em>Verrà generata una scheda per ogni comune</em>`;
+            infoDiv.style.display = 'block';
+        };
+
+        window.eseguiStampa = function(formato) {
+            const tipo = document.getElementById('stampaTipo').value;
+            if (formato === 'pdf') {
+                if (tipo === 'mese') generaPDFMese();
+                else if (tipo === 'periodo') generaPDFPeriodo();
+                else if (tipo === 'adempimento') generaPDFSchedaComune();
+            } else if (formato === 'excel') {
+                if (tipo === 'mese') generaExcel('mese');
+                else if (tipo === 'periodo') generaExcel('periodo');
+                else if (tipo === 'adempimento') generaExcel('adempimento');
+            }
+            document.getElementById('stampaModal').classList.remove('open');
+        };
+
+        // ---- HELPER: stile stampa comune ----
+        function getStatoLabel(stato) {
+            const map = { 'Da Fare': '🔴 Da Fare', 'In Corso': '🟡 In Corso', 'In Attesa Ente': '🟠 In Attesa Ente', 'Completato': '🟢 Completato', 'Non Gestito': '⚫ Non Gestito' };
+            return map[stato] || stato || '🔴 Da Fare';
+        }
+        function getStatoColor(stato) {
+            const map = { 'Da Fare': '#dc2626', 'In Corso': '#d97706', 'In Attesa Ente': '#ea580c', 'Completato': '#16a34a', 'Non Gestito': '#6b7280' };
+            return map[stato] || '#dc2626';
+        }
+        function printPageStyle() {
+            return `<style>
+                @media print { @page { margin: 15mm; } body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .page-break { page-break-before: always; } }
+                body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; margin: 0; padding: 20px; font-size: 12px; line-height: 1.5; }
+                .header-print { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: linear-gradient(135deg, #1e3a5f, #2563eb); color: white; border-radius: 10px; margin-bottom: 20px; }
+                .header-print h1 { margin: 0; font-size: 18px; } .header-print .date { font-size: 11px; opacity: 0.8; }
+                .scheda-comune { border: 2px solid #2563eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+                .scheda-header { background: #eff6ff; padding: 12px 18px; border-bottom: 2px solid #bfdbfe; }
+                .scheda-header h2 { margin: 0; color: #1e40af; font-size: 16px; }
+                .scheda-info { display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: #475569; margin-top: 6px; }
+                .fase-block { margin: 10px 15px; padding: 10px 15px; border-left: 4px solid #8b5cf6; background: #faf5ff; border-radius: 0 8px 8px 0; }
+                .fase-title { font-weight: 700; color: #6d28d9; font-size: 13px; margin-bottom: 4px; }
+                .fase-scad { font-size: 11px; color: #7c3aed; }
+                .istruzioni-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin-top: 6px; font-size: 11px; white-space: pre-wrap; color: #78350f; }
+                .stato-box { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; color: white; margin-top: 6px; }
+                .note-box { background: #f1f5f9; border-radius: 6px; padding: 8px 12px; margin-top: 6px; font-size: 11px; white-space: pre-wrap; color: #334155; }
+                table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+                th { background: #1e3a5f; color: white; padding: 8px 12px; text-align: left; font-size: 11px; }
+                td { padding: 7px 12px; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+                tr:nth-child(even) { background: #f8fafc; }
+                .footer-print { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 20px; padding-top: 10px; border-top: 1px solid #e2e8f0; }
+                .riepilogo-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+                .riepilogo-title { font-weight: 700; font-size: 13px; color: #1e3a5f; }
+                .riepilogo-meta { font-size: 11px; color: #64748b; margin-top: 3px; }
+                .progress-bar-print { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+                .progress-fill-print { height: 100%; background: #22c55e; border-radius: 4px; }
+            </style>`;
+        }
+
+        function openPrintWindow(html, title) {
+            const w = window.open('', '_blank');
+            w.document.write(`<!DOCTYPE html><html><head><title>${title} - Studio Grismondi</title>${printPageStyle()}</head><body>${html}</body></html>`);
+            w.document.close();
+            setTimeout(() => { w.print(); }, 500);
+        }
+
+        function printHeader(titolo, sottotitolo) {
+            const ora = new Date().toLocaleString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+            return `<div class="header-print"><div><h1>📅 Studio Grismondi srl</h1><div class="date">${titolo}${sottotitolo ? ' — ' + sottotitolo : ''}</div></div><div style="text-align:right;"><div style="font-size:11px;">Stampato il: ${ora}</div></div></div>`;
+        }
+
+        // ---- PDF: RIEPILOGO MESE ----
+        function generaPDFMese() {
+            const meseCorrente = document.getElementById('filterMese').value;
+            let filtered = [...allAdempimenti];
+            if (meseCorrente) filtered = filtered.filter(a => a.AnnoMese === meseCorrente);
+            filtered.sort((a,b) => {
+                const dA = a.DataScadenza ? new Date(a.DataScadenza) : new Date('2099-12-31');
+                const dB = b.DataScadenza ? new Date(b.DataScadenza) : new Date('2099-12-31');
+                return dA - dB;
+            });
+            const titolo = meseCorrente ? formatMese(meseCorrente) : 'Tutti i mesi';
+            let html = printHeader('Riepilogo Scadenze', titolo);
+            html += buildRiepilogoTable(filtered);
+            html += `<div class="footer-print">© 2026 Studio Grismondi srl — Tutti i diritti riservati</div>`;
+            openPrintWindow(html, `Riepilogo ${titolo}`);
+        }
+
+        // ---- PDF: RIEPILOGO PERIODO ----
+        function generaPDFPeriodo() {
+            const da = document.getElementById('stampaMeseDa').value;
+            const a = document.getElementById('stampaMeseA').value;
+            let filtered = allAdempimenti.filter(ad => ad.AnnoMese && ad.AnnoMese >= da && ad.AnnoMese <= a);
+            filtered.sort((x,y) => {
+                if (x.AnnoMese !== y.AnnoMese) return x.AnnoMese.localeCompare(y.AnnoMese);
+                const dA = x.DataScadenza ? new Date(x.DataScadenza) : new Date('2099-12-31');
+                const dB = y.DataScadenza ? new Date(y.DataScadenza) : new Date('2099-12-31');
+                return dA - dB;
+            });
+            let html = printHeader('Riepilogo Scadenze Periodo', `${formatMese(da)} — ${formatMese(a)}`);
+            // Raggruppa per mese
+            const perMese = {};
+            filtered.forEach(ad => { const m = ad.AnnoMese; if (!perMese[m]) perMese[m] = []; perMese[m].push(ad); });
+            for (const [mese, lista] of Object.entries(perMese)) {
+                html += `<h3 style="color:#1e3a5f;border-bottom:2px solid #2563eb;padding-bottom:4px;margin-top:20px;">📅 ${formatMese(mese)}</h3>`;
+                html += buildRiepilogoTable(lista);
+            }
+            html += `<div class="footer-print">© 2026 Studio Grismondi srl — Tutti i diritti riservati</div>`;
+            openPrintWindow(html, `Riepilogo ${formatMese(da)} - ${formatMese(a)}`);
+        }
+
+        function buildRiepilogoTable(adempimenti) {
+            let html = '<table><thead><tr><th>Adempimento</th><th>Tipologia</th><th>Scadenza</th><th>Responsabile</th><th>Progresso</th><th>Stato</th></tr></thead><tbody>';
+            adempimenti.forEach(a => {
+                const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+                let totali, completati, nonGestiti;
+                if (hasFasi) {
+                    const cf = allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false);
+                    totali = cf.length; completati = cf.filter(c => c.StatoEnte === 'Completato').length; nonGestiti = cf.filter(c => !c.StatoEnte || c.StatoEnte === 'Non Gestito').length;
+                } else {
+                    const enti = allEnti.filter(e => e.AdempimentoID == a.ID);
+                    totali = enti.length; completati = enti.filter(e => e.StatoEnte === 'Completato').length; nonGestiti = enti.filter(e => !e.StatoEnte || e.StatoEnte === 'Non Gestito').length;
+                }
+                const perc = totali > 0 ? Math.round(((completati + nonGestiti) / totali) * 100) : 0;
+                const isDone = totali > 0 && (completati + nonGestiti) === totali;
+                const scad = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '-';
+                const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join(', ') : '-';
+                html += `<tr><td><strong>${escapeHtml(a.Title)}</strong>${hasFasi ? ' ⚡' : ''}</td><td>${a.Tipologia || '-'}</td><td>${scad}</td><td>${resp}</td>
+                    <td><div class="progress-bar-print"><div class="progress-fill-print" style="width:${perc}%"></div></div>${perc}%</td>
+                    <td style="color:${isDone ? '#16a34a' : '#dc2626'};font-weight:700;">${isDone ? '✅ Completato' : `${completati}/${totali}`}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        // ---- PDF: SCHEDA ADEMPIMENTO PER COMUNE ----
+        function generaPDFSchedaComune() {
+            const adempId = document.getElementById('stampaAdempimento').value;
+            if (!adempId) { showAlert('⚠️ Seleziona un adempimento', 'error'); return; }
+            const a = allAdempimenti.find(x => x.ID == adempId);
+            if (!a) return;
+            const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+            const perComune = document.getElementById('stampaPerComune').checked;
+            const scadStr = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '-';
+            const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join(', ') : '-';
+
+            let html = printHeader('Scheda Adempimento', a.Title);
+
+            if (hasFasi && perComune) {
+                // Raccogli tutti i comuni unici
+                const comuniFasi = allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false);
+                const comuniUnici = [...new Set(comuniFasi.map(c => c.Comune))].sort();
+                const fasiAdemp = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
+
+                comuniUnici.forEach((comune, idx) => {
+                    if (idx > 0) html += '<div class="page-break"></div>';
+                    html += `
+                    <div class="scheda-comune">
+                        <div class="scheda-header">
+                            <h2>🏛️ ${comune}</h2>
+                            <div class="scheda-info">
+                                <span>📋 ${escapeHtml(a.Title)}</span>
+                                <span>📅 ${formatMese(a.AnnoMese)}</span>
+                                <span>⏰ Scad: ${scadStr}</span>
+                                <span>📂 ${a.Tipologia || '-'}</span>
+                                <span>👤 ${resp}</span>
+                            </div>
+                        </div>`;
+                    
+                    fasiAdemp.forEach(fase => {
+                        const comuneFase = comuniFasi.find(c => c.FaseID == fase.ID && c.Comune === comune);
+                        if (!comuneFase) return;
+                        const stato = comuneFase.StatoEnte || 'Da Fare';
+                        const scadFase = fase.DataScadenzaFase ? new Date(fase.DataScadenzaFase).toLocaleDateString('it-IT') : '-';
+                        const respFase = fase.ResponsabileFase || '-';
+                        
+                        html += `<div class="fase-block">
+                            <div class="fase-title">Fase ${fase.OrdineFase}: ${escapeHtml(fase.Title)}</div>
+                            <div class="fase-scad">📅 Scadenza fase: ${scadFase} | 👤 ${respFase}</div>
+                            <div class="stato-box" style="background:${getStatoColor(stato)}">${getStatoLabel(stato)}</div>`;
+                        
+                        if (fase.NoteFase) {
+                            html += `<div class="istruzioni-box"><strong>📋 Istruzioni:</strong><br>${escapeHtml(fase.NoteFase)}</div>`;
+                        }
+                        if (comuneFase.NoteEnte) {
+                            html += `<div class="note-box"><strong>📝 Note:</strong><br>${escapeHtml(comuneFase.NoteEnte)}</div>`;
+                        }
+                        html += '</div>';
+                    });
+                    
+                    html += '</div>';
+                });
+            } else if (!hasFasi && perComune) {
+                // Adempimento senza fasi - una scheda per comune
+                const enti = allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                enti.forEach((ente, idx) => {
+                    if (idx > 0) html += '<div class="page-break"></div>';
+                    const stato = ente.StatoEnte || 'Da Fare';
+                    html += `
+                    <div class="scheda-comune">
+                        <div class="scheda-header">
+                            <h2>🏛️ ${ente.Comune}</h2>
+                            <div class="scheda-info">
+                                <span>📋 ${escapeHtml(a.Title)}</span>
+                                <span>📅 ${formatMese(a.AnnoMese)}</span>
+                                <span>⏰ Scad: ${scadStr}</span>
+                                <span>📂 ${a.Tipologia || '-'}</span>
+                                <span>👤 ${resp}</span>
+                            </div>
+                        </div>
+                        <div style="padding:15px;">
+                            <div class="stato-box" style="background:${getStatoColor(stato)}">${getStatoLabel(stato)}</div>
+                            ${ente.NoteEnte ? `<div class="note-box" style="margin-top:10px;"><strong>📝 Note:</strong><br>${escapeHtml(ente.NoteEnte)}</div>` : ''}
+                        </div>
+                    </div>`;
+                });
+            } else {
+                // Riepilogo tabellare singolo adempimento
+                html += `<div style="margin-bottom:15px;padding:12px;background:#eff6ff;border-radius:8px;">
+                    <strong>${escapeHtml(a.Title)}</strong><br>📅 ${formatMese(a.AnnoMese)} | ⏰ ${scadStr} | 📂 ${a.Tipologia} | 👤 ${resp}
+                    ${a.Descrizione ? `<div class="istruzioni-box" style="margin-top:8px;">${escapeHtml(a.Descrizione)}</div>` : ''}
+                </div>`;
+                if (hasFasi) {
+                    const fasiAdemp = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
+                    fasiAdemp.forEach(fase => {
+                        const cf = allComuniFasi.filter(c => c.FaseID == fase.ID && c.Attivo !== false).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                        html += `<div class="fase-block"><div class="fase-title">Fase ${fase.OrdineFase}: ${escapeHtml(fase.Title)}</div></div>`;
+                        html += '<table><thead><tr><th>Comune</th><th>Stato</th><th>Note</th></tr></thead><tbody>';
+                        cf.forEach(c => { html += `<tr><td>${c.Comune}</td><td style="color:${getStatoColor(c.StatoEnte)};font-weight:700;">${getStatoLabel(c.StatoEnte)}</td><td style="font-size:10px;">${c.NoteEnte ? escapeHtml(c.NoteEnte).substring(0,100) : '-'}</td></tr>`; });
+                        html += '</tbody></table>';
+                    });
+                } else {
+                    const enti = allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                    html += '<table><thead><tr><th>Comune</th><th>Stato</th><th>Note</th></tr></thead><tbody>';
+                    enti.forEach(e => { html += `<tr><td>${e.Comune}</td><td style="color:${getStatoColor(e.StatoEnte)};font-weight:700;">${getStatoLabel(e.StatoEnte)}</td><td style="font-size:10px;">${e.NoteEnte ? escapeHtml(e.NoteEnte).substring(0,100) : '-'}</td></tr>`; });
+                    html += '</tbody></table>';
+                }
+            }
+            html += `<div class="footer-print">© 2026 Studio Grismondi srl — Tutti i diritti riservati</div>`;
+            openPrintWindow(html, `Scheda ${a.Title}`);
+        }
+
+        // ---- EXCEL EXPORT (solo admin) ----
+        function generaExcel(tipo) {
+            let rows = [];
+            let filename = '';
+            
+            if (tipo === 'mese') {
+                const meseCorrente = document.getElementById('filterMese').value;
+                let filtered = [...allAdempimenti];
+                if (meseCorrente) filtered = filtered.filter(a => a.AnnoMese === meseCorrente);
+                filename = `Scadenze_${meseCorrente || 'Tutti'}.csv`;
+                rows = buildExcelRows(filtered);
+            } else if (tipo === 'periodo') {
+                const da = document.getElementById('stampaMeseDa').value;
+                const a = document.getElementById('stampaMeseA').value;
+                let filtered = allAdempimenti.filter(ad => ad.AnnoMese && ad.AnnoMese >= da && ad.AnnoMese <= a);
+                filename = `Scadenze_${da}_${a}.csv`;
+                rows = buildExcelRows(filtered);
+            } else if (tipo === 'adempimento') {
+                const adempId = document.getElementById('stampaAdempimento').value;
+                if (!adempId) { showAlert('⚠️ Seleziona un adempimento', 'error'); return; }
+                const a = allAdempimenti.find(x => x.ID == adempId);
+                if (!a) return;
+                filename = `Scheda_${(a.Title || 'Adempimento').replace(/[^a-zA-Z0-9]/g, '_')}.csv`;
+                rows = buildExcelRowsAdempimento(a);
+            }
+            
+            downloadCSV(rows, filename);
+        }
+
+        function buildExcelRows(adempimenti) {
+            const rows = [['Mese','Adempimento','Tipologia','Scadenza','Responsabile','Comune','Fase','Stato','Progresso%','Note']];
+            adempimenti.forEach(a => {
+                const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+                const scad = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '';
+                const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join('; ') : '';
+                if (hasFasi) {
+                    const fasi = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
+                    fasi.forEach(f => {
+                        allComuniFasi.filter(c => c.FaseID == f.ID && c.Attivo !== false).sort((x,y) => x.Comune.localeCompare(y.Comune)).forEach(c => {
+                            rows.push([formatMese(a.AnnoMese), a.Title, a.Tipologia||'', scad, resp, c.Comune, `F${f.OrdineFase}: ${f.Title}`, c.StatoEnte||'Da Fare', c.ProgressEnte||0, (c.NoteEnte||'').replace(/\n/g,' ')]);
+                        });
+                    });
+                } else {
+                    allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune)).forEach(e => {
+                        rows.push([formatMese(a.AnnoMese), a.Title, a.Tipologia||'', scad, resp, e.Comune, '', e.StatoEnte||'Da Fare', e.ProgressEnte||0, (e.NoteEnte||'').replace(/\n/g,' ')]);
+                    });
+                }
+            });
+            return rows;
+        }
+
+        function buildExcelRowsAdempimento(a) {
+            const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
+            const scad = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '';
+            const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join('; ') : '';
+            const rows = [['Comune','Fase','Scadenza Fase','Responsabile Fase','Stato','Progresso%','Note','Istruzioni Fase']];
+            if (hasFasi) {
+                const fasi = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
+                fasi.forEach(f => {
+                    const scadF = f.DataScadenzaFase ? new Date(f.DataScadenzaFase).toLocaleDateString('it-IT') : '';
+                    allComuniFasi.filter(c => c.FaseID == f.ID && c.Attivo !== false).sort((x,y) => x.Comune.localeCompare(y.Comune)).forEach(c => {
+                        rows.push([c.Comune, `F${f.OrdineFase}: ${f.Title}`, scadF, f.ResponsabileFase||'', c.StatoEnte||'Da Fare', c.ProgressEnte||0, (c.NoteEnte||'').replace(/\n/g,' '), (f.NoteFase||'').replace(/\n/g,' ')]);
+                    });
+                });
+            } else {
+                allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune)).forEach(e => {
+                    rows.push([e.Comune, '', scad, resp, e.StatoEnte||'Da Fare', e.ProgressEnte||0, (e.NoteEnte||'').replace(/\n/g,' '), '']);
+                });
+            }
+            return rows;
+        }
+
+        function downloadCSV(rows, filename) {
+            const BOM = '\uFEFF';
+            const csv = BOM + rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(';')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showAlert(`✅ File ${filename} scaricato!`, 'success');
+        }
 
         // ============================================================
         // INIT
