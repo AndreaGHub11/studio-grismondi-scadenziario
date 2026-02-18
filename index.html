@@ -3637,9 +3637,6 @@
                             <div class="fase-scad">📅 Scadenza fase: ${scadFase} | 👤 ${respFase}</div>
                             <div class="stato-box" style="background:${getStatoColor(stato)}">${getStatoLabel(stato)}</div>`;
                         
-                        if (fase.NoteFase) {
-                            html += `<div class="istruzioni-box"><strong>📋 Istruzioni:</strong><br>${escapeHtml(fase.NoteFase)}</div>`;
-                        }
                         if (comuneFase.NoteEnte) {
                             html += `<div class="note-box"><strong>📝 Note:</strong><br>${escapeHtml(comuneFase.NoteEnte)}</div>`;
                         }
@@ -3677,7 +3674,6 @@
                 // Riepilogo tabellare singolo adempimento
                 html += `<div style="margin-bottom:15px;padding:12px;background:#eff6ff;border-radius:8px;">
                     <strong>${escapeHtml(a.Title)}</strong><br>📅 ${formatMese(a.AnnoMese)} | ⏰ ${scadStr} | 📂 ${a.Tipologia} | 👤 ${resp}
-                    ${a.Descrizione ? `<div class="istruzioni-box" style="margin-top:8px;">${escapeHtml(a.Descrizione)}</div>` : ''}
                 </div>`;
                 if (hasFasi) {
                     const fasiAdemp = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
@@ -3755,7 +3751,7 @@
             const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
             const scad = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '';
             const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join('; ') : '';
-            const rows = [['Comune','Fase','Scadenza Fase','Responsabile Fase','Stato','Progresso%','Note','Istruzioni Fase']];
+            const rows = [['Comune','Fase','Scadenza Fase','Responsabile Fase','Stato','Progresso%','Note']];
             if (hasFasi) {
                 const fasi = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
                 fasi.forEach(f => {
@@ -3763,14 +3759,14 @@
                     let cf = allComuniFasi.filter(c => c.FaseID == f.ID && c.Attivo !== false).sort((x,y) => x.Comune.localeCompare(y.Comune));
                     if (comuneFilter) cf = cf.filter(c => c.Comune === comuneFilter);
                     cf.forEach(c => {
-                        rows.push([c.Comune, `F${f.OrdineFase}: ${f.Title}`, scadF, f.ResponsabileFase||'', c.StatoEnte||'Da Fare', c.ProgressEnte||0, (c.NoteEnte||'').replace(/\n/g,' '), (f.NoteFase||'').replace(/\n/g,' ')]);
+                        rows.push([c.Comune, `F${f.OrdineFase}: ${f.Title}`, scadF, f.ResponsabileFase||'', c.StatoEnte||'Da Fare', c.ProgressEnte||0, (c.NoteEnte||'').replace(/\n/g,' ')]);
                     });
                 });
             } else {
                 let enti = allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune));
                 if (comuneFilter) enti = enti.filter(e => e.Comune === comuneFilter);
                 enti.forEach(e => {
-                    rows.push([e.Comune, '', scad, resp, e.StatoEnte||'Da Fare', e.ProgressEnte||0, (e.NoteEnte||'').replace(/\n/g,' '), '']);
+                    rows.push([e.Comune, '', scad, resp, e.StatoEnte||'Da Fare', e.ProgressEnte||0, (e.NoteEnte||'').replace(/\n/g,' ')]);
                 });
             }
             return rows;
