@@ -1033,6 +1033,13 @@
                     </select>
                     <div id="stampaAdempInfo" style="display:none;margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac;font-size:12px;color:#065f46;">
                     </div>
+                    <!-- Selezione comune -->
+                    <div id="stampaComuneOpts" style="display:none;margin-top:10px;">
+                        <label style="color:#4338ca;">🏛️ Seleziona comune</label>
+                        <select id="stampaComune" style="border-color:#a5b4fc;">
+                            <option value="">📋 Tutti i comuni</option>
+                        </select>
+                    </div>
                     <div style="margin-top:10px;">
                         <label style="font-size:13px;color:#6b7280;">
                             <input type="checkbox" id="stampaPerComune" checked> Genera una scheda per ogni comune (allegabile alla pratica)
@@ -3424,20 +3431,33 @@
         window.onStampaAdempChange = function() {
             const adempId = document.getElementById('stampaAdempimento').value;
             const infoDiv = document.getElementById('stampaAdempInfo');
-            if (!adempId) { infoDiv.style.display = 'none'; return; }
+            const comuneOpts = document.getElementById('stampaComuneOpts');
+            if (!adempId) { infoDiv.style.display = 'none'; comuneOpts.style.display = 'none'; return; }
             const a = allAdempimenti.find(x => x.ID == adempId);
             if (!a) return;
             const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
-            let comuniCount = 0;
+            
+            // Raccogli comuni
+            let comuniList = [];
             if (hasFasi) {
-                comuniCount = new Set(allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false).map(c => c.Comune)).size;
+                comuniList = [...new Set(allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false).map(c => c.Comune))].sort();
             } else {
-                comuniCount = allEnti.filter(e => e.AdempimentoID == a.ID).length;
+                comuniList = allEnti.filter(e => e.AdempimentoID == a.ID).map(e => e.Comune).sort();
             }
+            
+            // Popola select comuni
+            const selComune = document.getElementById('stampaComune');
+            selComune.innerHTML = `<option value="">📋 Tutti i comuni (${comuniList.length})</option>`;
+            comuniList.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = `🏛️ ${c}`;
+                selComune.appendChild(opt);
+            });
+            comuneOpts.style.display = 'block';
+            
             const fasiCount = hasFasi ? allFasi.filter(f => f.AdempimentoID == a.ID).length : 0;
             infoDiv.innerHTML = `<strong>${escapeHtml(a.Title)}</strong><br>
-                ${hasFasi ? `⚡ ${fasiCount} fasi | ` : ''}🏛️ ${comuniCount} comuni | 📅 Scad: ${a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '-'}
-                <br><em>Verrà generata una scheda per ogni comune</em>`;
+                ${hasFasi ? `⚡ ${fasiCount} fasi | ` : ''}🏛️ ${comuniList.length} comuni | 📅 Scad: ${a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '-'}`;
             infoDiv.style.display = 'block';
         };
 
@@ -3577,15 +3597,17 @@
             if (!a) return;
             const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
             const perComune = document.getElementById('stampaPerComune').checked;
+            const comuneSelezionato = document.getElementById('stampaComune').value; // vuoto = tutti
             const scadStr = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '-';
             const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join(', ') : '-';
 
-            let html = printHeader('Scheda Adempimento', a.Title);
+            let html = printHeader('Scheda Adempimento', a.Title + (comuneSelezionato ? ` — ${comuneSelezionato}` : ''));
 
             if (hasFasi && perComune) {
                 // Raccogli tutti i comuni unici
                 const comuniFasi = allComuniFasi.filter(c => c.AdempimentoID == a.ID && c.Attivo !== false);
-                const comuniUnici = [...new Set(comuniFasi.map(c => c.Comune))].sort();
+                let comuniUnici = [...new Set(comuniFasi.map(c => c.Comune))].sort();
+                if (comuneSelezionato) comuniUnici = comuniUnici.filter(c => c === comuneSelezionato);
                 const fasiAdemp = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
 
                 comuniUnici.forEach((comune, idx) => {
@@ -3628,7 +3650,8 @@
                 });
             } else if (!hasFasi && perComune) {
                 // Adempimento senza fasi - una scheda per comune
-                const enti = allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                let enti = allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                if (comuneSelezionato) enti = enti.filter(e => e.Comune === comuneSelezionato);
                 enti.forEach((ente, idx) => {
                     if (idx > 0) html += '<div class="page-break"></div>';
                     const stato = ente.StatoEnte || 'Da Fare';
@@ -3699,7 +3722,8 @@
                 const a = allAdempimenti.find(x => x.ID == adempId);
                 if (!a) return;
                 filename = `Scheda_${(a.Title || 'Adempimento').replace(/[^a-zA-Z0-9]/g, '_')}.csv`;
-                rows = buildExcelRowsAdempimento(a);
+                const comuneSel = document.getElementById('stampaComune').value;
+                rows = buildExcelRowsAdempimento(a, comuneSel);
             }
             
             downloadCSV(rows, filename);
@@ -3727,7 +3751,7 @@
             return rows;
         }
 
-        function buildExcelRowsAdempimento(a) {
+        function buildExcelRowsAdempimento(a, comuneFilter) {
             const hasFasi = a.HasFasi === true || a.HasFasi === 'true';
             const scad = a.DataScadenza ? new Date(a.DataScadenza).toLocaleDateString('it-IT') : '';
             const resp = Array.isArray(a.Responsabile) ? a.Responsabile.join('; ') : '';
@@ -3736,12 +3760,16 @@
                 const fasi = allFasi.filter(f => f.AdempimentoID == a.ID).sort((x,y) => (x.OrdineFase||0) - (y.OrdineFase||0));
                 fasi.forEach(f => {
                     const scadF = f.DataScadenzaFase ? new Date(f.DataScadenzaFase).toLocaleDateString('it-IT') : '';
-                    allComuniFasi.filter(c => c.FaseID == f.ID && c.Attivo !== false).sort((x,y) => x.Comune.localeCompare(y.Comune)).forEach(c => {
+                    let cf = allComuniFasi.filter(c => c.FaseID == f.ID && c.Attivo !== false).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                    if (comuneFilter) cf = cf.filter(c => c.Comune === comuneFilter);
+                    cf.forEach(c => {
                         rows.push([c.Comune, `F${f.OrdineFase}: ${f.Title}`, scadF, f.ResponsabileFase||'', c.StatoEnte||'Da Fare', c.ProgressEnte||0, (c.NoteEnte||'').replace(/\n/g,' '), (f.NoteFase||'').replace(/\n/g,' ')]);
                     });
                 });
             } else {
-                allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune)).forEach(e => {
+                let enti = allEnti.filter(e => e.AdempimentoID == a.ID).sort((x,y) => x.Comune.localeCompare(y.Comune));
+                if (comuneFilter) enti = enti.filter(e => e.Comune === comuneFilter);
+                enti.forEach(e => {
                     rows.push([e.Comune, '', scad, resp, e.StatoEnte||'Da Fare', e.ProgressEnte||0, (e.NoteEnte||'').replace(/\n/g,' '), '']);
                 });
             }
